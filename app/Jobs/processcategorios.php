@@ -23,9 +23,11 @@ class processcategorios implements ShouldQueue
      */
     public function handle(): void
     {
-        $category=Categorios::findOrFile($this->id);
-        logger()->info('Categorios process successfully',[
-            'category_id'=>$category_id
+        $category = Categorios::findOrFail($this->id);
+
+        logger()->info('Category processed successfully', [
+            'category_id' => $category->id,
+            'category_name' => $category->name,
         ]);
 
     }
