@@ -29,10 +29,10 @@
 
 <div class="container">
   <h2>Categories List</h2>   
-  @if(session('succssess'))
+  @if(session('success'))
       <div class="alert alert-success">
         {{ session('success') }}
-    </div>
+      </div>
 @endif
 
 @if(session('error'))

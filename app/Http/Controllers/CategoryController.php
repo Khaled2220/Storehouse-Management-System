@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Services\CategoryService;
+use App\Events\category;
 
 class CategoryController extends Controller
 {
@@ -28,13 +29,14 @@ class CategoryController extends Controller
     public function store(StoreCategoryRequest $request)
     {
         $validated = $request->validated();
-
-        $this->categoryService->createCategory([
+        $category = $this->categoryService->createCategory([
             'name' => $validated['name'],
         ]);
 
+        event(new category($category));
+        
         return redirect()->route('Categorios.index')
-            ->with('success', 'Category added successfully');
+        ->with('success', 'Category added successfully');
     }
 
     public function show($id)
