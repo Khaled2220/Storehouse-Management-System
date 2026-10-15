@@ -2,15 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Products;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
+use App\Events\product;
+use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductRequest;
+use App\Services\ProductService;
 
 class ProductController extends Controller
 {
+    public function __construct(private ProductService $productService) 
+    {
+        //
+    }
+
     public function index()
     {
-        $Products = Products::latest()->paginate(50);
+        $Products = $this->productService->getAllProducts();
         return view('productview.index', compact('Products'));
     }
 
@@ -19,88 +25,54 @@ class ProductController extends Controller
         return view('productview.create');
     }
 
-    public function store(Request $request)
+    public function store(StoreProductRequest $request)
     {
-        $validated = $request->validate([
-            'name'        => 'required|string',
-            'quantity'    => 'required|integer',
-            'description' => 'nullable|string',
-            'price'       => 'required|numeric',
-            'image'       => 'nullable|image|mimes:jpeg,png,jpg,gif'
-        ]);
-        
-        $imagename = null;
-        if ($request->hasFile('image')) {
-            $imagename = time() . '.' . $request->image->extension();
-            $request->image->move(public_path('image'), $imagename);
-        }
-        
-        Products::create([   
-            'name'        => $validated['name'],
-            'quantity'    => $validated['quantity'],
-            'description' => $validated['description'],
-            'price'       => $validated['price'],
-            'image'       => $imagename,
-        ]);
+        $validated = $request->validated();
+        $product = $this->productService->createProduct(
+            $validated,
+            $request->file('image')
+        );
+        event(new product($product));
 
-        return redirect()->to('/Products')->with('success', 'Product added successfully');
+        return redirect()->to('/Products')
+            ->with('success', 'Product added successfully');
     }
 
     public function show($id)
     {
-        $product = Products::findOrFail($id);
+        $product = $this->productService->getProductById((int) $id);
+
         return view('productview.show', compact('product'));
     }
 
     public function edit($id)
     {
-        $product = Products::findOrFail($id);
+        $product = $this->productService->getProductById((int) $id);
+
         return view('productview.edit', compact('product'));
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateProductRequest $request, $id)
     {
-        $product = Products::findOrFail($id);
+        $product = $this->productService->getProductById((int) $id);
+        $validated = $request->validated();
 
-        $validated = $request->validate([
-            'name'        => 'required|string',
-            'quantity'    => 'required|integer',
-            'description' => 'nullable|string',
-            'price'       => 'required|numeric',
-            'image'       => 'nullable|image|mimes:jpeg,png,jpg,gif',
-        ]);
+        $this->productService->updateProduct(
+            $product,
+            $validated,
+            $request->file('image')
+        );
 
-        $imagename = $product->image;
-
-        if ($request->hasFile('image')) {
-            if ($product->image && File::exists(public_path('image/' . $product->image))) {
-                File::delete(public_path('image/' . $product->image));
-            }            
-            $imagename = time() . '.' . $request->image->extension();
-            $request->image->move(public_path('image'), $imagename);
-        } 
-         
-        $product->update([
-            'name'        => $validated['name'],
-            'quantity'    => $validated['quantity'],
-            'description' => $validated['description'],
-            'price'       => $validated['price'],
-            'image'       => $imagename,
-        ]);
-
-        return redirect()->to('/Products')->with('success', 'Product updated successfully');
-    }   
+        return redirect()->to('/Products')
+            ->with('success', 'Product updated successfully');
+    }
 
     public function destroy($id)
     {
-        $product = Products::findOrFail($id);
-        
-        if ($product->image && File::exists(public_path('image/' . $product->image))) {
-            File::delete(public_path('image/' . $product->image));
-        }
+        $product = $this->productService->getProductById((int) $id);
+        $this->productService->deleteProduct($product);
 
-        $product->delete();
-
-        return redirect()->to('/Products')->with('success', 'Product deleted successfully');
+        return redirect()->to('/Products')
+            ->with('success', 'Product deleted successfully');
     }
 }
