@@ -2,20 +2,19 @@
 
 namespace App\Notifications;
 
-use App\Models\Category;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class Categorios extends Notification
+class CategoryCreatedNotification extends Notification
 {
     use Queueable;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct()
+    public function __construct( public string $categoryName,public int $categoryId)
     {
         //
     }
@@ -27,7 +26,7 @@ class Categorios extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['database'];
     }
 
     /**
@@ -49,7 +48,14 @@ class Categorios extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            //
+            'message' => 'A new category was created.',
+            'category_id' => $this->categoryId,
+            'category_name' => $this->categoryName,
         ];
     }
 }
+
+
+
+
+

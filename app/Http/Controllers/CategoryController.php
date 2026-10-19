@@ -6,11 +6,14 @@ use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Services\CategoryService;
 use App\Events\category;
+use App\Notifications\CategoryCreatedNotification;
+use Illuminate\Support\Facades\Auth;
 
 class CategoryController extends Controller
 {
-    public function __construct(private CategoryService $categoryService) 
-    {
+    public function __construct(
+        private CategoryService $categoryService
+    ) {
         //
     }
 
@@ -29,14 +32,28 @@ class CategoryController extends Controller
     public function store(StoreCategoryRequest $request)
     {
         $validated = $request->validated();
+
         $category = $this->categoryService->createCategory([
             'name' => $validated['name'],
         ]);
 
+        // Trigger the Event and Listener
         event(new category($category));
-        
+
+        // Notify the user who created the category
+        $user = Auth::user();
+
+        if ($user) {
+            $user->notify(
+                new CategoryCreatedNotification(
+                    $category->name,
+                    $category->id
+                )
+            );
+        }
+
         return redirect()->route('Categorios.index')
-        ->with('success', 'Category added successfully');
+            ->with('success', 'Category added successfully');
     }
 
     public function show($id)
@@ -69,6 +86,7 @@ class CategoryController extends Controller
     public function destroy($id)
     {
         $category = $this->categoryService->getCategoryById((int) $id);
+
         $deleted = $this->categoryService->deleteCategory($category);
 
         if (! $deleted) {
