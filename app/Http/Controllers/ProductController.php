@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Events\product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Models\User;
+use App\Notifications\ProductCreatedNotification;
 use App\Services\ProductService;
 
 class ProductController extends Controller
@@ -34,6 +36,7 @@ class ProductController extends Controller
             $validated,
             $request->file('image')
         );
+
         event(new product($product));
 
         User::where('user_type', 1)->each(function ($user) use ($product) {
@@ -66,7 +69,6 @@ class ProductController extends Controller
     public function update(UpdateProductRequest $request, $id)
     {
         $product = $this->productService->getProductById((int) $id);
-
         $validated = $request->validated();
 
         $this->productService->updateProduct(
@@ -82,7 +84,6 @@ class ProductController extends Controller
     public function destroy($id)
     {
         $product = $this->productService->getProductById((int) $id);
-
         $this->productService->deleteProduct($product);
 
         return redirect()->to('/Products')
