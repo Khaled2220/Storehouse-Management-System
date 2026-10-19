@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('products', function (Blueprint $table) {
-             $table->string('status')->default('active')->after('image');
+            $table->string('status')->default('active')->after('image');
             $table->date('expiry_date')->nullable()->after('status');
         });
     }
