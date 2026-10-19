@@ -5,28 +5,52 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
-use App\Http\Middleware\EnsureUserIsAdmin; 
+use App\Http\Controllers\NotificationController;
+use App\Http\Middleware\EnsureUserIsAdmin;
 
+// Redirect the home page to login
 Route::redirect('/', '/login');
 
+// Registration routes
 Route::get('/register', [AuthController::class, 'showRegister']);
 Route::post('/register', [AuthController::class, 'register']);
 
-Route::get('/login', [AuthController::class, 'showlogin'])->name('login');
+// Login routes
+Route::get('/login', [AuthController::class, 'showlogin'])
+    ->name('login');
+
 Route::post('/login', [AuthController::class, 'login']);
 
-
-
-
+// Routes for authenticated users
 Route::middleware(['auth'])->group(function () {
-  
-   Route::middleware([EnsureUserIsAdmin::class])->group(function () {
-      Route::resource('Products', ProductController::class)->except(['index', 'show']);
-      Route::resource('Categorios', CategoryController::class)->except(['index', 'show']);
-   });
-    Route::resource('Products', ProductController::class)->only(['index', 'show']);
-    Route::resource('Categorios', CategoryController::class)->only(['index', 'show']); 
 
+    // Admin-only routes for creating, editing and deleting
+    Route::middleware([EnsureUserIsAdmin::class])->group(function () {
+
+        Route::resource('Products', ProductController::class)
+            ->except(['index', 'show']);
+
+        Route::resource('Categorios', CategoryController::class)
+            ->except(['index', 'show']);
+    });
+
+    // Product routes available to authenticated users
+    Route::resource('Products', ProductController::class)
+        ->only(['index', 'show']);
+
+    // Category routes available to authenticated users
+    Route::resource('Categorios', CategoryController::class)
+        ->only(['index', 'show']);
+
+    // Display notifications
+    Route::get('/notifications', [NotificationController::class, 'index'])
+        ->name('notifications.index');
+
+    // Mark a notification as read
+    Route::patch('/notifications/{id}/read', [
+        NotificationController::class,
+        'markAsRead'
+    ])->name('notifications.read');
 });
 
 
