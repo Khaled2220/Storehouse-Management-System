@@ -81,7 +81,7 @@ class ProductController extends Controller
 
     public function show($id)
     {
-                $product = Products::with('categories', 'user')->find($id);
+        $product = Products::with('categories', 'user')->find($id);
 
         if (!$product) {
             return response()->json([
@@ -125,6 +125,7 @@ class ProductController extends Controller
             //    'errors' => $validator->errors()
            // ], 422);
         //}
+
         $validated = $request->validated();
         $imagename = $product->image;
 
@@ -133,13 +134,11 @@ class ProductController extends Controller
                 File::delete(public_path('image/' . $product->image));
             }
 
-
             $imagename = time() . '.' . $request->image->extension();
             $request->image->move(public_path('image'), $imagename);
         }
-
        
-         $product->update([
+        $product->update([
             'name' => $validated->name,
             'quantity' => $validated->quantity,
             'description' => $validated->description,
@@ -158,7 +157,6 @@ class ProductController extends Controller
     {
          $product = Products::find($id);
 
-        
         if (!$product) {
             return response()->json([
                 'status' => false,

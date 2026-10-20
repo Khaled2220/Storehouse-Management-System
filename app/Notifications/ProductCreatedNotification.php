@@ -14,7 +14,7 @@ class ProductCreatedNotification extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct(   public string $productName,public int $productId)
+    public function __construct(public string $productName,public int $productId)
     {
         //
     }

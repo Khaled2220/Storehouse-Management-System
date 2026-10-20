@@ -22,7 +22,6 @@ class EnsureUserIsAdmin
      if (auth()->user()->user_type !== 1) {
             return redirect()->route('Products.index')->with('error', 'Unauthorized access! Admin only.');
         }
-
         return $next($request);
     }
 }

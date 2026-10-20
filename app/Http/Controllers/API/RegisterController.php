@@ -8,10 +8,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\File;
-
 use App\Http\Requests\RegisterRequest;
-
-
 
 class RegisterController extends Controller
 {
@@ -42,14 +39,13 @@ class RegisterController extends Controller
             'user_type' => 2, 
         ]);
 
-
         $token = $user->createToken('AuthToken')->plainTextToken;
             return response()->json([
-            'status' => true,
-            'message' => 'User registered successfully!',
-            'token' => $token,
-            'user' => $user
-        ], 201); 
+              'status' => true,
+              'message' => 'User registered successfully!',
+              'token' => $token,
+              'user' => $user
+            ], 201); 
     }
 }
 

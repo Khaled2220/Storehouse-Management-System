@@ -10,9 +10,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-
 #[Fillable(['full_name', 'email', 'password'])]
 #[Hidden(['password', 'remember_token'])]
+
 class User extends Authenticatable{
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
@@ -25,15 +25,16 @@ class User extends Authenticatable{
         //'is_admin'
         'user_type',
     ];
+
       protected $hidden = [
         'password',
         'remember_token',
     ];
 
-
     public function products(){
         return $this->hasMany(Products::class);
     }
+
     /**
      * Get the attributes that should be cast.
      *

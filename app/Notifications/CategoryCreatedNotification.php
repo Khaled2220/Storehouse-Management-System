@@ -14,7 +14,7 @@ class CategoryCreatedNotification extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct( public string $categoryName,public int $categoryId)
+    public function __construct(public string $categoryName,public int $categoryId)
     {
         //
     }
@@ -54,8 +54,3 @@ class CategoryCreatedNotification extends Notification
         ];
     }
 }
-
-
-
-
-

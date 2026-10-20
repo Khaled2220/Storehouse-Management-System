@@ -4,18 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest; 
 
 
-
 class AuthController extends Controller
 {
-
 /**
      * Display a listing of the resource.
      */
@@ -71,6 +67,7 @@ class AuthController extends Controller
     {
         //
     }
+
     public function showRegister()
     {
     return view('register');
@@ -88,12 +85,14 @@ class AuthController extends Controller
             'full_name' => $request->full_name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-          //'password'=>$request->password,
             'user_type' => 2,
+
+         //'password'=>$request->password,
          //'user_type' => ['nullable', 'in:0,1'],
         
         ]);
         return redirect('/');
+
         //return redirect()->action([AuthController::class, 'login']);
           // return redirect('/login')->with('success', 'Registration successful. Please log in.');
         //return redirect('/login');
@@ -107,20 +106,24 @@ class AuthController extends Controller
     public function login(LoginRequest $request)
     {
         $credentials = $request->only('email','password');
+
         //validate([
           //  'email' => ['required', 'string', 'email'],
             //'password' => ['required', 'string']
         //]);
 
   //dd(Auth::attempt($credentials));
+
        if (Auth::attempt($credentials)) {
         //dd('ssss');
-            $request->session()->regenerate();
-           return redirect()->route('Products.index'); 
+
+        $request->session()->regenerate();
+        return redirect()->route('Products.index'); 
            
         }
         //dd('fffff');
-          return back()->withErrors(['email' => 'Invalid email or password']);
+        
+        return back()->withErrors(['email' => 'Invalid email or password']);
      //return redirect()->route('Products.index');
 
     }

@@ -33,7 +33,6 @@ class CategoryService
         if ($category->products()->exists()) {
             return false;
         }
-
         return (bool) $category->delete();
     }
 }

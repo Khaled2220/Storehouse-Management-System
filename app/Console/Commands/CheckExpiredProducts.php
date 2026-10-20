@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
-
 use App\Models\Products; 
 use Carbon\Carbon;  
 
@@ -23,17 +22,11 @@ class CheckExpiredProducts extends Command
             ->where('status', 'active')
             ->update(['status' => 'expired']);
     
-
-          if ($updatedCount === 0) {
+        if ($updatedCount === 0) {
             $this->info('There are no expired products today.');
         } else {
             $this->info("Successfully updated {$updatedCount} expired products.");
         }
-
         return Command::SUCCESS;
     }
 }
-
-
-
-

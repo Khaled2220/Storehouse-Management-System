@@ -24,6 +24,7 @@ class processproducts implements ShouldQueue
     public function handle(): void
     {
         $product=Products::findOrFail($this->id);
+        
         logger()->info('Product processed successfully', [
             'product_id' => $product->id,
         ]);
