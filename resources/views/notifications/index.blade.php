@@ -3,7 +3,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Notifications</title>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
 
     <style>
         body {
@@ -71,13 +72,18 @@
         <li class="nav-item">
             <a class="nav-link active" href="{{ route('notifications.index') }}">
                 My Notifications
+
                 @auth
                     @php
-                        $unreadCount = auth()->user()->unreadNotifications()->count();
+                        $unreadCount = auth()->user()
+                            ->unreadNotifications()
+                            ->count();
                     @endphp
 
                     @if ($unreadCount > 0)
-                        <span class="badge badge-light">{{ $unreadCount }}</span>
+                        <span class="badge badge-light">
+                            {{ $unreadCount }}
+                        </span>
                     @endif
                 @endauth
             </a>
@@ -96,12 +102,29 @@
     @endif
 
     @forelse ($notifications as $notification)
+
         <div class="notification {{ $notification->read_at ? 'read' : 'unread' }}">
 
             <h3>
                 {{ $notification->data['message'] ?? 'New notification' }}
             </h3>
 
+            {{-- Product notification details --}}
+            @if (isset($notification->data['product_name']))
+                <p>
+                    <strong>Product:</strong>
+                    {{ $notification->data['product_name'] }}
+                </p>
+            @endif
+
+            @if (isset($notification->data['product_id']))
+                <p>
+                    <strong>Product ID:</strong>
+                    {{ $notification->data['product_id'] }}
+                </p>
+            @endif
+
+            {{-- Category notification details --}}
             @if (isset($notification->data['category_name']))
                 <p>
                     <strong>Category:</strong>
@@ -137,6 +160,7 @@
             @endunless
 
         </div>
+
     @empty
         <p>You have no notifications.</p>
     @endforelse
