@@ -139,19 +139,6 @@
 
 <div class="container">
 
-    {{-- Back buttons at the top of the page --}}
-    <div class="back-buttons">
-
-        <a href="{{ route('Products.index') }}" class="btn back-btn">
-            Back to Products
-        </a>
-
-        <a href="{{ route('Categorios.index') }}" class="btn back-btn">
-            Back to Categories
-        </a>
-
-    </div>
-
     <h1>My Notifications</h1>
 
     @if (session('success'))
@@ -240,6 +227,19 @@
 
     <div class="mt-3">
         {{ $notifications->links() }}
+    </div>
+
+        {{-- Back buttons at the top of the page --}}
+    <div class="back-buttons">
+
+        <a href="{{ route('Products.index') }}" class="btn back-btn">
+            Back to Products
+        </a>
+
+        <a href="{{ route('Categorios.index') }}" class="btn back-btn">
+            Back to Categories
+        </a>
+
     </div>
 
 </div>

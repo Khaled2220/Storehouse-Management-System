@@ -183,7 +183,7 @@
 
                                         <button type="submit" class="btn btn-danger">
                                             <span class="glyphicon glyphicon-trash"></span>
-                                            &nbsp;Delete
+                                            Delete
                                         </button>
                                     </form>
                                 </div>
