@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
@@ -11,20 +10,40 @@ use App\Http\Middleware\EnsureUserIsAdmin;
 // Redirect the home page to login
 Route::redirect('/', '/login');
 
-// Registration routes
-Route::get('/register', [AuthController::class, 'showRegister']);
-Route::post('/register', [AuthController::class, 'register']);
 
-// Login routes
+// ========================================
+// Registration Routes
+// ========================================
+
+Route::get('/register', [AuthController::class, 'showRegister'])
+    ->name('register');
+
+Route::post('/register', [AuthController::class, 'register'])
+    ->name('register.store');
+
+
+// ========================================
+// Login Routes
+// ========================================
+
 Route::get('/login', [AuthController::class, 'showlogin'])
     ->name('login');
 
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login'])
+    ->name('login.store');
 
-// Routes for authenticated users
+
+// ========================================
+// Routes for Authenticated Users
+// ========================================
+
 Route::middleware(['auth'])->group(function () {
 
-    // Admin-only routes for creating, editing and deleting
+    // ========================================
+    // Admin-Only Routes
+    // Create, Store, Edit, Update, and Delete
+    // ========================================
+
     Route::middleware([EnsureUserIsAdmin::class])->group(function () {
 
         Route::resource('Products', ProductController::class)
@@ -32,53 +51,62 @@ Route::middleware(['auth'])->group(function () {
 
         Route::resource('Categorios', CategoryController::class)
             ->except(['index', 'show']);
+
     });
 
-    // Product routes available to authenticated users
+
+    // ========================================
+    // Product Routes
+    // Available to All Authenticated Users
+    // ========================================
+
     Route::resource('Products', ProductController::class)
         ->only(['index', 'show']);
 
-    // Category routes available to authenticated users
+
+    // ========================================
+    // Category Routes
+    // Available to All Authenticated Users
+    // ========================================
+
     Route::resource('Categorios', CategoryController::class)
         ->only(['index', 'show']);
 
+
+    // ========================================
+    // Notification Routes
+    // ========================================
+
     // Display notifications
-    Route::get('/notifications', [NotificationController::class, 'index'])
-        ->name('notifications.index');
+    Route::get('/notifications', [
+        NotificationController::class,
+        'index'
+    ])->name('notifications.index');
+
 
     // Mark a notification as read
     Route::patch('/notifications/{id}/read', [
         NotificationController::class,
         'markAsRead'
     ])->name('notifications.read');
+
 });
 
 
+// ========================================
+// Old Routes (Kept as Comments)
+// ========================================
 
-//Route::get('/products',[ProductController::class,'index'])->middleware('auth','admin');
+// Route::get('/products', [ProductController::class, 'index'])
+//     ->middleware('auth', 'admin');
 
-//Route::get('/Products', function() {
-//    $products = \App\Models\Products::latest()->paginate(50);
-//    return view('productview.index', compact('products'));
-//})->name('Products.index')->middleware('auth');
+// Route::get('/Products', function () {
+//     $Products = \App\Models\Products::latest()->paginate(50);
+//     return view('productview.index', compact('Products'));
+// })->name('Products.index')->middleware('auth');
 
+// Route::get('/product/{id}', [ProductController::class, 'show']);
 
-//Route::View('/register', [AuthController::class, 'register']);
-//Route::post('/register', [AuthController::class, 'register']);
-
-
-
-//Route::get('/product/{id}', [ProductController::class, 'show']);
+// Route::get('/Categorios', [CategoryController::class, 'index']);
 
 
-//Route::get('/products',[ProductController::class,'index']);
-//Route::get('/products',[ProductController::class,'create']);
-//Route::post('/products',[ProductController::class,'store']);
-//Route::get('/products',[ProductController::class,'show']);
-//Route::delete('/products',[ProductController::class,'destroy']);
-
-//Route::get('/Categorios',[CategoryController::class,'index']);
-//Route::get('/Categorios',[CategoryController::class,'create']);
-//Route::post('/Categorios',[CategoryController::class,'store']);
-//Route::get('/Categorios',[CategoryController::class,'show']);
-//Route::delete('/Categorios',[CategoryController::class,'destroy']);

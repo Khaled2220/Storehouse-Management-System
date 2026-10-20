@@ -2,14 +2,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <title>Edit Category</title>
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <style>
         .navbar .nav-link,
@@ -19,11 +17,66 @@
             color: black !important;
             font-size: 20px;
         }
+
+        .container {
+            margin-top: 25px;
+            margin-bottom: 30px;
+        }
+
+        .category-form {
+            max-width: 600px;
+        }
+
+        .form-control {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .action-buttons {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .action-buttons .btn,
+        .back-button .btn {
+            width: 170px;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        .back-button {
+            margin-top: 15px;
+        }
+
+        /* Back button only */
+        .back-button .back-btn {
+            background-color: DimGrey;
+            color: white !important;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+        }
+
+        .back-button .back-btn:hover,
+        .back-button .back-btn:focus {
+            background-color: #555555;
+            color: white !important;
+            text-decoration: none;
+        }
     </style>
 </head>
 
+<body>
+
 <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
-    <ul class="navbar-nav">
+    <ul class="nav navbar-nav">
         <li class="nav-item">
             <a class="nav-link" href="{{ route('Products.index') }}">
                 Products
@@ -46,7 +99,7 @@
                     @endphp
 
                     @if ($unreadCount > 0)
-                        <span class="badge badge-light">{{ $unreadCount }}</span>
+                        <span class="badge">{{ $unreadCount }}</span>
                     @endif
                 @endauth
             </a>
@@ -54,13 +107,17 @@
     </ul>
 </nav>
 
-<br>
-
 <div class="container">
 
-    @if (auth()->check() && auth()->user()->user_type === 1)
+    @if (auth()->check() && (int) auth()->user()->user_type === 1)
 
         <h2>Edit Category</h2>
+
+        @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
 
         @if ($errors->any())
             <div class="alert alert-danger">
@@ -72,51 +129,53 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ url('/Categorios/' . $category->id) }}">
+        <form
+            class="category-form"
+            method="POST"
+            action="{{ route('Categorios.update', $category->id) }}"
+        >
             @csrf
             @method('PUT')
 
-            <label>Name:</label><br>
+            <div class="form-group">
+                <label for="name">Category Name:</label>
 
-            <input
-                type="text"
-                name="name"
-                value="{{ old('name', $category->name) }}"
-                required
-            >
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    class="form-control"
+                    value="{{ old('name', $category->name) }}"
+                    required
+                    autofocus
+                >
+            </div>
 
-            <br><br>
-
-            <button
-                type="submit"
-                class="btn btn-sm text-white font-weight-bold shadow-sm"
-                style="background-color: green; padding: 6px 12px; font-size: 13px;"
-            >
-                Update Category
-            </button>
+            <div class="action-buttons">
+                <button type="submit" class="btn btn-success">
+                    Update Category
+                </button>
+            </div>
         </form>
 
-        <br>
-
-        <a
-            href="{{ route('Categorios.index') }}"
-            style="background-color: DimGrey; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px; font-weight: bold;"
-        >
-            Back
-        </a>
+        <div class="back-button">
+            <a href="{{ route('Categorios.index') }}" class="btn back-btn">
+                Back to Categories
+            </a>
+        </div>
 
     @else
 
-        <div class="alert alert-danger" style="margin-top: 20px;">
+        <div class="alert alert-danger">
             <h4>Unauthorized access! Admin only.</h4>
-            <p>Redirecting you back to the categories list...</p>
-        </div>
+            <p>You do not have permission to edit categories.</p>
 
-        <script>
-            setTimeout(function () {
-                window.location.href = "{{ route('Categorios.index') }}";
-            }, 2000);
-        </script>
+            <div class="back-button">
+                <a href="{{ route('Categorios.index') }}" class="btn back-btn">
+                    Back to Categories
+                </a>
+            </div>
+        </div>
 
     @endif
 

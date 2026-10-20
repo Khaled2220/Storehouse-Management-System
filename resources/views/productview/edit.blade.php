@@ -2,14 +2,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <title>Edit Product</title>
+
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <style>
         .navbar .nav-link,
@@ -19,49 +18,144 @@
             color: black !important;
             font-size: 20px;
         }
+
+        .container {
+            margin-top: 25px;
+            margin-bottom: 30px;
+        }
+
+        .product-form {
+            max-width: 600px;
+        }
+
+        .form-control {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .current-image {
+            max-width: 250px;
+            height: auto;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+
+        .action-buttons {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .action-buttons .btn,
+        .back-button .btn {
+            width: 170px;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        .back-button {
+            margin-top: 15px;
+        }
+
+        /* Back button only */
+        .back-button .back-btn {
+            background-color: DimGrey;
+            color: white !important;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+        }
+
+        .back-button .back-btn:hover,
+        .back-button .back-btn:focus {
+            background-color: #555555;
+            color: white !important;
+            text-decoration: none;
+        }
+
+        /* Back button inside the unauthorized message */
+        .unauthorized-back-btn {
+            width: 170px;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            font-size: 14px;
+            background-color: DimGrey;
+            color: white !important;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+        }
+
+        .unauthorized-back-btn:hover,
+        .unauthorized-back-btn:focus {
+            background-color: #555555;
+            color: white !important;
+            text-decoration: none;
+        }
     </style>
 </head>
 
-<nav class="navbar navbar-expand-sm bg-primary navbar-dark">
-    <ul class="navbar-nav">
-        <li class="nav-item">
-            <a class="nav-link" href="{{ route('Products.index') }}">
-                Products
-            </a>
-        </li>
+<body>
 
-        <li class="nav-item">
-            <a class="nav-link" href="{{ route('Categorios.index') }}">
-                Category
-            </a>
-        </li>
+    {{-- Navigation Bar --}}
+    <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
+        <ul class="nav navbar-nav">
 
-        <li class="nav-item">
-            <a class="nav-link" href="{{ route('notifications.index') }}">
-                My Notifications
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('Products.index') }}">
+                    Products
+                </a>
+            </li>
 
-                @auth
-                    @php
-                        $unreadCount = auth()->user()->unreadNotifications()->count();
-                    @endphp
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('Categorios.index') }}">
+                    Category
+                </a>
+            </li>
 
-                    @if ($unreadCount > 0)
-                        <span class="badge badge-light">{{ $unreadCount }}</span>
-                    @endif
-                @endauth
-            </a>
-        </li>
-    </ul>
-</nav>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('notifications.index') }}">
+                    My Notifications
 
-<br>
+                    @auth
+                        @php
+                            $unreadCount = auth()->user()
+                                ->unreadNotifications()
+                                ->count();
+                        @endphp
 
-<div class="container">
+                        @if ($unreadCount > 0)
+                            <span class="badge">{{ $unreadCount }}</span>
+                        @endif
+                    @endauth
+                </a>
+            </li>
 
-    @if (auth()->check() && auth()->user()->user_type === 1)
+        </ul>
+    </nav>
+
+    {{-- Edit Product --}}
+    <div class="container">
 
         <h2>Edit Product</h2>
 
+        {{-- Success Message --}}
+        @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        {{-- Validation Errors --}}
         @if ($errors->any())
             <div class="alert alert-danger">
                 <ul>
@@ -72,96 +166,133 @@
             </div>
         @endif
 
-        <form
-            method="POST"
-            action="{{ url('/Products/' . $product->id) }}"
-            enctype="multipart/form-data"
-        >
-            @csrf
-            @method('PUT')
+        {{-- Admin Only --}}
+        @if (auth()->check() && (int) auth()->user()->user_type === 1)
 
-            <label>Name:</label><br>
-            <input
-                type="text"
-                name="name"
-                value="{{ old('name', $product->name) }}"
-                required
+            <form
+                class="product-form"
+                method="POST"
+                action="{{ route('Products.update', $product->id) }}"
+                enctype="multipart/form-data"
             >
-            <br><br>
+                @csrf
+                @method('PUT')
 
-            <label>Description:</label><br>
-            <textarea name="description">{{ old('description', $product->description) }}</textarea>
-            <br><br>
+                {{-- Product Name --}}
+                <div class="form-group">
+                    <label for="name">Name:</label>
 
-            <label>Quantity:</label><br>
-            <input
-                type="number"
-                name="quantity"
-                value="{{ old('quantity', $product->quantity) }}"
-                min="0"
-                required
-            >
-            <br><br>
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        class="form-control"
+                        value="{{ old('name', $product->name) }}"
+                        required
+                    >
+                </div>
 
-            <label>Price:</label><br>
-            <input
-                type="number"
-                name="price"
-                value="{{ old('price', $product->price) }}"
-                min="0"
-                step="0.01"
-                required
-            >
-            <br><br>
+                {{-- Description --}}
+                <div class="form-group">
+                    <label for="description">Description:</label>
 
-            <label>Current Image:</label><br>
+                    <textarea
+                        id="description"
+                        name="description"
+                        class="form-control"
+                        rows="4"
+                    >{{ old('description', $product->description) }}</textarea>
+                </div>
 
-            @if ($product->image)
-                <img
-                    src="{{ asset('image/' . $product->image) }}"
-                    width="80"
-                    alt="Current product image"
-                >
-                <br><br>
-            @else
-                <p>No image available.</p>
-            @endif
+                {{-- Quantity --}}
+                <div class="form-group">
+                    <label for="quantity">Quantity:</label>
 
-            <label>Change Image:</label><br>
-            <input type="file" name="image" accept="image/*">
-            <br><br>
+                    <input
+                        type="number"
+                        id="quantity"
+                        name="quantity"
+                        class="form-control"
+                        value="{{ old('quantity', $product->quantity) }}"
+                        min="0"
+                        required
+                    >
+                </div>
 
-            <button
-                type="submit"
-                class="btn btn-sm text-white font-weight-bold shadow-sm"
-                style="background-color: green; padding: 6px 12px; font-size: 13px;"
-            >
-                Update Product
-            </button>
-        </form>
+                {{-- Price --}}
+                <div class="form-group">
+                    <label for="price">Price:</label>
 
-        <br>
+                    <input
+                        type="number"
+                        id="price"
+                        name="price"
+                        class="form-control"
+                        value="{{ old('price', $product->price) }}"
+                        min="0"
+                        step="0.01"
+                        required
+                    >
+                </div>
 
-        <a
-            href="{{ route('Products.index') }}"
-            style="background-color: DimGrey; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px; font-weight: bold;"
-        >
-            Back
-        </a>
+                {{-- Current Image --}}
+                <div class="form-group">
+                    <label>Current Image:</label>
+                    <br>
 
-    @else
+                    @if ($product->image)
+                        <img
+                            src="{{ asset('image/' . $product->image) }}"
+                            class="current-image"
+                            alt="{{ $product->name }}"
+                        >
+                    @else
+                        <p>No image available.</p>
+                    @endif
+                </div>
 
-        <div class="alert alert-danger" style="margin-top: 20px;">
-            <h4>Unauthorized access! Admin only.</h4>
-            <p>Redirecting you back to the products list...</p>
-        </div>
+                {{-- Change Image --}}
+                <div class="form-group">
+                    <label for="image">Change Image:</label>
 
-        <script>
-            setTimeout(function () {
-                window.location.href = "{{ route('Products.index') }}";
-            }, 2000);
-        </script>
+                    <input
+                        type="file"
+                        id="image"
+                        name="image"
+                        class="form-control"
+                        accept="image/jpeg,image/png,image/jpg,image/gif"
+                    >
+                </div>
 
-    @endif
+                {{-- Update Button --}}
+                <div class="action-buttons">
+                    <button type="submit" class="btn btn-success">
+                        Update Product
+                    </button>
+                </div>
 
-</div>
+            </form>
+
+            {{-- Back Button --}}
+            <div class="back-button">
+                <a href="{{ route('Products.index') }}"
+                   class="btn back-btn">
+                    Back to Products
+                </a>
+            </div>
+
+        @else
+
+            <div class="alert alert-danger">
+                <h4>Unauthorized access! Admin only.</h4>
+                <p>You do not have permission to edit products.</p>
+
+                <a href="{{ route('Products.index') }}"
+                   class="btn unauthorized-back-btn">
+                    Back to Products
+                </a>
+            </div>
+
+        @endif
+
+    </div>

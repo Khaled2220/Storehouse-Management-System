@@ -1,6 +1,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>My Notifications</title>
 
     <link rel="stylesheet"
@@ -21,6 +22,44 @@
             font-size: 20px;
         }
 
+        .container {
+            margin-top: 20px;
+            margin-bottom: 30px;
+        }
+
+        /* Back buttons */
+        .back-buttons {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            margin-bottom: 25px;
+        }
+
+        .back-btn {
+            width: 170px;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            font-size: 14px;
+            background-color: DimGrey;
+            color: white !important;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+        }
+
+        .back-btn:hover,
+        .back-btn:focus {
+            background-color: #555555;
+            color: white !important;
+            text-decoration: none;
+        }
+
+        /* Notification cards */
         .notification {
             background: white;
             border: 1px solid #ddd;
@@ -42,13 +81,18 @@
             margin-bottom: 15px;
         }
 
-        button {
+        /* Mark as read button */
+        .mark-read-button {
             background: #2563eb;
             color: white;
             border: none;
             border-radius: 5px;
             padding: 10px 15px;
             cursor: pointer;
+        }
+
+        .mark-read-button:hover {
+            background: #1d4ed8;
         }
     </style>
 </head>
@@ -57,6 +101,7 @@
 
 <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
     <ul class="navbar-nav">
+
         <li class="nav-item">
             <a class="nav-link" href="{{ route('Products.index') }}">
                 Products
@@ -88,17 +133,37 @@
                 @endauth
             </a>
         </li>
+
     </ul>
 </nav>
 
-<br>
-
 <div class="container">
+
+    {{-- Back buttons at the top of the page --}}
+    <div class="back-buttons">
+
+        <a href="{{ route('Products.index') }}" class="btn back-btn">
+            Back to Products
+        </a>
+
+        <a href="{{ route('Categorios.index') }}" class="btn back-btn">
+            Back to Categories
+        </a>
+
+    </div>
 
     <h1>My Notifications</h1>
 
     @if (session('success'))
-        <p class="success">{{ session('success') }}</p>
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
     @endif
 
     @forelse ($notifications as $notification)
@@ -150,24 +215,31 @@
             </p>
 
             @unless ($notification->read_at)
-                <form method="POST"
-                      action="{{ route('notifications.read', $notification->id) }}">
+                <form
+                    method="POST"
+                    action="{{ route('notifications.read', $notification->id) }}"
+                >
                     @csrf
                     @method('PATCH')
 
-                    <button type="submit">Mark as read</button>
+                    <button type="submit" class="mark-read-button">
+                        Mark as read
+                    </button>
                 </form>
             @endunless
 
         </div>
 
     @empty
-        <p>You have no notifications.</p>
+
+        <div class="alert alert-info">
+            You have no notifications.
+        </div>
+
     @endforelse
 
-    {{ $notifications->links() }}
+    <div class="mt-3">
+        {{ $notifications->links() }}
+    </div>
 
 </div>
-
-</body>
-</html>

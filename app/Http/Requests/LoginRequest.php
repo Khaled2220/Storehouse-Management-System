@@ -7,6 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
+
 class LoginRequest extends FormRequest
 {
     /**
@@ -18,23 +19,13 @@ class LoginRequest extends FormRequest
     }
 
     /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
+     * Get the validation rules.
      */
     public function rules(): array
     {
         return [
-              'email' => 'required|email',
-              'password' => 'required'
+            'email' => ['required', 'email'],
+            'password' => ['required', 'string'],
         ];
-    }
-       protected function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(response()->json([
-            'status'  => false,
-            'message' => 'Validation error',
-            'errors'  => $validator->errors()
-        ], 422));
     }
 }
