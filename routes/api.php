@@ -9,6 +9,7 @@ use App\Http\Controllers\API\ProductController;
 //Route::get('/user', function (Request $request) {
   //  return $request->user();
 //})->middleware('auth:sanctum');
+
 Route::get('/test', function () {
     return response()->json([
         'status' => true,

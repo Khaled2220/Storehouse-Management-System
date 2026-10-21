@@ -7,14 +7,11 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Middleware\EnsureUserIsAdmin;
 
-// Redirect the home page to login
+// login
 Route::redirect('/', '/login');
 
 
-// ========================================
-// Registration Routes
-// ========================================
-
+// Registre
 Route::get('/register', [AuthController::class, 'showRegister'])
     ->name('register');
 
@@ -22,10 +19,8 @@ Route::post('/register', [AuthController::class, 'register'])
     ->name('register.store');
 
 
-// ========================================
-// Login Routes
-// ========================================
 
+// Login 
 Route::get('/login', [AuthController::class, 'showlogin'])
     ->name('login');
 
@@ -33,58 +28,39 @@ Route::post('/login', [AuthController::class, 'login'])
     ->name('login.store');
 
 
-// ========================================
-// Routes for Authenticated Users
-// ========================================
 
+// Authenticated Users
 Route::middleware(['auth'])->group(function () {
 
-    // ========================================
-    // Admin-Only Routes
+  
+    // Admin-Only 
     // Create, Store, Edit, Update, and Delete
-    // ========================================
-
     Route::middleware([EnsureUserIsAdmin::class])->group(function () {
-
         Route::resource('Products', ProductController::class)
             ->except(['index', 'show']);
 
         Route::resource('Categorios', CategoryController::class)
             ->except(['index', 'show']);
-
     });
 
 
-    // ========================================
-    // Product Routes
-    // Available to All Authenticated Users
-    // ========================================
 
+    // Product 
     Route::resource('Products', ProductController::class)
         ->only(['index', 'show']);
 
 
-    // ========================================
-    // Category Routes
-    // Available to All Authenticated Users
-    // ========================================
-
+    // Category 
     Route::resource('Categorios', CategoryController::class)
         ->only(['index', 'show']);
 
 
-    // ========================================
-    // Notification Routes
-    // ========================================
-
-    // Display notifications
+    // Notification 
     Route::get('/notifications', [
         NotificationController::class,
         'index'
     ])->name('notifications.index');
 
-
-    // Mark a notification as read
     Route::patch('/notifications/{id}/read', [
         NotificationController::class,
         'markAsRead'
@@ -93,9 +69,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 
-// ========================================
-// Old Routes (Kept as Comments)
-// ========================================
+
 
 // Route::get('/products', [ProductController::class, 'index'])
 //     ->middleware('auth', 'admin');
@@ -108,5 +82,3 @@ Route::middleware(['auth'])->group(function () {
 // Route::get('/product/{id}', [ProductController::class, 'show']);
 
 // Route::get('/Categorios', [CategoryController::class, 'index']);
-
-
