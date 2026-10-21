@@ -35,4 +35,20 @@ class NotificationController extends Controller
         return redirect()->route('notifications.index')
             ->with('success', 'Notification marked as read.');
     }
+
+    /**
+     * Delete a notification belonging to the authenticated user.
+     */
+    public function destroy(Request $request, string $id)
+    {
+        $notification = $request->user()
+            ->notifications()
+            ->whereKey($id)
+            ->firstOrFail();
+
+        $notification->delete();
+
+        return redirect()->route('notifications.index')
+            ->with('success', 'Notification deleted successfully.');
+    }
 }

@@ -1,3 +1,5 @@
+
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -5,7 +7,10 @@
     <title>My Notifications</title>
 
     <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
     <style>
         body {
@@ -25,6 +30,72 @@
         .container {
             margin-top: 20px;
             margin-bottom: 30px;
+        }
+
+        .notification {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .unread {
+            border-left: 5px solid #2563eb;
+        }
+
+        .read {
+            border-left: 5px solid #16a34a;
+        }
+
+        .notification-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .notification-actions form {
+            display: inline-block;
+            margin: 0;
+        }
+
+        .notification-actions .btn {
+            min-width: 100px;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        .mark-read-button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 15px;
+            cursor: pointer;
+        }
+
+        .mark-read-button:hover {
+            background: #1d4ed8;
+            color: white;
+        }
+
+        .notification-actions .btn-danger {
+            background-color: #d9534f;
+            border-color: #d43f3a;
+            color: white;
+        }
+
+        .notification-actions .btn-danger:hover,
+        .notification-actions .btn-danger:focus {
+            background-color: #c9302c;
+            border-color: #ac2925;
+            color: white;
         }
 
         .back-buttons {
@@ -57,47 +128,12 @@
             color: white !important;
             text-decoration: none;
         }
-
-        .notification {
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 15px;
-        }
-
-        .unread {
-            border-left: 5px solid #2563eb;
-        }
-
-        .read {
-            border-left: 5px solid #16a34a;
-        }
-
-        .success {
-            color: green;
-            margin-bottom: 15px;
-        }
-
-        .mark-read-button {
-            background: #2563eb;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 10px 15px;
-            cursor: pointer;
-        }
-
-        .mark-read-button:hover {
-            background: #1d4ed8;
-        }
     </style>
 </head>
 
 <body>
-
 <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
-    <ul class="navbar-nav">
+    <ul class="nav navbar-nav">
 
         <li class="nav-item">
             <a class="nav-link" href="{{ route('Products.index') }}">
@@ -123,19 +159,17 @@
                     @endphp
 
                     @if ($unreadCount > 0)
-                        <span class="badge badge-light">
+                        <span class="badge">
                             {{ $unreadCount }}
                         </span>
                     @endif
                 @endauth
             </a>
         </li>
-
     </ul>
 </nav>
 
 <div class="container">
-
     <h1>My Notifications</h1>
 
     @if (session('success'))
@@ -158,7 +192,6 @@
                 {{ $notification->data['message'] ?? 'New notification' }}
             </h3>
 
-            {{-- Product notification details --}}
             @if (isset($notification->data['product_name']))
                 <p>
                     <strong>Product:</strong>
@@ -173,7 +206,6 @@
                 </p>
             @endif
 
-            {{-- Category notification details --}}
             @if (isset($notification->data['category_name']))
                 <p>
                     <strong>Category:</strong>
@@ -198,20 +230,38 @@
                 {{ $notification->read_at ? 'Read' : 'Unread' }}
             </p>
 
-            @unless ($notification->read_at)
+            <div class="notification-actions">
+
+                @unless ($notification->read_at)
+                    <form
+                        method="POST"
+                        action="{{ route('notifications.read', $notification->id) }}"
+                    >
+                        @csrf
+                        @method('PATCH')
+
+                        <button type="submit" class="mark-read-button">
+                            Mark as read
+                        </button>
+                    </form>
+                @endunless
+
                 <form
+                    action="{{ route('notifications.destroy', $notification->id) }}"
                     method="POST"
-                    action="{{ route('notifications.read', $notification->id) }}"
+                    onsubmit="return confirm('Are you sure you want to delete this notification?')"
                 >
                     @csrf
-                    @method('PATCH')
+                    @method('DELETE')
 
-                    <button type="submit" class="mark-read-button">
-                        Mark as read
+                    <button type="submit" class="btn btn-danger">
+                        <span class="glyphicon glyphicon-trash"></span>
+                        Delete
                     </button>
                 </form>
-            @endunless
+            </div>
         </div>
+
     @empty
 
         <div class="alert alert-info">
@@ -224,7 +274,6 @@
         {{ $notifications->links() }}
     </div>
 
-        {{-- Back buttons at the top of the page --}}
     <div class="back-buttons">
 
         <a href="{{ route('Products.index') }}" class="btn back-btn">
@@ -234,5 +283,6 @@
         <a href="{{ route('Categorios.index') }}" class="btn back-btn">
             Back to Categories
         </a>
+
     </div>
 </div>

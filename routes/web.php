@@ -7,53 +7,44 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Middleware\EnsureUserIsAdmin;
 
-// login
+// Redirect homepage to login
 Route::redirect('/', '/login');
 
-
-// Registre
+// Register
 Route::get('/register', [AuthController::class, 'showRegister'])
     ->name('register');
 
 Route::post('/register', [AuthController::class, 'register'])
     ->name('register.store');
 
-
-
-// Login 
+// Login
 Route::get('/login', [AuthController::class, 'showlogin'])
     ->name('login');
 
 Route::post('/login', [AuthController::class, 'login'])
     ->name('login.store');
 
-
-
-// Authenticated Users
+// Authenticated users
 Route::middleware(['auth'])->group(function () {
 
-  
-    // Admin-Only 
-    // Create, Store, Edit, Update, and Delete
+    // Admin-only 
     Route::middleware([EnsureUserIsAdmin::class])->group(function () {
+
         Route::resource('Products', ProductController::class)
             ->except(['index', 'show']);
 
         Route::resource('Categorios', CategoryController::class)
             ->except(['index', 'show']);
+
     });
-
-
 
     // Product 
     Route::resource('Products', ProductController::class)
         ->only(['index', 'show']);
 
-
     // Category 
     Route::resource('Categorios', CategoryController::class)
         ->only(['index', 'show']);
-
 
     // Notification 
     Route::get('/notifications', [
@@ -66,9 +57,12 @@ Route::middleware(['auth'])->group(function () {
         'markAsRead'
     ])->name('notifications.read');
 
+    Route::delete('/notifications/{id}', [
+        NotificationController::class,
+        'destroy'
+    ])->name('notifications.destroy');
+
 });
-
-
 
 
 // Route::get('/products', [ProductController::class, 'index'])
