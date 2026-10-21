@@ -54,10 +54,14 @@ class CategoryController extends Controller
 
     public function show($id)
     {
-        $category = $this->categoryService->getCategoryById((int) $id);
+      //  $category = $this->categoryService->getCategoryById((int) $id);
 
-        return view('categoryview.show', compact('category'));
-    }
+      // return view('categoryview.show', compact('category'));
+           $category = $this->categoryService->getCategoryById((int) $id);
+           $products = $category->products;
+           
+           return view('categoryview.show', compact('category', 'products'));
+      }
 
     public function edit($id)
     {
