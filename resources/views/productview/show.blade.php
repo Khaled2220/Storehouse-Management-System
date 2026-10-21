@@ -207,6 +207,7 @@
                     @method('DELETE')
 
                     <button type="submit" class="btn btn-danger">
+                        <span class="glyphicon glyphicon-trash"></span>    
                         Delete
                     </button>
                 </form>
