@@ -32,6 +32,6 @@ class product
     {
         return [
         //    new PrivateChannel('channel-name'),
-                    ];
+        ];
     }
 }
