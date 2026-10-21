@@ -8,7 +8,6 @@
 </head>
 
 
-
 <style>
 body {
   background-color: #f4f6f9;
@@ -101,30 +100,26 @@ btn-login:hover {
     <div class="text-center mb-4">
       <div class="card">
         <div class="card-body">
-      Storehouse Management System
-  
-
-
-  <form method="POST" action="{{ url('/register') }}">  
-    @csrf
-    
-    <br><label>Full Name</label>
-    <input type="text" name="full_name"><br>
-    
-    <label>Email</label>
-    <input type="email" name="email"><br>
-
-    <label>Password</label>
-    <input type="password" name="password"><br>
-
-     
-       <button type="submit" 
-        class="btn btn-block text-white fw-bold shadow-sm" 
-        style="background-color: Navy; padding: 10px;">
-    Create Account
-</button>
-  
-  </form>
-</div>  
-</div>
-</div>
+          Storehouse Management System
+          
+          <form method="POST" action="{{ url('/register') }}">  
+            @csrf
+            
+            <br><label>Full Name</label>
+            <input type="text" name="full_name"><br>
+            
+            <label>Email</label>
+            <input type="email" name="email"><br>
+            
+            <label>Password</label>
+            <input type="password" name="password"><br>
+            
+            <button type="submit" class="btn btn-block text-white fw-bold shadow-sm" style="background-color: Navy; padding: 10px;">
+              Create Account
+            </button>
+          </form>
+        </div>  
+      </div>
+    </div>
+  </div>
+</div>    

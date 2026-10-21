@@ -55,7 +55,6 @@
             margin-top: 20px;
         }
 
-        /* Back button only */
         .back-button .back-btn {
             background-color: DimGrey;
             color: white !important;
@@ -209,5 +208,4 @@
             Back to Products
         </a>
     </div>
-
 </div>

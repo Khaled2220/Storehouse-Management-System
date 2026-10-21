@@ -55,7 +55,6 @@
             margin-top: 15px;
         }
 
-        /* Back button only */
         .back-button .back-btn {
             background-color: DimGrey;
             color: white !important;
@@ -74,7 +73,6 @@
 </head>
 
 <body>
-
 <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
     <ul class="nav navbar-nav">
         <li class="nav-item">
@@ -108,9 +106,7 @@
 </nav>
 
 <div class="container">
-
     @if (auth()->check() && (int) auth()->user()->user_type === 1)
-
         <h2>Add New Category</h2>
 
         @if (session('success'))
@@ -164,7 +160,6 @@
         </div>
 
     @else
-
         <div class="alert alert-danger">
             <h4>Unauthorized access! Admin only.</h4>
             <p>You do not have permission to add categories.</p>
@@ -175,7 +170,5 @@
                 </a>
             </div>
         </div>
-
     @endif
-
 </div>

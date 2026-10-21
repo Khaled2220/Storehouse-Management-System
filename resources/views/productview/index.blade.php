@@ -20,7 +20,6 @@
             margin-top: 20px;
         }
 
-        /* Show Detail Button */
         .show-detail-btn {
             background-color: DimGrey;
             color: white !important;
@@ -40,7 +39,6 @@
 
 <body>
 
-    {{-- Navigation Bar --}}
     <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
         <ul class="nav navbar-nav">
 
@@ -77,26 +75,22 @@
         </ul>
     </nav>
 
-    {{-- Products List --}}
     <div class="container">
 
         <h2>Products List</h2>
 
-        {{-- Success Message --}}
         @if (session('success'))
             <div class="alert alert-success">
                 {{ session('success') }}
             </div>
         @endif
 
-        {{-- Error Message --}}
         @if (session('error'))
             <div class="alert alert-danger">
                 {{ session('error') }}
             </div>
         @endif
 
-        {{-- Add Product Button: Admin Only --}}
         @if (auth()->check() && (int) auth()->user()->user_type === 1)
             <a href="{{ route('Products.create') }}"
                class="btn btn-success">
@@ -106,9 +100,7 @@
 
         <br><br>
 
-        {{-- Products Table --}}
         <table class="table table-bordered table-striped">
-
             <thead>
                 <tr>
                     <th>Name</th>
@@ -125,7 +117,6 @@
                         </td>
 
                         <td>
-                            {{-- Show Detail Button Only --}}
                             <a href="{{ route('Products.show', $product->id) }}"
                                class="btn show-detail-btn">
                                 Show Detail
@@ -143,7 +134,5 @@
 
                 @endforelse
             </tbody>
-
         </table>
-
     </div>

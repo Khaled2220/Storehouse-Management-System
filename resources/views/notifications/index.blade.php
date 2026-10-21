@@ -27,7 +27,6 @@
             margin-bottom: 30px;
         }
 
-        /* Back buttons */
         .back-buttons {
             display: flex;
             align-items: center;
@@ -59,7 +58,6 @@
             text-decoration: none;
         }
 
-        /* Notification cards */
         .notification {
             background: white;
             border: 1px solid #ddd;
@@ -81,7 +79,6 @@
             margin-bottom: 15px;
         }
 
-        /* Mark as read button */
         .mark-read-button {
             background: #2563eb;
             color: white;
@@ -214,9 +211,7 @@
                     </button>
                 </form>
             @endunless
-
         </div>
-
     @empty
 
         <div class="alert alert-info">
@@ -239,7 +234,5 @@
         <a href="{{ route('Categorios.index') }}" class="btn back-btn">
             Back to Categories
         </a>
-
     </div>
-
 </div>

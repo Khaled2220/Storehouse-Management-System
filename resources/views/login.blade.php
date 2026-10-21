@@ -97,43 +97,44 @@ btn-login:hover {
 
 
 <div class="container d-flex justify-content-center">
-   <div class="card">
+  <div class="card">
+
         <div class="card-body">
-     <form method="POST" action="{{ url('/login') }}">
-        @csrf
-    <h2 class="text-center mb-4 text-logo">Login</h2><br>  
-    <div class="form-group">
-      <label for="email">Email:</label>
-      <input type="text" class="form-control" id="email" name="email">
-    </div>
-    <div class="form-group">
-      <label for="password">Password:</label>
-      <input type="password" class="form-control" id="password" name="password">
-    </div>
-    <div class="form-check d-flex align-items-center mb-3">
-        <input class="form-check-input" type="checkbox" name="remember" id="rememberMe">
-        <label class="form-check-label ms-2" for="rememberMe">
-            Remember me
-        </label>
-    </div>
-
-   <button type="submit" 
-        class="btn btn-block text-white fw-bold shadow-sm" 
-        style="background-color: Navy; padding: 10px;">
-    Login
-</button>
-    <p class="text-center mt-3 mb-0">
-        <span class="text-muted small">Don't have an account?</span>
-
-        <a href="{{ url('/register') }}"
-           class="btn btn-sm text-white fw-bold ms-1 px-3 shadow-sm"
-           style="background-color: Navy;">
-           Create Account
-        </a>
-    </p>
-
-
-
-</form>
+          <form method="POST" action="{{ url('/login') }}">
+            @csrf
+            
+            <h2 class="text-center mb-4 text-logo">Login</h2><br>  
+          
+            <div class="form-group">
+              <label for="email">Email:</label>
+              <input type="text" class="form-control" id="email" name="email">
+            </div>
+            
+            <div class="form-group">
+              <label for="password">Password:</label>
+              <input type="password" class="form-control" id="password" name="password">
+            </div>
+            
+            <div class="form-check d-flex align-items-center mb-3">
+              <input class="form-check-input" type="checkbox" name="remember" id="rememberMe">
+              <label class="form-check-label ms-2" for="rememberMe">
+                Remember me
+              </label>
+            </div>
+            
+            <button type="submit" class="btn btn-block text-white fw-bold shadow-sm" style="background-color: Navy; padding: 10px;">
+              Login
+            </button>
+            
+            <p class="text-center mt-3 mb-0">
+              <span class="text-muted small">Don't have an account?</span>
+              <a href="{{ url('/register') }}"
+              class="btn btn-sm text-white fw-bold ms-1 px-3 shadow-sm"
+              style="background-color: Navy;">
+              Create Account
+              </a>
+            </p>
+          </form>
+        </div>
+  </div>
 </div>
-

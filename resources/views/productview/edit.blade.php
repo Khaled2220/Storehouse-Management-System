@@ -79,7 +79,6 @@
             text-decoration: none;
         }
 
-        /* Back button inside the unauthorized message */
         .unauthorized-back-btn {
             width: 170px;
             height: 40px;
@@ -105,8 +104,6 @@
 </head>
 
 <body>
-
-    {{-- Navigation Bar --}}
     <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
         <ul class="nav navbar-nav">
 
@@ -139,11 +136,9 @@
                     @endauth
                 </a>
             </li>
-
         </ul>
     </nav>
 
-    {{-- Edit Product --}}
     <div class="container">
 
         <h2>Edit Product</h2>
@@ -166,9 +161,8 @@
             </div>
         @endif
 
-        {{-- Admin Only --}}
-        @if (auth()->check() && (int) auth()->user()->user_type === 1)
 
+        @if (auth()->check() && (int) auth()->user()->user_type === 1)
             <form
                 class="product-form"
                 method="POST"
@@ -178,7 +172,7 @@
                 @csrf
                 @method('PUT')
 
-                {{-- Product Name --}}
+
                 <div class="form-group">
                     <label for="name">Name:</label>
 
@@ -192,7 +186,6 @@
                     >
                 </div>
 
-                {{-- Description --}}
                 <div class="form-group">
                     <label for="description">Description:</label>
 
@@ -204,7 +197,6 @@
                     >{{ old('description', $product->description) }}</textarea>
                 </div>
 
-                {{-- Quantity --}}
                 <div class="form-group">
                     <label for="quantity">Quantity:</label>
 
@@ -219,7 +211,6 @@
                     >
                 </div>
 
-                {{-- Price --}}
                 <div class="form-group">
                     <label for="price">Price:</label>
 
@@ -235,7 +226,6 @@
                     >
                 </div>
 
-                {{-- Current Image --}}
                 <div class="form-group">
                     <label>Current Image:</label>
                     <br>
@@ -251,7 +241,6 @@
                     @endif
                 </div>
 
-                {{-- Change Image --}}
                 <div class="form-group">
                     <label for="image">Change Image:</label>
 
@@ -264,7 +253,6 @@
                     >
                 </div>
 
-                {{-- Update Button --}}
                 <div class="action-buttons">
                     <button type="submit" class="btn btn-success">
                         Update Product
@@ -273,7 +261,6 @@
 
             </form>
 
-            {{-- Back Button --}}
             <div class="back-button">
                 <a href="{{ route('Products.index') }}"
                    class="btn back-btn">
@@ -292,7 +279,5 @@
                     Back to Products
                 </a>
             </div>
-
         @endif
-
     </div>

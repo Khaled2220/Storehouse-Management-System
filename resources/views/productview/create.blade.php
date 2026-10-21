@@ -223,7 +223,5 @@
                 </a>
             </div>
         </div>
-
     @endif
-
 </div>

@@ -55,7 +55,6 @@
             margin-top: 15px;
         }
 
-        /* Back button only */
         .back-button .back-btn {
             background-color: DimGrey;
             color: white !important;
@@ -74,7 +73,6 @@
 </head>
 
 <body>
-
 <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
     <ul class="nav navbar-nav">
         <li class="nav-item">
@@ -176,7 +174,5 @@
                 </a>
             </div>
         </div>
-
     @endif
-
 </div>

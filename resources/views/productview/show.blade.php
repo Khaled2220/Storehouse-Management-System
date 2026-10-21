@@ -84,7 +84,6 @@
 
 <body>
 
-    {{-- Navigation Bar --}}
     <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
         <ul class="nav navbar-nav">
 
@@ -121,26 +120,22 @@
         </ul>
     </nav>
 
-    {{-- Product Details --}}
     <div class="container">
 
         <h2>Product Details</h2>
 
-        {{-- Success Message --}}
         @if (session('success'))
             <div class="alert alert-success">
                 {{ session('success') }}
             </div>
         @endif
 
-        {{-- Error Message --}}
         @if (session('error'))
             <div class="alert alert-danger">
                 {{ session('error') }}
             </div>
         @endif
 
-        {{-- Product Information --}}
         <table class="table table-bordered product-details">
             <tbody>
 
@@ -191,18 +186,18 @@
             </tbody>
         </table>
 
-        {{-- Update and Delete Buttons --}}
+      
         <div class="action-buttons">
 
             @if (auth()->check() && (int) auth()->user()->user_type === 1)
 
-                {{-- Update Button --}}
+              
                 <a href="{{ route('Products.edit', $product->id) }}"
                    class="btn btn-warning">
-                    Update
+                    Edit
                 </a>
 
-                {{-- Delete Button --}}
+               
                 <form
                     action="{{ route('Products.destroy', $product->id) }}"
                     method="POST"
@@ -220,7 +215,6 @@
 
         </div>
 
-        {{-- Back Button: Separate Row --}}
         <div class="back-button">
             <a href="{{ route('Products.index') }}"
                class="btn back-btn">
