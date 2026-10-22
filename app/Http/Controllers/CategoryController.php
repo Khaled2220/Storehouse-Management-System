@@ -20,7 +20,10 @@ class CategoryController extends Controller
     {
         $categorios = $this->categoryService->getAllCategories();
 
-        return view('categoryview.index', compact('categorios'));
+        return view('categoryview.index')
+            ->with('categorios', $categorios);
+
+        //return view('categoryview.index', compact('categorios'));
     }
 
     public function create()
@@ -53,17 +56,22 @@ class CategoryController extends Controller
 
     public function show($id)
     {
-           $category = $this->categoryService->getCategoryById((int) $id);
-           $products = $category->products;
+        $category = $this->categoryService->getCategoryById((int) $id);
+        $products = $category->products;
            
-           return view('categoryview.show', compact('category', 'products'));
+        return view('categoryview.show')
+            ->with('category', $category)
+            ->with('products', $products);
+        //return view('categoryview.show', compact('category', 'products'));
     }
 
     public function edit($id)
     {
         $category = $this->categoryService->getCategoryById((int) $id);
 
-        return view('categoryview.edit', compact('category'));
+        return view('categoryview.edit')
+            ->with('category', $category);
+        //return view('categoryview.edit', compact('category'));
     }
 
     public function update(UpdateCategoryRequest $request, $id)
