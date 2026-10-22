@@ -224,7 +224,7 @@
                             </td>
 
                             <td>
-                                <a href="{{ route('Categorios.show', $category->id) }}"
+                                <a href="{{ route('Products.index', $category->id) }}"
                                   class="btn show-products-btn">
                                   Show Products
                                 </a>
