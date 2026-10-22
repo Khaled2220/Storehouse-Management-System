@@ -41,21 +41,6 @@ class ProductController extends Controller
 
     public function store(ProductRequest $request)
     {
-       // $validator = Validator::make($request->all(), [
-        //    'name' => ['required', 'string'],
-        //    'quantity' => ['required', 'integer', 'min:1'],
-        //    'description' => ['nullable', 'string'],
-        //    'price' => ['required', 'numeric', 'min:1'],
-        //    'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif']
-       // ]);
-        //  if ($validator->fails()) {
-         //   return response()->json([
-          //      'status' => false,
-           //     'message' => 'Validation error.',
-           //     'errors' => $validator->errors()
-          //  ], 422);
-        //}
-
         $validated = $request->validated();        
         $imagename = null;
         if ($request->hasFile('image')) {
@@ -109,22 +94,6 @@ class ProductController extends Controller
               'message' => 'Product not found.'
            ], 404);
         }
-
-      //    $validator = Validator::make($request->all(), [
-       //     'name' => ['required', 'string'],
-       //     'quantity' => ['required', 'integer', 'min:1'],
-       //     'description' => ['nullable', 'string'],
-       //     'price' => ['required', 'numeric', 'min:1'],
-       //     'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif']
-      //  ]);
-
-       // if ($validator->fails()) {
-        //    return response()->json([
-          //      'status' => false,
-            //    'message' => 'Validation error.',
-            //    'errors' => $validator->errors()
-           // ], 422);
-        //}
 
         $validated = $request->validated();
         $imagename = $product->image;

@@ -11,6 +11,7 @@ use Carbon\Carbon;
 
 #[Signature('app:check-expired-products')]
 #[Description('Command description')]
+
 class CheckExpiredProducts extends Command
 {
     /**

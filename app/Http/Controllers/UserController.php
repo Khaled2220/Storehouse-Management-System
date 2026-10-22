@@ -60,8 +60,6 @@ class usercontroller extends Controller
      */
     public function destroy($id)
     {
-       // $user=User::findOnFail($id);
-       // $user->delete();
-       // return ('massege'=>'User delete successfully');
+        //
     }
 }

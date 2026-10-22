@@ -35,7 +35,6 @@ class CategoryController extends Controller
         $category = $this->categoryService->createCategory([
             'name' => $validated['name'],
         ]);
-
         event(new category($category));
 
         $user = Auth::user();
@@ -54,14 +53,11 @@ class CategoryController extends Controller
 
     public function show($id)
     {
-      //  $category = $this->categoryService->getCategoryById((int) $id);
-
-      // return view('categoryview.show', compact('category'));
            $category = $this->categoryService->getCategoryById((int) $id);
            $products = $category->products;
            
            return view('categoryview.show', compact('category', 'products'));
-      }
+    }
 
     public function edit($id)
     {

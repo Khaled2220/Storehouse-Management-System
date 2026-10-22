@@ -14,20 +14,8 @@ use App\Http\Requests\LoginRequest;
 class LoginController extends Controller
 {
     
- // public function showlogin()
- // {
- // return view('login');
- // }
-
     public function login(LoginRequest $request)
-    {
-
-    //  $request->validate([
-  //      'email' => 'required|email',
-  //      'password' => 'required'
-  //  ]);
-  
-    
+    {    
        $validated = $request->validated();
        $user = User::where('email', $validated->email)->first();
 

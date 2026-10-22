@@ -64,15 +64,3 @@ Route::middleware(['auth'])->group(function () {
 
 });
 
-
-// Route::get('/products', [ProductController::class, 'index'])
-//     ->middleware('auth', 'admin');
-
-// Route::get('/Products', function () {
-//     $Products = \App\Models\Products::latest()->paginate(50);
-//     return view('productview.index', compact('Products'));
-// })->name('Products.index')->middleware('auth');
-
-// Route::get('/product/{id}', [ProductController::class, 'show']);
-
-// Route::get('/Categorios', [CategoryController::class, 'index']);

@@ -75,12 +75,6 @@ class AuthController extends Controller
 
     public function register(RegisterRequest $request)
     {
-        //$request->validate([
-          //  'full_name' => ['required','string'],
-           // 'email' => ['required','unique:users'],
-           // 'password' => ['required','min:6','max:20']
-      //  ]);
-
         $user = User::create([
             'full_name' => $request->full_name,
             'email' => $request->email,
@@ -92,10 +86,6 @@ class AuthController extends Controller
         
         ]);
         return redirect('/');
-
-        //return redirect()->action([AuthController::class, 'login']);
-          // return redirect('/login')->with('success', 'Registration successful. Please log in.');
-        //return redirect('/login');
     }
     
     public function showlogin()
@@ -105,14 +95,7 @@ class AuthController extends Controller
     
     public function login(LoginRequest $request)
     {
-        $credentials = $request->only('email','password');
-
-        //validate([
-          //  'email' => ['required', 'string', 'email'],
-            //'password' => ['required', 'string']
-        //]);
-
-  //dd(Auth::attempt($credentials));
+       $credentials = $request->only('email','password');
 
        if (Auth::attempt($credentials)) {
         //dd('ssss');
@@ -124,7 +107,5 @@ class AuthController extends Controller
         //dd('fffff');
         
         return back()->withErrors(['email' => 'Invalid email or password']);
-     //return redirect()->route('Products.index');
-
     }
 }    
