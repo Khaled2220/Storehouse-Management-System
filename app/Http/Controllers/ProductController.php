@@ -8,6 +8,8 @@ use App\Http\Requests\UpdateProductRequest;
 use App\Models\User;
 use App\Notifications\ProductCreatedNotification;
 use App\Services\ProductService;
+use App\Mail\ProductCreatedMail;
+use Illuminate\Support\Facades\Mail;
 
 class ProductController extends Controller
 {
@@ -47,6 +49,13 @@ class ProductController extends Controller
                 )
             );
         });
+
+        Mail::to('khalidalomari558@gmail.com')->send(
+            new ProductCreatedMail(
+            $product->name,
+            (int) $product->id
+            )
+        );
 
         return redirect()->to('/Products')
             ->with('success', 'Product added successfully');

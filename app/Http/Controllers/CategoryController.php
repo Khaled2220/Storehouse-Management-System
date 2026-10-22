@@ -8,6 +8,8 @@ use App\Services\CategoryService;
 use App\Events\category;
 use App\Notifications\CategoryCreatedNotification;
 use Illuminate\Support\Facades\Auth;
+use App\Mail\CategoryCreatedMail;
+use Illuminate\Support\Facades\Mail;
 
 class CategoryController extends Controller
 {
@@ -50,6 +52,12 @@ class CategoryController extends Controller
                 )
             );
         }
+        Mail::to('khalidalomari558@gmail.com')->send(
+            new CategoryCreatedMail(
+            $category->name,
+            (int) $category->id
+            )
+        );
         return redirect()->route('Categorios.index')
             ->with('success', 'Category added successfully');
     }
