@@ -5,34 +5,37 @@
 
     <title>Categories List</title>
 
-    <link rel="stylesheet"
-          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" 
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">      
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-
+    
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-        }
-
-        .navbar {
-            border-radius: 0;
-            margin-bottom: 25px;
-        }
-
         .navbar .nav-link,
-        .navbar .navbar-nav > li > a {
+        .navbar .nav-link:hover,
+        .navbar .nav-link:focus,
+
+        .navbar .nav-link.active {
             color: black !important;
             font-size: 20px;
         }
+
 
         .container {
             margin-top: 25px;
             margin-bottom: 30px;
         }
+
+        .category-form {
+            max-width: 600px;
+        }
+
+        .form-control {
+            width: 100%;
+            max-width: 600px;
+        }    
 
         h2 {
             margin-bottom: 25px;
@@ -123,50 +126,38 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-default">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="{{ route('Products.index') }}">
-                    Storehouse
-                </a>
-            </div>
+    
+<nav class="navbar navbar-expand-sm bg-primary navbar-dark">
+    <ul class="nav navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('Products.index') }}">
+                Products
+            </a>
+        </li>
 
-            <ul class="nav navbar-nav">
-                <li>
-                    <a href="{{ route('Products.index') }}">
-                        Products
-                    </a>
-                </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('Categorios.index') }}">
+                Category
+            </a>
+        </li>
 
-                <li class="active">
-                    <a href="{{ route('Categorios.index') }}">
-                        Category
-                    </a>
-                </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('notifications.index') }}">
+                My Notifications
 
-                <li>
-                    <a href="{{ route('notifications.index') }}">
-                        My Notifications
+                @auth
+                    @php
+                        $unreadCount = auth()->user()->unreadNotifications()->count();
+                    @endphp
 
-                        @auth
-                            @php
-                                $unreadCount = auth()->user()
-                                    ->unreadNotifications()
-                                    ->count();
-                            @endphp
-
-                            @if ($unreadCount > 0)
-                                <span class="badge">
-                                    {{ $unreadCount }}
-                                </span>
-                            @endif
-                        @endauth
-                    </a>
-                </li>
-            </ul>
-
-        </div>
-    </nav>
+                    @if ($unreadCount > 0)
+                        <span class="badge">{{ $unreadCount }}</span>
+                    @endif
+                @endauth
+            </a>
+        </li>
+    </ul>
+</nav>
 
     <div class="container">
         <h2>Categories List</h2>
@@ -233,7 +224,7 @@
                             </td>
 
                             <td>
-                                <a href="{{ route('Products.index') }}"
+                                <a href="{{ route('Categorios.show', $category->id) }}"
                                   class="btn show-products-btn">
                                   Show Products
                                 </a>
