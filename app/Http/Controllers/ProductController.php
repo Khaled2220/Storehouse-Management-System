@@ -10,6 +10,7 @@ use App\Notifications\ProductCreatedNotification;
 use App\Services\ProductService;
 use App\Mail\ProductCreatedMail;
 use Illuminate\Support\Facades\Mail;
+use App\Models\Products;
 
 class ProductController extends Controller
 {
