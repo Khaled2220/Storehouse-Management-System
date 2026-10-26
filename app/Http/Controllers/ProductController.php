@@ -23,7 +23,8 @@ class ProductController extends Controller
     {
         $Products = $this->productService->getAllProducts();
 
-        return view('productview.index', compact('Products'));
+        return view('productview.index')->with('Products', $Products);
+        //return view('productview.index', compact('Products'));
     }
 
     public function create()
@@ -66,14 +67,16 @@ class ProductController extends Controller
     {
         $product = $this->productService->getProductById((int) $id);
 
-        return view('productview.show', compact('product'));
+        return view('productview.show')->with('product', $product);
+        //return view('productview.show', compact('product'));
     }
 
     public function edit($id)
     {
         $product = $this->productService->getProductById((int) $id);
 
-        return view('productview.edit', compact('product'));
+        return view('productview.edit')->with('product', $product);
+        //return view('productview.edit', compact('product'));
     }
 
     public function update(UpdateProductRequest $request, $id)

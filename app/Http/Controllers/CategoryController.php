@@ -40,6 +40,7 @@ class CategoryController extends Controller
         $category = $this->categoryService->createCategory([
             'name' => $validated['name'],
         ]);
+
         event(new category($category));
 
         $user = Auth::user();
@@ -53,10 +54,7 @@ class CategoryController extends Controller
             );
         }
         Mail::to('khalidalomari558@gmail.com')->send(
-            new CategoryCreatedMail(
-            $category->name,
-            (int) $category->id
-            )
+            new CategoryCreatedMail($category->name,(int) $category->id)
         );
         return redirect()->route('Categorios.index')
             ->with('success', 'Category added successfully');
