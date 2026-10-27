@@ -1,3 +1,4 @@
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,6 +12,10 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+        }
         .navbar .nav-link,
         .navbar .nav-link:hover,
         .navbar .nav-link:focus,
@@ -18,28 +23,23 @@
             color: black !important;
             font-size: 20px;
         }
-
         .container {
             margin-top: 25px;
             margin-bottom: 30px;
         }
-
         .product-form {
             max-width: 600px;
         }
-
         .form-control {
             width: 100%;
             max-width: 600px;
         }
-
         .current-image {
             max-width: 250px;
             height: auto;
             border-radius: 6px;
             margin-top: 10px;
         }
-
         .action-buttons {
             display: flex;
             align-items: center;
@@ -47,7 +47,6 @@
             flex-wrap: wrap;
             margin-top: 20px;
         }
-
         .action-buttons .btn,
         .back-button .btn {
             width: 170px;
@@ -58,27 +57,21 @@
             box-sizing: border-box;
             font-size: 14px;
         }
-
+        .update-btn {
+            background-color: #5cb85c;
+            border-color: #4cae4c;
+            color: white;
+        }
+        .update-btn:hover,
+        .update-btn:focus {
+            background-color: #449d44;
+            border-color: #398439;
+            color: white;
+        }
         .back-button {
             margin-top: 15px;
         }
-
-        /* Back button only */
-        .back-button .back-btn {
-            background-color: DimGrey;
-            color: white !important;
-            border: none;
-            border-radius: 4px;
-            text-decoration: none;
-        }
-
-        .back-button .back-btn:hover,
-        .back-button .back-btn:focus {
-            background-color: #555555;
-            color: white !important;
-            text-decoration: none;
-        }
-
+        .back-button .back-btn,
         .unauthorized-back-btn {
             width: 170px;
             height: 40px;
@@ -93,7 +86,8 @@
             border-radius: 4px;
             text-decoration: none;
         }
-
+        .back-button .back-btn:hover,
+        .back-button .back-btn:focus,
         .unauthorized-back-btn:hover,
         .unauthorized-back-btn:focus {
             background-color: #555555;
@@ -106,7 +100,6 @@
 <body>
     <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
         <ul class="nav navbar-nav">
-
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('Products.index') }}">
                     Products
@@ -119,11 +112,12 @@
                 </a>
             </li>
 
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('notifications.index') }}">
-                    My Notifications
+            
+            @if (auth()->check() && (int) auth()->user()->user_type === 1)
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('notifications.index') }}">
+                        My Notifications
 
-                    @auth
                         @php
                             $unreadCount = auth()->user()
                                 ->unreadNotifications()
@@ -131,26 +125,26 @@
                         @endphp
 
                         @if ($unreadCount > 0)
-                            <span class="badge">{{ $unreadCount }}</span>
+                            <span class="badge">
+                                {{ $unreadCount }}
+                            </span>
                         @endif
-                    @endauth
-                </a>
-            </li>
+                    </a>
+                </li>
+            @endif
         </ul>
     </nav>
 
     <div class="container">
-
         <h2>Edit Product</h2>
 
-        {{-- Success Message --}}
         @if (session('success'))
             <div class="alert alert-success">
                 {{ session('success') }}
             </div>
         @endif
 
-        {{-- Validation Errors --}}
+        
         @if ($errors->any())
             <div class="alert alert-danger">
                 <ul>
@@ -161,45 +155,37 @@
             </div>
         @endif
 
-
+        
         @if (auth()->check() && (int) auth()->user()->user_type === 1)
             <form
                 class="product-form"
                 method="POST"
                 action="{{ route('Products.update', $product->id) }}"
-                enctype="multipart/form-data"
-            >
+                enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
-
-
                 <div class="form-group">
                     <label for="name">Name:</label>
-
                     <input
                         type="text"
                         id="name"
                         name="name"
                         class="form-control"
                         value="{{ old('name', $product->name) }}"
-                        required
-                    >
+                        required>
                 </div>
 
                 <div class="form-group">
                     <label for="description">Description:</label>
-
                     <textarea
                         id="description"
                         name="description"
                         class="form-control"
-                        rows="4"
-                    >{{ old('description', $product->description) }}</textarea>
+                        rows="4">{{ old('description', $product->description) }}</textarea>
                 </div>
 
                 <div class="form-group">
                     <label for="quantity">Quantity:</label>
-
                     <input
                         type="number"
                         id="quantity"
@@ -207,13 +193,11 @@
                         class="form-control"
                         value="{{ old('quantity', $product->quantity) }}"
                         min="0"
-                        required
-                    >
+                        required>
                 </div>
 
                 <div class="form-group">
                     <label for="price">Price:</label>
-
                     <input
                         type="number"
                         id="price"
@@ -222,20 +206,17 @@
                         value="{{ old('price', $product->price) }}"
                         min="0"
                         step="0.01"
-                        required
-                    >
+                        required>
                 </div>
 
                 <div class="form-group">
                     <label>Current Image:</label>
                     <br>
-
                     @if ($product->image)
                         <img
                             src="{{ asset('image/' . $product->image) }}"
                             class="current-image"
-                            alt="{{ $product->name }}"
-                        >
+                            alt="{{ $product->name }}">
                     @else
                         <p>No image available.</p>
                     @endif
@@ -243,22 +224,19 @@
 
                 <div class="form-group">
                     <label for="image">Change Image:</label>
-
                     <input
                         type="file"
                         id="image"
                         name="image"
                         class="form-control"
-                        accept="image/jpeg,image/png,image/jpg,image/gif"
-                    >
+                        accept="image/jpeg,image/png,image/jpg,image/gif">
                 </div>
 
                 <div class="action-buttons">
-                    <button type="submit" class="btn btn-success">
+                    <button type="submit" class="btn update-btn">
                         Update Product
                     </button>
                 </div>
-
             </form>
 
             <div class="back-button">
@@ -269,7 +247,6 @@
             </div>
 
         @else
-
             <div class="alert alert-danger">
                 <h4>Unauthorized access! Admin only.</h4>
                 <p>You do not have permission to edit products.</p>

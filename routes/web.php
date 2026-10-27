@@ -8,9 +8,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Middleware\EnsureUserIsAdmin;
 use App\Models\Products;
 
-// Redirect homepage to login
 Route::redirect('/', '/login');
-
 
 // Register
 Route::get('/register', [AuthController::class, 'showRegister'])
@@ -19,7 +17,6 @@ Route::get('/register', [AuthController::class, 'showRegister'])
 Route::post('/register', [AuthController::class, 'register'])
     ->name('register.store');
 
-
 // Login
 Route::get('/login', [AuthController::class, 'showlogin'])
     ->name('login');
@@ -27,91 +24,79 @@ Route::get('/login', [AuthController::class, 'showlogin'])
 Route::post('/login', [AuthController::class, 'login'])
     ->name('login.store');
 
-
 // Authenticated users
 Route::middleware(['auth'])->group(function () {
 
-    // Products: available to authenticated users
-
-
-    // Create product page: ProductsPolicy
+    // Products: create
     Route::get('/Products/create', [ProductController::class, 'create'])
         ->middleware('can:create,' . Products::class)
         ->name('Products.create');
 
-
-    // Store product: ProductsPolicy
+    // Products: store
     Route::post('/Products', [ProductController::class, 'store'])
         ->middleware('can:create,' . Products::class)
         ->name('Products.store');
 
-
-    // List products
+    // Products: index
     Route::get('/Products', [ProductController::class, 'index'])
         ->name('Products.index');
 
-
-    // Edit product: ProductsPolicy
+    // Products: edit
     Route::get('/Products/{product}/edit', [ProductController::class, 'edit'])
         ->whereNumber('product')
         ->middleware('can:update,product')
         ->name('Products.edit');
 
-
-    // Update product: ProductsPolicy
+    // Products: update
     Route::put('/Products/{product}', [ProductController::class, 'update'])
         ->whereNumber('product')
         ->middleware('can:update,product')
         ->name('Products.update');
 
+    // Products: update using PATCH
     Route::patch('/Products/{product}', [ProductController::class, 'update'])
         ->whereNumber('product')
         ->middleware('can:update,product')
         ->name('Products.update.patch');
 
-
-    // Delete product: ProductsPolicy
+    // Products: delete
     Route::delete('/Products/{product}', [ProductController::class, 'destroy'])
         ->whereNumber('product')
         ->middleware('can:delete,product')
         ->name('Products.destroy');
 
-
-    // Show product
+    // Products: show
     Route::get('/Products/{product}', [ProductController::class, 'show'])
         ->whereNumber('product')
         ->name('Products.show');
 
-
     // Categories: admin-only management
     Route::middleware([EnsureUserIsAdmin::class])->group(function () {
-
         Route::resource('Categorios', CategoryController::class)
             ->except(['index', 'show']);
     });
-
 
     // Categories: available to authenticated users
     Route::resource('Categorios', CategoryController::class)
         ->only(['index', 'show']);
 
+    // Notifications: admin only
+    Route::middleware([EnsureUserIsAdmin::class])->group(function () {
 
-    // Notifications
-    Route::get('/notifications', [
-        NotificationController::class,
-        'index'
-    ])->name('notifications.index');
+        Route::get('/notifications', [
+            NotificationController::class,
+            'index',
+        ])->name('notifications.index');
 
-    Route::patch('/notifications/{id}/read', [
-        NotificationController::class,
-        'markAsRead'
-    ])->name('notifications.read');
+        Route::patch('/notifications/{id}/read', [
+            NotificationController::class,
+            'markAsRead',
+        ])->name('notifications.read');
 
-    Route::delete('/notifications/{id}', [
-        NotificationController::class,
-        'destroy'
-    ])->name('notifications.destroy');
+        Route::delete('/notifications/{id}', [
+            NotificationController::class,
+            'destroy',
+        ])->name('notifications.destroy');
+    });
 });
 
-
-//require __DIR__ . '/auth.php';

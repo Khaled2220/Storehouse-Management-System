@@ -5,12 +5,12 @@ namespace App\Http\Controllers;
 use App\Events\product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Mail\ProductCreatedMail;
 use App\Models\User;
+use App\Models\Products;
 use App\Notifications\ProductCreatedNotification;
 use App\Services\ProductService;
-use App\Mail\ProductCreatedMail;
 use Illuminate\Support\Facades\Mail;
-use App\Models\Products;
 
 class ProductController extends Controller
 {
@@ -23,8 +23,8 @@ class ProductController extends Controller
     {
         $Products = $this->productService->getAllProducts();
 
-        return view('productview.index')->with('Products', $Products);
-        //return view('productview.index', compact('Products'));
+        return view('productview.index')
+            ->with('Products', $Products);
     }
 
     public function create()
@@ -54,34 +54,33 @@ class ProductController extends Controller
 
         Mail::to('khalidalomari558@gmail.com')->send(
             new ProductCreatedMail(
-            $product->name,
-            (int) $product->id
+                $product->name,
+                (int) $product->id
             )
         );
 
-        return redirect()->to('/Products')
+        return redirect()->route('Products.index')
             ->with('success', 'Product added successfully');
     }
 
     public function show($id)
     {
-        $product = $this->productService->getProductById((int) $id);
+        $product = $this->productService->getProductById(
+            (int) $id
+        );
 
-        return view('productview.show')->with('product', $product);
-        //return view('productview.show', compact('product'));
+        return view('productview.show')
+            ->with('product', $product);
     }
 
-    public function edit($id)
+    public function edit(Products $product)
     {
-        $product = $this->productService->getProductById((int) $id);
-
-        return view('productview.edit')->with('product', $product);
-        //return view('productview.edit', compact('product'));
+        return view('productview.edit')
+            ->with('product', $product);
     }
 
-    public function update(UpdateProductRequest $request, $id)
+    public function update(UpdateProductRequest $request, Products $product)
     {
-        $product = $this->productService->getProductById((int) $id);
         $validated = $request->validated();
 
         $this->productService->updateProduct(
@@ -90,16 +89,15 @@ class ProductController extends Controller
             $request->file('image')
         );
 
-        return redirect()->to('/Products')
+        return redirect()->route('Products.index')
             ->with('success', 'Product updated successfully');
     }
 
-    public function destroy($id)
+    public function destroy(Products $product)
     {
-        $product = $this->productService->getProductById((int) $id);
         $this->productService->deleteProduct($product);
 
-        return redirect()->to('/Products')
+        return redirect()->route('Products.index')
             ->with('success', 'Product deleted successfully');
     }
 }

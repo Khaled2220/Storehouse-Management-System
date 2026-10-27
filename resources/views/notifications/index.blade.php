@@ -1,4 +1,3 @@
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -18,7 +17,6 @@
             margin: 0;
             background: #f5f5f5;
         }
-
         .navbar .nav-link,
         .navbar .nav-link:hover,
         .navbar .nav-link:focus,
@@ -26,12 +24,10 @@
             color: black !important;
             font-size: 20px;
         }
-
         .container {
             margin-top: 20px;
             margin-bottom: 30px;
         }
-
         .notification {
             background: white;
             border: 1px solid #ddd;
@@ -39,15 +35,12 @@
             padding: 20px;
             margin-bottom: 15px;
         }
-
         .unread {
             border-left: 5px solid #2563eb;
         }
-
         .read {
             border-left: 5px solid #16a34a;
         }
-
         .notification-actions {
             display: flex;
             align-items: center;
@@ -55,12 +48,10 @@
             flex-wrap: wrap;
             margin-top: 15px;
         }
-
         .notification-actions form {
             display: inline-block;
             margin: 0;
         }
-
         .notification-actions .btn {
             min-width: 100px;
             height: 40px;
@@ -70,7 +61,6 @@
             box-sizing: border-box;
             font-size: 14px;
         }
-
         .mark-read-button {
             background: #2563eb;
             color: white;
@@ -78,26 +68,25 @@
             border-radius: 4px;
             padding: 10px 15px;
             cursor: pointer;
+            min-width: 100px;
+            height: 40px;
+            font-size: 14px;
         }
-
         .mark-read-button:hover {
             background: #1d4ed8;
             color: white;
         }
-
         .notification-actions .btn-danger {
             background-color: #d9534f;
             border-color: #d43f3a;
             color: white;
         }
-
         .notification-actions .btn-danger:hover,
         .notification-actions .btn-danger:focus {
             background-color: #c9302c;
             border-color: #ac2925;
             color: white;
         }
-
         .back-buttons {
             display: flex;
             align-items: center;
@@ -106,7 +95,6 @@
             margin-top: 20px;
             margin-bottom: 25px;
         }
-
         .back-btn {
             width: 170px;
             height: 40px;
@@ -121,7 +109,6 @@
             border-radius: 4px;
             text-decoration: none;
         }
-
         .back-btn:hover,
         .back-btn:focus {
             background-color: #555555;
@@ -134,7 +121,6 @@
 <body>
 <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
     <ul class="nav navbar-nav">
-
         <li class="nav-item">
             <a class="nav-link" href="{{ route('Products.index') }}">
                 Products
@@ -147,11 +133,11 @@
             </a>
         </li>
 
-        <li class="nav-item">
-            <a class="nav-link active" href="{{ route('notifications.index') }}">
-                My Notifications
-
-                @auth
+        @if (auth()->check() && (int) auth()->user()->user_type === 1)
+            <li class="nav-item">
+                <a class="nav-link active"
+                   href="{{ route('notifications.index') }}">
+                    My Notifications
                     @php
                         $unreadCount = auth()->user()
                             ->unreadNotifications()
@@ -163,9 +149,9 @@
                             {{ $unreadCount }}
                         </span>
                     @endif
-                @endauth
-            </a>
-        </li>
+                </a>
+            </li>
+        @endif
     </ul>
 </nav>
 
@@ -185,9 +171,7 @@
     @endif
 
     @forelse ($notifications as $notification)
-
         <div class="notification {{ $notification->read_at ? 'read' : 'unread' }}">
-
             <h3>
                 {{ $notification->data['message'] ?? 'New notification' }}
             </h3>
@@ -213,6 +197,7 @@
                 </p>
             @endif
 
+
             @if (isset($notification->data['category_id']))
                 <p>
                     <strong>Category ID:</strong>
@@ -220,10 +205,12 @@
                 </p>
             @endif
 
+
             <p>
                 <strong>Date:</strong>
                 {{ $notification->created_at->format('Y-m-d H:i') }}
             </p>
+
 
             <p>
                 <strong>Status:</strong>
@@ -231,29 +218,25 @@
             </p>
 
             <div class="notification-actions">
-
                 @unless ($notification->read_at)
                     <form
                         method="POST"
-                        action="{{ route('notifications.read', $notification->id) }}"
-                    >
+                        action="{{ route('notifications.read', $notification->id) }}">
                         @csrf
                         @method('PATCH')
-
                         <button type="submit" class="mark-read-button">
                             Mark as read
                         </button>
                     </form>
                 @endunless
 
+
                 <form
                     action="{{ route('notifications.destroy', $notification->id) }}"
                     method="POST"
-                    onsubmit="return confirm('Are you sure you want to delete this notification?')"
-                >
+                    onsubmit="return confirm('Are you sure you want to delete this notification?')">
                     @csrf
                     @method('DELETE')
-
                     <button type="submit" class="btn btn-danger">
                         <span class="glyphicon glyphicon-trash"></span>
                         Delete
@@ -263,19 +246,18 @@
         </div>
 
     @empty
-
         <div class="alert alert-info">
             You have no notifications.
         </div>
-
     @endforelse
+
 
     <div class="mt-3">
         {{ $notifications->links() }}
     </div>
 
-    <div class="back-buttons">
 
+    <div class="back-buttons">
         <a href="{{ route('Products.index') }}" class="btn back-btn">
             Back to Products
         </a>
@@ -283,6 +265,5 @@
         <a href="{{ route('Categorios.index') }}" class="btn back-btn">
             Back to Categories
         </a>
-
     </div>
 </div>

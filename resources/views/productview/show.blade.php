@@ -1,3 +1,4 @@
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,6 +12,10 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+        }
         .navbar .nav-link,
         .navbar .nav-link:hover,
         .navbar .nav-link:focus,
@@ -18,24 +23,19 @@
             color: black !important;
             font-size: 20px;
         }
-
         .container {
             margin-top: 25px;
             margin-bottom: 30px;
         }
-
         .product-image {
             max-width: 250px;
             height: auto;
             border-radius: 6px;
             margin-top: 10px;
         }
-
         .product-details th {
             width: 180px;
         }
-
-        /* Same size for all buttons */
         .action-buttons .btn,
         .back-button .btn {
             width: 150px;
@@ -46,25 +46,19 @@
             box-sizing: border-box;
             font-size: 14px;
         }
-
         .action-buttons {
             display: flex;
             align-items: center;
             gap: 8px;
             flex-wrap: wrap;
         }
-
         .action-buttons form {
             display: inline-block;
             margin: 0;
         }
-
-        /* Back button on a separate row */
         .back-button {
             margin-top: 15px;
         }
-
-        /* Back button only */
         .back-button .back-btn {
             background-color: DimGrey;
             color: white !important;
@@ -72,21 +66,40 @@
             border-radius: 4px;
             text-decoration: none;
         }
-
         .back-button .back-btn:hover,
         .back-button .back-btn:focus {
             background-color: #555555;
             color: white !important;
             text-decoration: none;
         }
+        .edit-btn {
+            background-color: #f0ad4e;
+            border-color: #eea236;
+            color: white;
+        }
+        .edit-btn:hover,
+        .edit-btn:focus {
+            background-color: #ec971f;
+            border-color: #d58512;
+            color: white;
+        }
+        .delete-btn {
+            background-color: #d9534f;
+            border-color: #d43f3a;
+            color: white;
+        }
+        .delete-btn:hover,
+        .delete-btn:focus {
+            background-color: #c9302c;
+            border-color: #ac2925;
+            color: white;
+        }
     </style>
 </head>
 
 <body>
-
     <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
         <ul class="nav navbar-nav">
-
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('Products.index') }}">
                     Products
@@ -99,11 +112,10 @@
                 </a>
             </li>
 
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('notifications.index') }}">
-                    My Notifications
-
-                    @auth
+            @if (auth()->check() && (int) auth()->user()->user_type === 1)
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('notifications.index') }}">
+                        My Notifications
                         @php
                             $unreadCount = auth()->user()
                                 ->unreadNotifications()
@@ -111,17 +123,17 @@
                         @endphp
 
                         @if ($unreadCount > 0)
-                            <span class="badge">{{ $unreadCount }}</span>
+                            <span class="badge">
+                                {{ $unreadCount }}
+                            </span>
                         @endif
-                    @endauth
-                </a>
-            </li>
-
+                    </a>
+                </li>
+            @endif
         </ul>
     </nav>
 
     <div class="container">
-
         <h2>Product Details</h2>
 
         @if (session('success'))
@@ -138,7 +150,6 @@
 
         <table class="table table-bordered product-details">
             <tbody>
-
                 <tr>
                     <th>Name</th>
                     <td>{{ $product->name }}</td>
@@ -182,39 +193,30 @@
                         {{ $product->created_at?->format('Y-m-d') ?? 'N/A' }}
                     </td>
                 </tr>
-
             </tbody>
         </table>
 
-      
-        <div class="action-buttons">
-
-            @if (auth()->check() && (int) auth()->user()->user_type === 1)
-
-              
+    
+        @if (auth()->check() && (int) auth()->user()->user_type === 1)
+            <div class="action-buttons">
                 <a href="{{ route('Products.edit', $product->id) }}"
-                   class="btn btn-warning">
+                   class="btn edit-btn">
                     Edit
                 </a>
 
-               
                 <form
                     action="{{ route('Products.destroy', $product->id) }}"
                     method="POST"
-                    onsubmit="return confirm('Are you sure you want to delete this product?')"
-                >
+                    onsubmit="return confirm('Are you sure you want to delete this product?')">
                     @csrf
                     @method('DELETE')
-
-                    <button type="submit" class="btn btn-danger">
-                        <span class="glyphicon glyphicon-trash"></span>    
+                    <button type="submit" class="btn delete-btn">
+                        <span class="glyphicon glyphicon-trash"></span>
                         Delete
                     </button>
                 </form>
-
-            @endif
-
-        </div>
+            </div>
+        @endif
 
         <div class="back-button">
             <a href="{{ route('Products.index') }}"
@@ -222,5 +224,4 @@
                 Back to Products
             </a>
         </div>
-
     </div>

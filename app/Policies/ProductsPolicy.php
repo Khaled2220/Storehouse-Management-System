@@ -29,7 +29,7 @@ class ProductsPolicy
      */
     public function create(User $user): bool
     {
-        return $user->user_type ===1;
+        return (int) $user->user_type === 1;
     }
 
     /**
@@ -37,7 +37,7 @@ class ProductsPolicy
      */
     public function update(User $user, Products $products): bool
     {
-        return $user->user_type ===1;
+        return (int) $user->user_type === 1;
     }
 
     /**
@@ -45,7 +45,7 @@ class ProductsPolicy
      */
     public function delete(User $user, Products $products): bool
     {
-        return $user->user_type ===1;
+        return (int) $user->user_type === 1;
     }
 
     /**
@@ -53,7 +53,7 @@ class ProductsPolicy
      */
     public function restore(User $user, Products $products): bool
     {
-        return $user->user_type ===1;
+        return (int) $user->user_type === 1;
     }
 
     /**
@@ -61,6 +61,6 @@ class ProductsPolicy
      */
     public function forceDelete(User $user, Products $products): bool
     {
-        return $user->user_type ===1;
+        return (int) $user->user_type === 1;
     }
 }

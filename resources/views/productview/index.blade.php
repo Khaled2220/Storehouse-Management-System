@@ -1,3 +1,4 @@
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,11 +16,10 @@
             color: black !important;
             font-size: 20px;
         }
-
         .container {
             margin-top: 20px;
+            margin-bottom: 30px;
         }
-
         .show-detail-btn {
             background-color: DimGrey;
             color: white !important;
@@ -27,23 +27,31 @@
             border-radius: 4px;
             text-decoration: none;
         }
-
         .show-detail-btn:hover,
         .show-detail-btn:focus {
             background-color: #555555;
             color: white !important;
             text-decoration: none;
         }
+        .add-product-btn {
+            background-color: #5cb85c;
+            border-color: #4cae4c;
+            color: white !important;
+        }
+        .add-product-btn:hover,
+        .add-product-btn:focus {
+            background-color: #449d44;
+            border-color: #398439;
+            color: white !important;
+        }
     </style>
 </head>
 
 <body>
-
     <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
         <ul class="nav navbar-nav">
-
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('Products.index') }}">
+                <a class="nav-link active" href="{{ route('Products.index') }}">
                     Products
                 </a>
             </li>
@@ -54,11 +62,10 @@
                 </a>
             </li>
 
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('notifications.index') }}">
-                    My Notifications
-
-                    @auth
+            @if (auth()->check() && (int) auth()->user()->user_type === 1)
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('notifications.index') }}">
+                        My Notifications
                         @php
                             $unreadCount = auth()->user()
                                 ->unreadNotifications()
@@ -66,17 +73,17 @@
                         @endphp
 
                         @if ($unreadCount > 0)
-                            <span class="badge">{{ $unreadCount }}</span>
+                            <span class="badge">
+                                {{ $unreadCount }}
+                            </span>
                         @endif
-                    @endauth
-                </a>
-            </li>
-
+                    </a>
+                </li>
+            @endif
         </ul>
     </nav>
 
     <div class="container">
-
         <h2>Products List</h2>
 
         @if (session('success'))
@@ -93,7 +100,7 @@
 
         @if (auth()->check() && (int) auth()->user()->user_type === 1)
             <a href="{{ route('Products.create') }}"
-               class="btn btn-success">
+               class="btn add-product-btn">
                 Add New Products
             </a>
         @endif
@@ -110,7 +117,6 @@
 
             <tbody>
                 @forelse ($Products as $product)
-
                     <tr>
                         <td>
                             {{ $product->name }}
@@ -125,14 +131,16 @@
                     </tr>
 
                 @empty
-
                     <tr>
                         <td colspan="2" class="text-center">
                             No products found.
                         </td>
                     </tr>
-
                 @endforelse
             </tbody>
         </table>
+
+        @if (method_exists($Products, 'links'))
+            {{ $Products->links() }}
+        @endif
     </div>

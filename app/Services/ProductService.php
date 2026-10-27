@@ -18,9 +18,14 @@ class ProductService
         return Products::findOrFail($id);
     }
 
-    public function createProduct(array $data, ?UploadedFile $image = null): Products
+    public function createProduct(array $data,?UploadedFile $image = null): Products 
     {
-        $data['image'] = $this->uploadImage($image);
+        if ($image !== null) {
+            $data['image'] = $this->uploadImage($image);
+        } else {
+            unset($data['image']);
+        }
+
         return Products::create($data);
     }
 
@@ -31,18 +36,22 @@ class ProductService
             $data['image'] = $this->uploadImage($image);
             $product->update($data);
             $this->deleteImage($oldImage);
+
             return $product->refresh();
         }
 
         unset($data['image']);
         $product->update($data);
+
         return $product->refresh();
     }
 
     public function deleteProduct(Products $product): bool
     {
         $image = $product->image;
+
         $deleted = (bool) $product->delete();
+
         if ($deleted) {
             $this->deleteImage($image);
         }
@@ -58,6 +67,7 @@ class ProductService
         File::ensureDirectoryExists($directory);
         $imageName = uniqid() . '.' . $image->extension();
         $image->move($directory, $imageName);
+
         return $imageName;
     }
 
