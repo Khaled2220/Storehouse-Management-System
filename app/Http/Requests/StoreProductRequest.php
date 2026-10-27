@@ -24,11 +24,19 @@ class StoreProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string',
+            'name' => 'required|string|max:255|unique:products,name',
             'quantity' => 'required|integer|min:0',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
     }
+    
+    public function messages(): array
+    {
+        return [
+            'name.unique' => 'This product name already exists. Please choose another name.',
+        ];
+    }
+
 }

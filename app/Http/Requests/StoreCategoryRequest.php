@@ -23,7 +23,14 @@ class StoreCategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['required','string', 'max:255', 'unique:categories,name'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'name.unique' => 'This category name already exists. Please choose another name.',
         ];
     }
 }
