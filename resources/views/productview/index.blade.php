@@ -44,6 +44,21 @@
             border-color: #398439;
             color: white !important;
         }
+        .action-buttons .btn,
+        .back-button .btn {
+            background-color: DimGrey;
+            color: white !important;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+            width: 150px;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            font-size: 14px;
+        }    
     </style>
 </head>
 
@@ -143,4 +158,18 @@
         @if (method_exists($Products, 'links'))
             {{ $Products->links() }}
         @endif
+
+        <div class="back-button">
+            <a href="{{ route('Categorios.index') }}"
+               class="btn back-btn">
+                Show Categorios
+            </a>
+
+            @if (auth()->check() && (int) auth()->user()->user_type === 1)
+            <a href="{{ route('notifications.index') }}"
+               class="btn back-btn">
+                Show Notification
+            </a>
+            @endif
+        </div>
     </div>
