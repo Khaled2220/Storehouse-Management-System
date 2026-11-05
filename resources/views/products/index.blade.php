@@ -66,13 +66,13 @@
     <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
         <ul class="nav navbar-nav">
             <li class="nav-item">
-                <a class="nav-link active" href="{{ route('Products.index') }}">
+                <a class="nav-link active" href="{{ route('products.index') }}">
                     Products
                 </a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('Categorios.index') }}">
+                <a class="nav-link" href="{{ route('categories.index') }}">
                     Category
                 </a>
             </li>
@@ -98,9 +98,7 @@
             </li>
         </ul>
 
-        <form method="POST" action="{{ route('logout') }}"
-              class="navbar-form navbar-right">
-
+        <form method="POST" action="{{ route('logout') }}" class="navbar-form navbar-right">
             @csrf
             <button type="submit" class="btn btn-default">
                 Logout
@@ -125,9 +123,9 @@
         @endif
 
 
-        @can('create', \App\Models\Products::class)
+        @can('create', \App\Models\Product::class)
 
-            <a href="{{ route('Products.create') }}" class="btn add-product-btn">
+            <a href="{{ route('products.create') }}" class="btn add-product-btn">
                 Add New Products
             </a>
         @endcan
@@ -146,7 +144,7 @@
 
 
             <tbody>
-                @forelse ($Products as $product)
+                @forelse ($products as $product)
                     <tr>
                         <td>
                             {{ $product->name }}
@@ -170,7 +168,7 @@
                         </td>
 
                         <td>
-                            <a href="{{ route('Products.show', $product->id) }}" class="btn show-detail-btn">
+                            <a href="{{ route('products.show', $product) }}" class="btn show-detail-btn">
                                 Show Detail
                             </a>
                         </td>
@@ -186,12 +184,12 @@
             </tbody>
         </table>
 
-        @if (method_exists($Products, 'links'))
-            {{ $Products->links() }}
+        @if (method_exists($products, 'links'))
+            {{ $products->links() }}
         @endif
 
         <div class="back-button">
-            <a href="{{ route('Categorios.index') }}" class="btn back-btn">
+            <a href="{{ route('categories.index') }}" class="btn back-btn">
                 Show Categories
             </a>
 

@@ -108,13 +108,13 @@
     <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
         <ul class="nav navbar-nav">
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('Products.index') }}">
+                <a class="nav-link" href="{{ route('products.index') }}">
                     Products
                 </a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('Categorios.index') }}">
+                <a class="nav-link" href="{{ route('categories.index') }}">
                     Category
                 </a>
             </li>
@@ -140,7 +140,7 @@
             </li>
         </ul>
 
-        <form method="POST" action="{{ route('logout') }}"class="navbar-form navbar-right">
+        <form method="POST" action="{{ route('logout') }}" class="navbar-form navbar-right">
             @csrf
             <button type="submit" class="btn btn-default">
                 Logout
@@ -175,9 +175,9 @@
         @endif
 
 
-        @can('create', \App\Models\Categorios::class)
+        @can('create', \App\Models\Category::class)
             <div class="add-button" style="margin-bottom: 20px;">
-                <a href="{{ route('Categorios.create') }}" class="btn add-btn">
+                <a href="{{ route('categories.create') }}" class="btn add-btn">
                     Add New Category
                 </a>
             </div>
@@ -191,14 +191,14 @@
                         <th>ID</th>
                         <th>Category Name</th>
                         <th>Show Products</th>
-                        @can('create', \App\Models\Categorios::class)
+                        @can('create', \App\Models\Category::class)
                             <th>Action</th>
                         @endcan
                     </tr>
                 </thead>
 
                 <tbody>
-                    @forelse ($categorios as $category)
+                    @forelse ($categories as $category)
                         <tr>
                             <td>
                                 {{ $category->id }}
@@ -209,22 +209,22 @@
                             </td>
 
                             <td>
-                                <a href="{{ route('Products.index', ['category_id' => $category->id]) }}" class="btn show-products-btn">
+                                <a href="{{ route('products.index', ['category_id' => $category->id]) }}" class="btn show-products-btn">
                                     Show Products
                                 </a>
                             </td>
 
-                            @can('create', \App\Models\Categorios::class)
+                            @can('create', \App\Models\Category::class)
                                 <td>
                                     <div class="action-buttons">
                                         @can('update', $category)
-                                            <a href="{{ route('Categorios.edit', $category->id) }}" class="btn edit-btn">
+                                            <a href="{{ route('categories.edit', $category) }}" class="btn edit-btn">
                                                 Edit
                                             </a>
                                         @endcan
 
                                         @can('delete', $category)
-                                            <form action="{{ route('Categorios.destroy', $category->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this category?');">
+                                            <form action="{{ route('categories.destroy', $category) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this category?');">
                                                 @csrf
                                                 @method('DELETE')
 
@@ -239,7 +239,7 @@
                         </tr>
 
                     @empty
-                        @can('create', \App\Models\Categorios::class)
+                        @can('create', \App\Models\Category::class)
                             <tr>
                                 <td colspan="4" class="text-center">
                                     No categories found.
@@ -260,7 +260,7 @@
 
 
         <div class="back-button">
-            <a href="{{ route('Products.index') }}" class="btn back-btn">
+            <a href="{{ route('products.index') }}" class="btn back-btn">
                 Back to Products
             </a>
         </div>

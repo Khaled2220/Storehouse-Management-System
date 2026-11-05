@@ -17,12 +17,12 @@ class ProfileController extends Controller
 
     public function index(Request $request)
     {
-        return view('Profile.index')->with('user', $request->user());
+        return view('profile.index')->with('user', $request->user());
     }
 
     public function edit(Request $request)
     {
-        return view('Profile.edit')->with('user', $request->user());
+        return view('profile.edit')->with('user', $request->user());
     }
 
     public function update(UpdateProfileRequest $request): RedirectResponse

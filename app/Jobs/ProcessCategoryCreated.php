@@ -2,15 +2,15 @@
 
 namespace App\Jobs;
 
-use App\Models\Products;
+use App\Models\Category;
 use App\Models\User;
-use App\Mail\ProductCreatedMail;
-use App\Notifications\ProductCreatedNotification;
+use App\Mail\CategoryCreatedMail;
+use App\Notifications\CategoryCreatedNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Mail;
 
-class processproducts implements ShouldQueue
+class ProcessCategoryCreated implements ShouldQueue
 {
     use Queueable;
 
@@ -27,19 +27,19 @@ class processproducts implements ShouldQueue
      */
     public function handle(): void
     {
-        $product = Products::findOrFail($this->id);
+        $category = Category::findOrFail($this->id);
 
-        User::admins()->each(function (User $user) use ($product) {
+        User::admins()->each(function (User $user) use ($category) {
             $user->notify(
-                new ProductCreatedNotification(
-                    $product->name,
-                    (int) $product->id
+                new CategoryCreatedNotification(
+                    $category->name,
+                    (int) $category->id
                 )
             );
             Mail::to($user->email)->send(
-                new ProductCreatedMail(
-                    $product->name,
-                    (int) $product->id
+                new CategoryCreatedMail(
+                    $category->name,
+                    (int) $category->id
                 )
             );
         });

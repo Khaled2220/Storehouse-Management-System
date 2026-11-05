@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\Products;
-use App\Events\product;
+use App\Models\Product;
+use App\Events\ProductCreated;
 use InvalidArgumentException;
 
 class ProductService
@@ -15,14 +15,14 @@ class ProductService
 
     public function getAllProducts()
     {
-        return Products::with(['categories', 'user'])
+        return Product::with(['categories', 'user'])
             ->latest()
             ->paginate(50);
     }
 
     public function getProductsByCategory(int $categoryId)
     {
-        return Products::with(['categories', 'user'])
+        return Product::with(['categories', 'user'])
             ->whereHas('categories', function ($query) use ($categoryId) {
                 $query->where('categories.id', $categoryId);
             })
@@ -30,13 +30,13 @@ class ProductService
             ->paginate(50);
     }
 
-    public function getProductById(int $id): Products
+    public function getProductById(int $id): Product
     {
-        return Products::with(['categories', 'user'])
+        return Product::with(['categories', 'user'])
             ->findOrFail($id);
     }
 
-    public function createProduct( array $data, ?string $imagePath = null, ?string $imageExtension = null ): Products 
+    public function createProduct( array $data, ?string $imagePath = null, ?string $imageExtension = null ): Product
     {
         $categoryIds = $data['categories'] ?? [];
 
@@ -47,16 +47,16 @@ class ProductService
             $imagePath,
             $imageExtension
         );
-        $product = Products::create($data);
+        $product = Product::create($data);
 
         $product->categories()->sync($categoryIds);
 
-        event(new product($product));
+        event(new ProductCreated($product));
 
         return $product->load(['categories', 'user']);
     }
 
-    public function updateProduct(Products $product, array $data, ?string $imagePath = null, ?string $imageExtension = null): Products 
+    public function updateProduct(Product $product, array $data, ?string $imagePath = null, ?string $imageExtension = null): Product
     {
         $oldImage = $product->image;
 
@@ -85,7 +85,7 @@ class ProductService
         return $product->refresh()->load(['categories', 'user']);
     }
 
-    public function deleteProduct(Products $product): bool
+    public function deleteProduct(Product $product): bool
     {
         $image = $product->image;
 

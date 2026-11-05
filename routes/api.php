@@ -21,13 +21,13 @@ Route::post('/login', [LoginController::class, 'login'])
 
 Route::get('/products', [ProductController::class, 'index']);
 
-Route::get('/products/{id}', [ProductController::class, 'show']);
+Route::get('/products/{product}', [ProductController::class, 'show']);
 
 
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/products', [ProductController::class, 'store'])
-        ->middleware('can:create,App\Models\Products');
+        ->middleware('can:create,App\Models\Product');
 
     Route::put('/products/{product}', [ProductController::class, 'update'])
         ->middleware('can:update,product');

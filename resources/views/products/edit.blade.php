@@ -101,13 +101,13 @@
 <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
     <ul class="nav navbar-nav">
         <li class="nav-item">
-            <a class="nav-link" href="{{ route('Products.index') }}">
+            <a class="nav-link" href="{{ route('products.index') }}">
                 Products
             </a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link" href="{{ route('Categorios.index') }}">
+            <a class="nav-link" href="{{ route('categories.index') }}">
                 Category
             </a>
         </li>
@@ -132,7 +132,7 @@
             </a>
         </li>
     </ul>
-    <form method="POST" action="{{ route('logout') }}"class="navbar-form navbar-right">
+   <form method="POST" action="{{ route('logout') }}" class="navbar-form navbar-right">
         @csrf
         <button type="submit" class="btn btn-default">
             Logout
@@ -167,7 +167,7 @@
 
     @can('update', $product)
         <form class="product-form" method="POST"
-            action="{{ route('Products.update', $product->id) }}"
+            action="{{ route('products.update', $product) }}"
             enctype="multipart/form-data"
         >
 
@@ -276,12 +276,12 @@
                 
                 <select name="status" id="status" class="form-control" required>
                     <option value="active"
-                        {{ old('status', $product->status) == 'active' ? 'selected' : '' }}>
+                         {{ old('status', $product->status) == 'active' ? 'selected' : '' }}>
                         Active
                     </option>
 
                     <option value="expired"
-                        {{ old('status', $product->status) == 'expired' ? 'selected' : '' }}>
+                         {{ old('status', $product->status) == 'expired' ? 'selected' : '' }}>>
                         Expired
                     </option>
                 </select>
@@ -296,9 +296,8 @@
                 
                 <input type="date" id="expiry_date" name="expiry_date"
                     class="form-control"
-                    value="{{ old('expiry_date', $product->expiry_date?->format('Y-m-d')) }}"
+                    value="{{ old('expiry_date', $product->expiry_date ? $product->expiry_date->format('Y-m-d') : '') }}"
                 >
-
                 @error('expiry_date')
                     <small class="text-danger">{{ $message }}</small>
                 @enderror
@@ -345,14 +344,14 @@
 
             <p>You do not have permission to edit products.</p>
 
-            <a href="{{ route('Products.index') }}" class="btn unauthorized-back-btn">
+            <a href="{{ route('products.index') }}" class="btn unauthorized-back-btn">
                 Back to Products
             </a>
         </div>
     @endcan
 
     <div class="back-button">
-        <a href="{{ route('Products.index') }}" class="btn back-btn">
+        <a href="{{ route('products.index') }}" class="btn back-btn">
             Back to Products
         </a>
     </div>

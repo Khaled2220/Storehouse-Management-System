@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Products extends Model
+class Product extends Model
 {
   
    protected $fillable = [
@@ -23,7 +23,7 @@ class Products extends Model
     }
 
     public function categories(){
-        return $this->belongsToMany( Categorios::class, 'products_categories', 'product_id', 'category_id');
+        return $this->belongsToMany( Category::class, 'products_categories', 'product_id', 'category_id');
     }
 
     protected function casts(): array

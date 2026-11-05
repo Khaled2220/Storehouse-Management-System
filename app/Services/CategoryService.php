@@ -2,38 +2,38 @@
 
 namespace App\Services;
 
-use App\Models\Categorios;
-use App\Events\category;
+use App\Models\Category;
+use App\Events\CategoryCreated;
 
 class CategoryService
 {
     public function getAllCategories()
     {
-        return Categorios::all();
+        return Category::all();
     }
 
-    public function getCategoryById(int $id): Categorios
+    public function getCategoryById(int $id): Category
     {
-        return Categorios::findOrFail($id);
+        return Category::findOrFail($id);
     }
 
-    public function createCategory(array $data): Categorios
+    public function createCategory(array $data): Category
     {
-        $category = Categorios::create($data);
+        $category = Category::create($data);
 
-        event(new category($category));
+        event(new CategoryCreated($category));
 
         return $category;
     }
 
-    public function updateCategory(Categorios $category,array $data): Categorios 
+    public function updateCategory(Category $category,array $data): Category
     {
         $category->update($data);
-        
+
         return $category->refresh();
     }
 
-    public function deleteCategory(Categorios $category): bool
+    public function deleteCategory(Category $category): bool
     {
          if ($category->products()->exists()) {
             return false;

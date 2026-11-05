@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Notifications\DatabaseNotification;
 use App\Services\NotificationService;
-use App\Models\User;
 
 class NotificationController extends Controller
 {
@@ -18,30 +18,32 @@ class NotificationController extends Controller
      */
     public function index(Request $request)
     {
-        $notifications = $this->notificationService->getUserNotifications($request->user());
+        $notifications = $this->notificationService
+            ->getUserNotifications($request->user());
 
-        return view('notifications.index')->with('notifications', $notifications);
-
-        //return view('notifications.index', compact('notifications'));
+        return view('notifications.index')
+            ->with('notifications', $notifications);
     }
 
-    /**
-     * Mark a notification as read.
-     */
-    public function markAsRead(Request $request, string $id)
-    {
-       $this->notificationService->markAsRead($request->user(),$id);
+    public function markAsRead(
+        Request $request,
+        DatabaseNotification $notification
+    ) {
+        $this->notificationService->markAsRead(
+            $request->user(),
+            $notification->id
+        );
 
         return redirect()->route('notifications.index')
             ->with('success', 'Notification marked as Read.');
     }
 
-    /**
-     * Delete a notification belonging to the authenticated user.
-     */
-    public function destroy(Request $request, string $id)
+    public function destroy(Request $request,DatabaseNotification $notification) 
     {
-        $this->notificationService->deleteNotification($request->user(),$id);
+        $this->notificationService->deleteNotification(
+            $request->user(),
+            $notification->id
+        );
 
         return redirect()->route('notifications.index')
             ->with('success', 'Notification deleted successfully.');

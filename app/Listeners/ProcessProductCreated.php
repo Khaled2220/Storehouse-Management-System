@@ -2,8 +2,9 @@
 
 namespace App\Listeners;
 
-use App\Events\product;
-use App\Jobs\processproducts;
+use App\Events\ProductCreated;
+use App\Jobs\ProcessProductCreated as ProcessProductCreatedJob;
+
 
 class ProcessProductCreated
 {
@@ -18,8 +19,8 @@ class ProcessProductCreated
     /**
      * Handle the event.
      */
-    public function handle(product $event): void
+    public function handle(ProductCreated $event): void
     {
-        processproducts::dispatch($event->product->id);
+        ProcessProductCreatedJob::dispatch($event->product->id);
     }
 }

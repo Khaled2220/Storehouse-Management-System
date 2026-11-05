@@ -2,8 +2,8 @@
 
 namespace App\Listeners;
 
-use App\Events\category;
-use App\Jobs\processcategorios;
+use App\Events\CategoryCreated;
+use App\Jobs\ProcessCategoryCreated as ProcessCategoryCreatedJob;
 
 class ProcessCategoryCreated
 {
@@ -18,8 +18,8 @@ class ProcessCategoryCreated
     /**
      * Handle the event.
      */
-    public function handle(category $event): void
+    public function handle(CategoryCreated $event): void
     {
-        processcategorios::dispatch($event->category->id);
+        ProcessCategoryCreatedJob::dispatch($event->category->id);
     }
 }

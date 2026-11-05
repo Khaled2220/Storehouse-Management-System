@@ -49,7 +49,7 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->route('Products.index');
+        return redirect()->route('products.index');
     }
 
     public function logout(Request $request)

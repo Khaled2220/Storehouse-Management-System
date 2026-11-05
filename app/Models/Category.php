@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Categorios extends Model
+class Category extends Model
 {
     protected $table = 'categories'; 
 
@@ -14,7 +14,7 @@ class Categorios extends Model
 
     public function products()
     {
-        return $this->belongsToMany(Products::class,
+        return $this->belongsToMany(Product::class,
             'products_categories',
             'category_id',
             'product_id'

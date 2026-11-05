@@ -81,7 +81,7 @@
         @endif
 
         @can('create', \App\Models\User::class)
-            <a href="{{ route('user.create') }}" class="btn btn-add">
+            <a href="{{ route('users.create') }}" class="btn btn-add">
                 Add User
             </a>
         @endcan
@@ -125,19 +125,19 @@
 
                         <td>
                             @can('view', $user)
-                                <a href="{{ route('user.show', $user->id) }}" class="btn btn-show">
+                                <a href="{{ route('users.show', $user->id) }}" class="btn btn-show">
                                     Show
                                 </a>
                             @endcan
 
                             @can('update', $user)
-                                <a href="{{ route('user.edit', $user->id) }}" class="btn btn-edit">
+                                <a href="{{ route('users.edit', $user->id) }}" class="btn btn-edit">
                                     Edit
                                 </a>
                             @endcan
 
                             @can('delete', $user)
-                                <form action="{{ route('user.destroy', $user->id) }}"
+                                <form action="{{ route('users.destroy', $user->id) }}"
                                     method="POST"
                                     style="display: inline;"
                                     onsubmit="return confirm('Are you sure you want to delete this user?')">

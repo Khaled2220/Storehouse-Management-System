@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Categorios;
+use App\Models\Category;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
@@ -14,7 +14,7 @@ class StoreCategoryRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        Gate::authorize('create',Categorios::class);
+        Gate::authorize('create',Category::class);
         return true;
     }
 

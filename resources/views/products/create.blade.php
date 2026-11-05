@@ -88,13 +88,13 @@
         <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
         <ul class="nav navbar-nav">
             <li class="nav-item">
-                <a class="nav-link active" href="{{ route('Products.index') }}">
+                <a class="nav-link active" href="{{ route('products.index') }}">
                     Products
                 </a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('Categorios.index') }}">
+                <a class="nav-link" href="{{ route('categories.index') }}">
                     Category
                 </a>
             </li>
@@ -156,10 +156,10 @@
         </div>
     @endif
 
-    @can('create', \App\Models\Products::class)
+    @can('create', \App\Models\Product::class)
 
         <form class="product-form" method="POST"
-              action="{{ route('Products.store') }}"
+              action="{{ route('products.store') }}"
               enctype="multipart/form-data">
 
             @csrf
@@ -258,7 +258,7 @@
     @endcan
 
     <div class="back-button">
-        <a href="{{ route('Products.index') }}" class="btn back-btn">
+        <a href="{{ route('products.index') }}" class="btn back-btn">
             Back to Products
         </a>
     </div>

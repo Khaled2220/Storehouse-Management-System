@@ -101,13 +101,13 @@
     <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
         <ul class="nav navbar-nav">
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('Products.index') }}">
+                <a class="nav-link" href="{{ route('products.index') }}">
                     Products
                 </a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('Categorios.index') }}">
+                <a class="nav-link" href="{{ route('categories.index') }}">
                     Category
                 </a>
             </li>
@@ -133,7 +133,7 @@
             </li>
         </ul>
 
-        <form method="POST" action="{{ route('logout') }}"class="navbar-form navbar-right">
+        <form method="POST" action="{{ route('logout') }}" class="navbar-form navbar-right">
             @csrf
             <button type="submit" class="btn btn-default">
                 Logout
@@ -204,13 +204,13 @@
 
         <div class="action-buttons">
             @can('update', $product)
-                <a href="{{ route('Products.edit', $product->id) }}" class="btn edit-btn">
+                <a href="{{ route('products.edit', $product) }}" class="btn edit-btn">
                     Edit
                 </a>
             @endcan
 
             @can('delete', $product)
-                <form action="{{ route('Products.destroy', $product->id) }}"
+                <form action="{{ route('products.destroy', $product) }}"
                     method="POST"
                     onsubmit="return confirm('Are you sure you want to delete this product?')">
 
@@ -226,7 +226,7 @@
         </div>
 
         <div class="back-button">
-            <a href="{{ route('Products.index') }}" class="btn back-btn">
+            <a href="{{ route('products.index') }}" class="btn back-btn">
                 Back to Products
             </a>
         </div>

@@ -77,7 +77,7 @@
         </table>
 
         <div class="text-center">
-            <a href="{{ route('user.index') }}" class="btn btn-back">
+            <a href="{{ route('users.index') }}" class="btn btn-back">
                 Back
             </a>
         </div>

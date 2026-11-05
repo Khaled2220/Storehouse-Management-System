@@ -2,7 +2,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Edit Category</title>
+    <title>Add New Category</title>
 
     <link rel="stylesheet"
           href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
@@ -49,13 +49,13 @@
             border-radius: 4px;
             text-decoration: none;
         }
-        .update-btn {
+        .save-btn {
             background-color: #5cb85c;
             color: white;
             border: none;
         }
-        .update-btn:hover,
-        .update-btn:focus {
+        .save-btn:hover,
+        .save-btn:focus {
             background-color: #449d44;
             color: white;
         }
@@ -82,16 +82,17 @@
     <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
         <ul class="nav navbar-nav">
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('Products.index') }}">
+                <a class="nav-link" href="{{ route('products.index') }}">
                     Products
                 </a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('Categorios.index') }}">
+                <a class="nav-link" href="{{ route('categories.index') }}">
                     Category
                 </a>
             </li>
+
 
             @can('viewNotifications', \App\Models\User::class)
                 <li class="nav-item">
@@ -114,7 +115,7 @@
             </li>
         </ul>
 
-        <form method="POST" action="{{ route('logout') }}"class="navbar-form navbar-right">
+        <form method="POST" action="{{ route('logout') }}" class="navbar-form navbar-right">
             @csrf
             <button type="submit" class="btn btn-default">
                 Logout
@@ -122,10 +123,11 @@
         </form>
     </nav>
 
-    <div class="container">
-        @can('update', $category)
 
-            <h2>Edit Category</h2>
+    <div class="container">
+        @can('create', \App\Models\Category::class)
+
+            <h2>Add New Category</h2>
 
             @if (session('success'))
                 <div class="alert alert-success">
@@ -149,15 +151,13 @@
                 </div>
             @endif
 
-
-            <form class="category-form" method="POST" action="{{ route('Categorios.update', $category->id) }}" >
+            <form class="category-form" method="POST" action="{{ route('categories.store') }}" >
                 @csrf
-                @method('PUT')
-
                 <div class="form-group">
+
                     <label for="name">Category Name:</label>
 
-                    <input type="text" id="name" name="name" class="form-control" value="{{ old('name', $category->name) }}" required autofocus >
+                    <input type="text" id="name" name="name" class="form-control" value="{{ old('name') }}" required autofocus >
 
                     @error('name')
                         <small class="text-danger">
@@ -167,23 +167,24 @@
                 </div>
 
                 <div class="action-buttons">
-                    <button type="submit" class="btn update-btn">
-                        Update Category
+                    <button type="submit" class="btn save-btn">
+                        Save Category
                     </button>
                 </div>
             </form>
 
         @else
+
             <div class="alert alert-danger">
                 <h4>Unauthorized access!</h4>
-                <p>You do not have permission to edit this category.</p>
+                <p>You do not have permission to add categories.</p>
             </div>
         @endcan
 
-
         <div class="back-button">
-            <a href="{{ route('Categorios.index') }}" class="btn back-btn">
+            <a href="{{ route('categories.index') }}" class="btn back-btn">
                 Back to Categories
             </a>
         </div>
     </div>
+

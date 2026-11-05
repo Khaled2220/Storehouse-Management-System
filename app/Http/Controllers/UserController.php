@@ -20,7 +20,7 @@ class UserController extends Controller
     {
         $users = $this->userService->getAllUsers();
 
-        return view('user.index')->with('users', $users);
+        return view('users.index')->with('users', $users);
     }
 
     /**
@@ -28,7 +28,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        return view('user.create');
+        return view('users.create');
     }
 
     /**
@@ -40,7 +40,7 @@ class UserController extends Controller
 
         $this->userService->createUser($validated);
 
-        return redirect()->route('user.index')
+        return redirect()->route('users.index')
             ->with('success', 'User Added Successfully');
     }
 
@@ -49,7 +49,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        return view('user.show')->with('user', $user);
+        return view('users.show')->with('user', $user);
     }
 
     /**
@@ -57,7 +57,7 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        return view('user.edit')->with('user', $user);
+        return view('users.edit')->with('user', $user);
     }
 
     /**
@@ -69,7 +69,7 @@ class UserController extends Controller
 
         $this->userService->updateUser($user, $validated);
 
-        return redirect()->route('user.index')
+        return redirect()->route('users.index')
             ->with('success', 'User Updated Successfully');
     }
 
@@ -80,7 +80,7 @@ class UserController extends Controller
     {
         $this->userService->deleteUser($user);
 
-        return redirect()->route('user.index')
+        return redirect()->route('users.index')
             ->with('success', 'User Deleted Successfully');
     }
 }

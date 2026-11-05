@@ -124,7 +124,7 @@
                 Edit Profile
             </a>
 
-            <a href="{{ route('Products.index') }}" class="btn back-button">
+            <a href="{{ route('products.index') }}" class="btn back-button">
                 Back
             </a>
 

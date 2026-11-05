@@ -67,7 +67,7 @@
             @endif
 
             @can('create', \App\Models\User::class)
-                <form action="{{ route('user.store') }}" method="POST">
+                <form action="{{ route('users.store') }}" method="POST">
                     @csrf
                     <div class="form-group">
                         <label for="full_name"> Full Name: </label>
@@ -133,7 +133,7 @@
                             Add User
                         </button>
 
-                        <a href="{{ route('user.index') }}" class="btn btn-back">
+                        <a href="{{ route('users.index') }}" class="btn btn-back">
                             Back
                         </a>
                     </div>
@@ -144,7 +144,7 @@
                     You are not authorized to create users.
                 </div>
 
-                <a href="{{ route('user.index') }}" class="btn btn-back">
+                <a href="{{ route('users.index') }}" class="btn btn-back">
                     Back
                 </a>
             @endcan

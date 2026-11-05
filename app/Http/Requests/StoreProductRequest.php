@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Products;
+use App\Models\Product;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
@@ -14,7 +14,7 @@ class StoreProductRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        Gate::authorize('create',Products::class);
+        Gate::authorize('create',Product::class);
         return true ;
     }
 

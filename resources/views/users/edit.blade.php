@@ -75,7 +75,7 @@
             @endif
 
             @can('update', $user)
-                <form action="{{ route('user.update', $user->id) }}" method="POST">
+                <form action="{{ route('users.update', $user->id) }}" method="POST">
                     @csrf
                     @method('PUT')
 
@@ -152,7 +152,7 @@
                             Update User
                         </button>
 
-                        <a href="{{ route('user.index') }}" class="btn btn-back">
+                        <a href="{{ route('users.index') }}" class="btn btn-back">
                             Back
                         </a>
                     </div>
@@ -163,7 +163,7 @@
                     You are not authorized to update this user.
                 </div>
 
-                <a href="{{ route('user.index') }}" class="btn btn-back">
+                <a href="{{ route('users.index') }}" class="btn btn-back">
                     Back
                 </a>
             @endcan

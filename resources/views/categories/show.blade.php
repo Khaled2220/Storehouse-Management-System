@@ -81,7 +81,7 @@ head>
         </table>
     </div>
 
-    <a href="{{ route('Categorios.index') }}" class="btn back-btn">
+    <a href="{{ route('categories.index') }}" class="btn back-btn">
         Back to Categories
     </a>
 </div>

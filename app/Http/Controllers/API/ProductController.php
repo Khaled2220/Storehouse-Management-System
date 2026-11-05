@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\Products;
+use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Services\ProductService;
@@ -21,7 +21,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = $this->productService->getAllProducts();
+         $products = $this->productService->getAllProducts();
 
         return ProductResource::collection($products)
             ->additional([
@@ -59,21 +59,20 @@ class ProductController extends Controller
     /**
      * Display the specified product.
      */
-    public function show(string $id)
+    public function show(Product $product)
     {
-        $product = $this->productService->getProductById((int) $id);
+        $product->load(['categories', 'user']);
 
-        return (new ProductResource($product))
-            ->additional([
-                'status' => true,
-                'message' => 'Product retrieved successfully.',
-            ]);
+        return (new ProductResource($product))->additional([
+            'status' => true,
+            'message' => 'Product retrieved successfully.',
+        ]);
     }
 
     /**
      * Update the specified product.
      */
-    public function update(UpdateProductRequest $request, Products $product)
+    public function update(UpdateProductRequest $request, Product $product)
     {
         $validated = $request->validated();
 
@@ -94,7 +93,7 @@ class ProductController extends Controller
     /**
      * Delete the specified product.
      */
-    public function destroy(Products $product)
+    public function destroy(Product $product)
     {
         $deleted = $this->productService->deleteProduct($product);
 

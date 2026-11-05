@@ -18,7 +18,7 @@ class EnsureUserIsAdmin
         }
         if  (!$user->isAdmin()) {
             return redirect()
-                ->route('Products.index')
+                ->route('products.index')
                 ->with('error', 'Unauthorized access! Admin only.');
         }
         return $next($request);

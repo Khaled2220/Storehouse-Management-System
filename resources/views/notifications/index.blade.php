@@ -121,13 +121,13 @@
     <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
         <ul class="nav navbar-nav">
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('Products.index') }}">
+                <a class="nav-link" href="{{ route('products.index') }}">
                     Products
                 </a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('Categorios.index') }}">
+                <a class="nav-link" href="{{ route('categories.index') }}">
                     Category
                 </a>
             </li>
@@ -153,7 +153,7 @@
             </li>
         </ul>
 
-        <form method="POST" action="{{ route('logout') }}"class="navbar-form navbar-right">
+        <form method="POST" action="{{ route('logout') }}" class="navbar-form navbar-right">
             @csrf
             <button type="submit" class="btn btn-default">
                 Logout
@@ -226,7 +226,7 @@
                     @unless ($notification->read_at)
                         <form
                             method="POST"
-                            action="{{ route('notifications.read', $notification->id) }}">
+                            action="{{ route('notifications.read', $notification) }}">
 
                             @csrf
                             @method('PATCH')
@@ -238,7 +238,7 @@
                     @endunless
 
                     <form
-                        action="{{ route('notifications.destroy', $notification->id) }}"
+                        action="{{ route('notifications.destroy', $notification) }}"
                         method="POST"
                         onsubmit="return confirm('Are you sure you want to delete this notification?')">
 
@@ -264,11 +264,11 @@
         </div>
 
         <div class="back-buttons">
-            <a href="{{ route('Products.index') }}" class="btn back-btn">
+            <a href="{{ route('products.index') }}" class="btn back-btn">
                 Back to Products
             </a>
 
-            <a href="{{ route('Categorios.index') }}" class="btn back-btn">
+            <a href="{{ route('categories.index') }}" class="btn back-btn">
                 Back to Categories
             </a>
         </div>
