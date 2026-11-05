@@ -3,16 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
+use App\Services\UserService;
 
-class usercontroller extends Controller
+class UserController extends Controller
 {
+    public function __construct(private UserService $userService) 
+    {
+        //
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
-    { 
-        //
+    {
+        $users = $this->userService->getAllUsers();
+
+        return view('user.index')->with('users', $users);
     }
 
     /**
@@ -20,23 +28,28 @@ class usercontroller extends Controller
      */
     public function create()
     {
-        //
+        return view('user.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreUserRequest $request)
     {
-         //
+        $validated = $request->validated();
+
+        $this->userService->createUser($validated);
+
+        return redirect()->route('user.index')
+            ->with('success', 'User Added Successfully');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(User $user)
     {
-        //
+        return view('user.show')->with('user', $user);
     }
 
     /**
@@ -44,22 +57,33 @@ class usercontroller extends Controller
      */
     public function edit(User $user)
     {
-        //
+        return view('user.edit')->with('user', $user);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $user)
+    public function update(UpdateUserRequest $request, User $user)
     {
-        //
+        $validated = $request->validated();
+
+        $this->userService->updateUser($user, $validated);
+
+        return redirect()->route('user.index')
+            ->with('success', 'User Updated Successfully');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(User $user)
     {
-        //
+        $this->userService->deleteUser($user);
+
+        return redirect()->route('user.index')
+            ->with('success', 'User Deleted Successfully');
     }
 }
+
+
+//link:http://127.0.0.1:8000/users

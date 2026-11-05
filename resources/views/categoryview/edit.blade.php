@@ -1,4 +1,3 @@
-<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,6 +8,7 @@
           href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
     <style>
@@ -93,29 +93,38 @@
                 </a>
             </li>
 
-            @auth
-                @if ((int) auth()->user()->user_type === 1)
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('notifications.index') }}">
-                            My Notifications
-                            @php
-                                $unreadCount = auth()->user()
-                                    ->unreadNotifications()
-                                    ->count();
-                            @endphp
+            @can('viewNotifications', \App\Models\User::class)
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('notifications.index') }}">
+                        My Notifications
 
-                            @if ($unreadCount > 0)
-                                <span class="badge">{{ $unreadCount }}</span>
-                            @endif
-                        </a>
-                    </li>
-                @endif
-            @endauth
+                        @if (($unreadNotificationsCount ?? 0) > 0)
+                            <span class="badge">
+                                {{ $unreadNotificationsCount }}
+                            </span>
+                        @endif
+                    </a>
+                </li>
+            @endcan
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('profile') }}">
+                    My Profile
+                </a>
+            </li>
         </ul>
+
+        <form method="POST" action="{{ route('logout') }}"class="navbar-form navbar-right">
+            @csrf
+            <button type="submit" class="btn btn-default">
+                Logout
+            </button>
+        </form>
     </nav>
 
     <div class="container">
-        @if (auth()->check() && (int) auth()->user()->user_type === 1)
+        @can('update', $category)
+
             <h2>Edit Category</h2>
 
             @if (session('success'))
@@ -124,6 +133,11 @@
                 </div>
             @endif
 
+            @if (session('error'))
+                <div class="alert alert-danger">
+                    {{ session('error') }}
+                </div>
+            @endif
 
             @if ($errors->any())
                 <div class="alert alert-danger">
@@ -135,25 +149,21 @@
                 </div>
             @endif
 
-            <form
-                class="category-form"
-                method="POST"
-                action="{{ route('Categorios.update', $category->id) }}"
-            >
+
+            <form class="category-form" method="POST" action="{{ route('Categorios.update', $category->id) }}" >
                 @csrf
                 @method('PUT')
+
                 <div class="form-group">
                     <label for="name">Category Name:</label>
 
-                    <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        class="form-control"
-                        value="{{ old('name', $category->name) }}"
-                        required
-                        autofocus
-                    >
+                    <input type="text" id="name" name="name" class="form-control" value="{{ old('name', $category->name) }}" required autofocus >
+
+                    @error('name')
+                        <small class="text-danger">
+                            {{ $message }}
+                        </small>
+                    @enderror
                 </div>
 
                 <div class="action-buttons">
@@ -163,25 +173,17 @@
                 </div>
             </form>
 
-            <div class="back-button">
-                <a href="{{ route('Categorios.index') }}"
-                   class="btn back-btn">
-                    Back to Categories
-                </a>
-            </div>
-
         @else
-
             <div class="alert alert-danger">
-                <h4>Unauthorized access! Admin only.</h4>
-                <p>You do not have permission to edit categories.</p>
-
-                <div class="back-button">
-                    <a href="{{ route('Categorios.index') }}"
-                       class="btn back-btn">
-                        Back to Categories
-                    </a>
-                </div>
+                <h4>Unauthorized access!</h4>
+                <p>You do not have permission to edit this category.</p>
             </div>
-        @endif
+        @endcan
+
+
+        <div class="back-button">
+            <a href="{{ route('Categorios.index') }}" class="btn back-btn">
+                Back to Categories
+            </a>
+        </div>
     </div>

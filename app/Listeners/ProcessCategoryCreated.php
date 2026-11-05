@@ -2,11 +2,8 @@
 
 namespace App\Listeners;
 
-//use App\Models\Category;
 use App\Events\category;
 use App\Jobs\processcategorios;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class ProcessCategoryCreated
 {

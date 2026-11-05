@@ -1,4 +1,3 @@
-<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,6 +8,7 @@
           href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
     <style>
@@ -112,30 +112,38 @@
                 </a>
             </li>
 
-            @if (auth()->check() && (int) auth()->user()->user_type === 1)
+            @can('viewNotifications', \App\Models\User::class)
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('notifications.index') }}">
                         My Notifications
-                        @php
-                            $unreadCount = auth()->user()
-                                ->unreadNotifications()
-                                ->count();
-                        @endphp
 
-                        @if ($unreadCount > 0)
+                        @if ($unreadNotificationsCount > 0)
                             <span class="badge">
-                                {{ $unreadCount }}
+                                {{ $unreadNotificationsCount }}
                             </span>
                         @endif
                     </a>
                 </li>
-            @endif
+            @endcan
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('profile') }}">
+                    My Profile
+                </a>
+            </li>
         </ul>
+
+        <form method="POST" action="{{ route('logout') }}"class="navbar-form navbar-right">
+            @csrf
+            <button type="submit" class="btn btn-default">
+                Logout
+            </button>
+        </form>
     </nav>
+
 
     <div class="container">
         <h2>Product Details</h2>
-
         @if (session('success'))
             <div class="alert alert-success">
                 {{ session('success') }}
@@ -147,6 +155,7 @@
                 {{ session('error') }}
             </div>
         @endif
+
 
         <table class="table table-bordered product-details">
             <tbody>
@@ -176,11 +185,8 @@
                     <th>Image</th>
                     <td>
                         @if ($product->image)
-                            <img
-                                src="{{ asset('image/' . $product->image) }}"
-                                class="product-image"
-                                alt="{{ $product->name }}"
-                            >
+                            <img src="{{ asset('image/' . $product->image) }}" class="product-image" alt="{{ $product->name }}" >
+
                         @else
                             No image available
                         @endif
@@ -196,31 +202,31 @@
             </tbody>
         </table>
 
-    
-        @if (auth()->check() && (int) auth()->user()->user_type === 1)
-            <div class="action-buttons">
-                <a href="{{ route('Products.edit', $product->id) }}"
-                   class="btn edit-btn">
+        <div class="action-buttons">
+            @can('update', $product)
+                <a href="{{ route('Products.edit', $product->id) }}" class="btn edit-btn">
                     Edit
                 </a>
+            @endcan
 
-                <form
-                    action="{{ route('Products.destroy', $product->id) }}"
+            @can('delete', $product)
+                <form action="{{ route('Products.destroy', $product->id) }}"
                     method="POST"
                     onsubmit="return confirm('Are you sure you want to delete this product?')">
+
                     @csrf
                     @method('DELETE')
+
                     <button type="submit" class="btn delete-btn">
                         <span class="glyphicon glyphicon-trash"></span>
                         Delete
                     </button>
                 </form>
-            </div>
-        @endif
+            @endcan
+        </div>
 
         <div class="back-button">
-            <a href="{{ route('Products.index') }}"
-               class="btn back-btn">
+            <a href="{{ route('Products.index') }}" class="btn back-btn">
                 Back to Products
             </a>
         </div>

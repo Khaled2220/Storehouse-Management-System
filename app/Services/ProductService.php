@@ -3,47 +3,86 @@
 namespace App\Services;
 
 use App\Models\Products;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\File;
+use App\Events\product;
+use InvalidArgumentException;
 
 class ProductService
 {
+    public function __construct(private ProductImageStorage $imageStorage)
+    {
+        //
+    }
+
     public function getAllProducts()
     {
-        return Products::latest()->paginate(50);
+        return Products::with(['categories', 'user'])
+            ->latest()
+            ->paginate(50);
+    }
+
+    public function getProductsByCategory(int $categoryId)
+    {
+        return Products::with(['categories', 'user'])
+            ->whereHas('categories', function ($query) use ($categoryId) {
+                $query->where('categories.id', $categoryId);
+            })
+            ->latest()
+            ->paginate(50);
     }
 
     public function getProductById(int $id): Products
     {
-        return Products::findOrFail($id);
+        return Products::with(['categories', 'user'])
+            ->findOrFail($id);
     }
 
-    public function createProduct(array $data,?UploadedFile $image = null): Products 
+    public function createProduct( array $data, ?string $imagePath = null, ?string $imageExtension = null ): Products 
     {
-        if ($image !== null) {
-            $data['image'] = $this->uploadImage($image);
-        } else {
-            unset($data['image']);
-        }
+        $categoryIds = $data['categories'] ?? [];
 
-        return Products::create($data);
+        unset($data['categories']);
+
+        $this->prepareImage(
+            $data,
+            $imagePath,
+            $imageExtension
+        );
+        $product = Products::create($data);
+
+        $product->categories()->sync($categoryIds);
+
+        event(new product($product));
+
+        return $product->load(['categories', 'user']);
     }
 
-    public function updateProduct(Products $product,array $data,?UploadedFile $image = null): Products 
+    public function updateProduct(Products $product, array $data, ?string $imagePath = null, ?string $imageExtension = null): Products 
     {
-        if ($image !== null) {
-            $oldImage = $product->image;
-            $data['image'] = $this->uploadImage($image);
-            $product->update($data);
-            $this->deleteImage($oldImage);
+        $oldImage = $product->image;
 
-            return $product->refresh();
-        }
+        $categoryIds = $data['categories'] ?? [];
 
-        unset($data['image']);
+        $hasCategories = array_key_exists('categories', $data);
+
+        unset($data['categories']);
+
+        $this->prepareImage(
+            $data,
+            $imagePath,
+            $imageExtension
+        );
+
         $product->update($data);
 
-        return $product->refresh();
+        if ($hasCategories) {
+            $product->categories()->sync($categoryIds);
+        }
+
+        if ($imagePath !== null) {
+            $this->imageStorage->delete($oldImage);
+        }
+
+        return $product->refresh()->load(['categories', 'user']);
     }
 
     public function deleteProduct(Products $product): bool
@@ -53,32 +92,26 @@ class ProductService
         $deleted = (bool) $product->delete();
 
         if ($deleted) {
-            $this->deleteImage($image);
+            $this->imageStorage->delete($image);
         }
         return $deleted;
     }
 
-    private function uploadImage(?UploadedFile $image): ?string
+    private function prepareImage(array &$data, ?string $imagePath, ?string $imageExtension): void 
     {
-        if ($image === null) {
-            return null;
-        }
-        $directory = public_path('image');
-        File::ensureDirectoryExists($directory);
-        $imageName = uniqid() . '.' . $image->extension();
-        $image->move($directory, $imageName);
-
-        return $imageName;
-    }
-
-    private function deleteImage(?string $imageName): void
-    {
-        if ($imageName === null || $imageName === '') {
+        if ($imagePath === null) {
+            unset($data['image']);
             return;
         }
-        $path = public_path('image/' . basename($imageName));
-        if (File::exists($path)) {
-            File::delete($path);
+
+        if ($imageExtension === null) {
+            throw new InvalidArgumentException(
+                'Image extension is required.'
+            );
         }
+        $data['image'] = $this->imageStorage->store(
+            $imagePath,
+            $imageExtension
+        );
     }
 }

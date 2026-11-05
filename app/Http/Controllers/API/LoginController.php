@@ -3,37 +3,34 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
-
-use App\Http\Requests\LoginRequest; 
+use App\Http\Requests\LoginRequest;
+use App\Services\ApiAuthService;
+use App\Http\Resources\UserResource;
 
 class LoginController extends Controller
 {
-    
-    public function login(LoginRequest $request)
-    {    
-       $validated = $request->validated();
-       $user = User::where('email', $validated->email)->first();
+    public function __construct(private ApiAuthService $authService) 
+    {
+        //
+    }
 
-        if (!$user || !Hash::check($validated->password, $user->password)) {
+    public function login(LoginRequest $request)
+    {
+        $result = $this->authService->login(
+            $request->validated()
+        );
+        if (!$result) {
             return response()->json([
                 'status' => false,
-                'message' => 'Invalid email or password'
+                'message' => 'Invalid email or password',
             ], 401);
         }
-
-        $token = $user->createToken('auth_token')->plainTextToken;
-
         return response()->json([
             'status' => true,
             'message' => 'Login successful',
-            'access_token' => $token,
-            'token_type' => 'Bearer',
-            'user' => $user
+            'access_token' => $result['access_token'],
+            'token_type' => $result['token_type'],
+            'user' => new UserResource($result['user']),
         ], 200);
     }
 }

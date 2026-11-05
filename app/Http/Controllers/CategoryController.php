@@ -2,18 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Categorios;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Services\CategoryService;
-use App\Events\category;
-use App\Notifications\CategoryCreatedNotification;
-use Illuminate\Support\Facades\Auth;
-use App\Mail\CategoryCreatedMail;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Http\Request;
+use App\Services\NotificationService;
 
 class CategoryController extends Controller
 {
-    public function __construct(private CategoryService $categoryService) 
+    public function __construct(private CategoryService $categoryService ,private NotificationService $notificationService) 
     {
         //
     }
@@ -22,8 +20,7 @@ class CategoryController extends Controller
     {
         $categorios = $this->categoryService->getAllCategories();
 
-        return view('categoryview.index')
-            ->with('categorios', $categorios);
+        return view('categoryview.index')->with('categorios', $categorios);
 
         //return view('categoryview.index', compact('categorios'));
     }
@@ -37,32 +34,14 @@ class CategoryController extends Controller
     {
         $validated = $request->validated();
 
-        $category = $this->categoryService->createCategory([
-            'name' => $validated['name'],
-        ]);
+        $this->categoryService->createCategory($validated);
 
-        event(new category($category));
-
-        $user = Auth::user();
-
-        if ($user) {
-            $user->notify(
-                new CategoryCreatedNotification(
-                    $category->name,
-                    $category->id
-                )
-            );
-        }
-        Mail::to('khalidalomari558@gmail.com')->send(
-            new CategoryCreatedMail($category->name,(int) $category->id)
-        );
         return redirect()->route('Categorios.index')
-            ->with('success', 'Category added successfully');
+            ->with('success', 'Category Added Successfully');
     }
 
-    public function show($id)
+    public function show(Categorios $category)
     {
-        $category = $this->categoryService->getCategoryById((int) $id);
         $products = $category->products;
            
         return view('categoryview.show')
@@ -71,32 +50,25 @@ class CategoryController extends Controller
         //return view('categoryview.show', compact('category', 'products'));
     }
 
-    public function edit($id)
+    public function edit(Categorios $category)
     {
-        $category = $this->categoryService->getCategoryById((int) $id);
+        return view('categoryview.edit')->with('category', $category);
 
-        return view('categoryview.edit')
-            ->with('category', $category);
         //return view('categoryview.edit', compact('category'));
     }
 
-    public function update(UpdateCategoryRequest $request, $id)
+    public function update(UpdateCategoryRequest $request,Categorios $category)
     {
-        $category = $this->categoryService->getCategoryById((int) $id);
         $validated = $request->validated();
 
-        $this->categoryService->updateCategory($category, [
-            'name' => $validated['name'],
-        ]);
+        $this->categoryService->updateCategory($category,$validated);
 
         return redirect()->route('Categorios.index')
-            ->with('success', 'Category updated successfully');
+            ->with('success', 'Category Updated Successfully');
     }
 
-    public function destroy($id)
+    public function destroy(Categorios $category)
     {
-        $category = $this->categoryService->getCategoryById((int) $id);
-
         $deleted = $this->categoryService->deleteCategory($category);
 
         if (! $deleted) {
@@ -106,8 +78,7 @@ class CategoryController extends Controller
                     'Category cannot be deleted because it has linked products'
                 );
         }
-
         return redirect()->route('Categorios.index')
-            ->with('success', 'Category deleted successfully');
+            ->with('success', 'Category Deleted Successfully');
     }
 }

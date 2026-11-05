@@ -3,21 +3,25 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Notifications\DatabaseNotification;
+use App\Services\NotificationService;
+use App\Models\User;
 
 class NotificationController extends Controller
 {
+    public function __construct(private NotificationService $notificationService) 
+    {
+        //
+    }
+
     /**
      * Display notifications for the authenticated user.
      */
     public function index(Request $request)
     {
-        $notifications = $request->user()
-            ->notifications()
-            ->latest()
-            ->paginate(10);
+        $notifications = $this->notificationService->getUserNotifications($request->user());
 
-        return view('notifications.index')->with('notifications', $notifications);    
+        return view('notifications.index')->with('notifications', $notifications);
+
         //return view('notifications.index', compact('notifications'));
     }
 
@@ -26,15 +30,10 @@ class NotificationController extends Controller
      */
     public function markAsRead(Request $request, string $id)
     {
-        $notification = $request->user()
-            ->notifications()
-            ->whereKey($id)
-            ->firstOrFail();
-
-        $notification->markAsRead();
+       $this->notificationService->markAsRead($request->user(),$id);
 
         return redirect()->route('notifications.index')
-            ->with('success', 'Notification marked as read.');
+            ->with('success', 'Notification marked as Read.');
     }
 
     /**
@@ -42,12 +41,7 @@ class NotificationController extends Controller
      */
     public function destroy(Request $request, string $id)
     {
-        $notification = $request->user()
-            ->notifications()
-            ->whereKey($id)
-            ->firstOrFail();
-
-        $notification->delete();
+        $this->notificationService->deleteNotification($request->user(),$id);
 
         return redirect()->route('notifications.index')
             ->with('success', 'Notification deleted successfully.');

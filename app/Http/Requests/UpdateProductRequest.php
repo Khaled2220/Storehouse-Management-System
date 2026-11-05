@@ -2,9 +2,10 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Products;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 
 class UpdateProductRequest extends FormRequest
 {
@@ -13,18 +14,8 @@ class UpdateProductRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        $user = $this->user();
-        $product = $this->route('product');
-
-        if (!$user) {
-            return false;
-        }
-
-        if (!$product instanceof Products) {
-            $product = Products::find($product);
-        }
-
-        return $product !== null && $user->can('update', $product);
+        Gate::authorize('update',$this->route('product'));
+        return true;
     }
 
     /**
@@ -34,12 +25,17 @@ class UpdateProductRequest extends FormRequest
      */
     public function rules(): array
     {
+        $product = $this->route('product');
         return [
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255',Rule::unique('products', 'name')->ignore($product),],
             'quantity' => ['required','integer','min:0'],
             'description' => ['nullable','string'],
             'price' => ['required','numeric','min:0'],
-            'image' => ['nullable','mimes:jpeg,png,jpg,gif','max:2048']
+            'image' => ['nullable','image','mimes:jpeg,png,jpg,gif','max:2048'],
+            'categories' => ['nullable', 'array'],
+            'categories.*' => ['integer', 'exists:categories,id'],
+            'status' => ['required', 'in:active,expired'],
+            'expiry_date' => ['nullable', 'date'],
         ];
     }
 }

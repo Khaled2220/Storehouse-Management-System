@@ -3,7 +3,6 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
@@ -17,7 +16,7 @@ class CategoryCreatedMail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(public string $CategoryName,public int $CategoryId)
+    public function __construct(public string $categoryName,public int $categoryId)
     {
         //
     }

@@ -3,67 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\RegisterRequest;
-use App\Http\Requests\LoginRequest; 
-
+use App\Http\Requests\LoginRequest;
+use App\Services\WebAuthService;
 
 class AuthController extends Controller
 {
-/**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        return view('login');
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function __construct(private WebAuthService $authService) 
     {
         //
     }
@@ -75,37 +21,41 @@ class AuthController extends Controller
 
     public function register(RegisterRequest $request)
     {
-        $user = User::create([
-            'full_name' => $request->full_name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'user_type' => 2,
+        $this->authService->register(
+            $request->validated()
+        );
 
-         //'password'=>$request->password,
-         //'user_type' => ['nullable', 'in:0,1'],
-        
-        ]);
         return redirect('/');
     }
-    
-    public function showlogin()
+
+    public function showLogin()
     {
         return view('login');
     }
-    
+
     public function login(LoginRequest $request)
     {
-       $credentials = $request->only('email','password');
+        $authenticated = $this->authService->attemptLogin(
+            $request->validated()
+        );
 
-       if (Auth::attempt($credentials)) {
-        //dd('ssss');
+        if (!$authenticated) {
+            return back()
+                ->withErrors([
+                    'email' => 'Invalid email or password',
+                ])
+                ->onlyInput('email');
+        }
 
         $request->session()->regenerate();
-        return redirect()->route('Products.index'); 
-           
-        }
-        //dd('fffff');
-        
-        return back()->withErrors(['email' => 'Invalid email or password']);
+
+        return redirect()->route('Products.index');
     }
-}    
+
+    public function logout(Request $request)
+    {
+        $this->authService->logout($request);
+
+        return redirect()->route('login');
+    }
+}

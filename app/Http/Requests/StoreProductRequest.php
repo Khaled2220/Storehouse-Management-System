@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Models\Products;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 
 class StoreProductRequest extends FormRequest
 {
@@ -13,7 +14,8 @@ class StoreProductRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()->can('create', \App\Models\Products::class);
+        Gate::authorize('create',Products::class);
+        return true ;
     }
 
     /**
@@ -24,11 +26,15 @@ class StoreProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255|unique:products,name',
-            'quantity' => 'required|integer|min:0',
-            'description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'name' => ['required','string','max:255','unique:products,name'],
+            'quantity' => ['required','integer','min:0'],
+            'description' => ['nullable','string'],
+            'price' => ['required','numeric','min:0'],
+            'image' => ['nullable','image','mimes:jpeg,png,jpg,gif','max:2048'],
+            'categories' => ['nullable', 'array'],
+            'categories.*' => ['integer', 'exists:categories,id'],
+            'status' => ['required', 'in:active,expired'],
+            'expiry_date' => ['nullable', 'date'],
         ];
     }
     
@@ -36,7 +42,9 @@ class StoreProductRequest extends FormRequest
     {
         return [
             'name.unique' => 'This product name already exists. Please choose another name.',
+            'categories.*.exists' => 'One or more selected categories do not exist.',
+            'status.in' => 'Status must be active or expired.',
+            'expiry_date.date' => 'Please enter a valid expiry date.',
         ];
     }
-
 }

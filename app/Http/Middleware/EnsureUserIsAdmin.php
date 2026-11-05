@@ -2,24 +2,25 @@
 
 namespace App\Http\Middleware;
 
-use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Closure;
 
 class EnsureUserIsAdmin
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (!auth()->check()) {
+        $user = $request->user();
+
+        if (!$user)
+        {
             return redirect()->route('login');
         }
-
-        if ((int) auth()->user()->user_type !== 1) {
+        if  (!$user->isAdmin()) {
             return redirect()
                 ->route('Products.index')
                 ->with('error', 'Unauthorized access! Admin only.');
         }
-
         return $next($request);
     }
 }

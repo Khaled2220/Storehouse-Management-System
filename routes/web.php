@@ -1,86 +1,101 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\EnsureUserIsAdmin;
 use App\Models\Products;
 
+
 Route::redirect('/', '/login');
 
-// Register
 Route::get('/register', [AuthController::class, 'showRegister'])
     ->name('register');
 
 Route::post('/register', [AuthController::class, 'register'])
+    ->middleware('throttle:5,1')
     ->name('register.store');
 
-// Login
 Route::get('/login', [AuthController::class, 'showlogin'])
     ->name('login');
 
 Route::post('/login', [AuthController::class, 'login'])
+    ->middleware('throttle:5,1')
     ->name('login.store');
 
-// Authenticated users
+Route::post('/logout', [AuthController::class, 'logout'])
+    ->middleware('auth')
+    ->name('logout');    
+
 Route::middleware(['auth'])->group(function () {
 
-    // Products: create
+    Route::get('/Products', [ProductController::class, 'index'])
+        ->name('Products.index');
+
     Route::get('/Products/create', [ProductController::class, 'create'])
         ->middleware('can:create,' . Products::class)
         ->name('Products.create');
 
-    // Products: store
     Route::post('/Products', [ProductController::class, 'store'])
         ->middleware('can:create,' . Products::class)
         ->name('Products.store');
 
-    // Products: index
-    Route::get('/Products', [ProductController::class, 'index'])
-        ->name('Products.index');
-
-    // Products: edit
     Route::get('/Products/{product}/edit', [ProductController::class, 'edit'])
         ->whereNumber('product')
         ->middleware('can:update,product')
         ->name('Products.edit');
 
-    // Products: update
     Route::put('/Products/{product}', [ProductController::class, 'update'])
         ->whereNumber('product')
         ->middleware('can:update,product')
         ->name('Products.update');
 
-    // Products: update using PATCH
     Route::patch('/Products/{product}', [ProductController::class, 'update'])
         ->whereNumber('product')
         ->middleware('can:update,product')
         ->name('Products.update.patch');
 
-    // Products: delete
     Route::delete('/Products/{product}', [ProductController::class, 'destroy'])
         ->whereNumber('product')
         ->middleware('can:delete,product')
         ->name('Products.destroy');
 
-    // Products: show
     Route::get('/Products/{product}', [ProductController::class, 'show'])
         ->whereNumber('product')
         ->name('Products.show');
 
-    // Categories: admin-only management
     Route::middleware([EnsureUserIsAdmin::class])->group(function () {
+
         Route::resource('Categorios', CategoryController::class)
-            ->except(['index', 'show']);
+            ->except(['index', 'show'])
+            ->parameters([
+                'Categorios' => 'category',
+            ]);
     });
-
-    // Categories: available to authenticated users
     Route::resource('Categorios', CategoryController::class)
-        ->only(['index', 'show']);
+        ->only(['index', 'show'])
+        ->parameters([
+            'Categorios' => 'category',
+        ]);
 
-    // Notifications: admin only
+    Route::middleware([EnsureUserIsAdmin::class])->group(function () {
+
+        Route::resource('users', UserController::class)
+            ->names([
+                'index' => 'user.index',
+                'create' => 'user.create',
+                'store' => 'user.store',
+                'show' => 'user.show',
+                'edit' => 'user.edit',
+                'update' => 'user.update',
+                'destroy' => 'user.destroy',
+            ]);
+    });
     Route::middleware([EnsureUserIsAdmin::class])->group(function () {
 
         Route::get('/notifications', [
@@ -98,5 +113,15 @@ Route::middleware(['auth'])->group(function () {
             'destroy',
         ])->name('notifications.destroy');
     });
-});
+    Route::get('/Profile', [ProfileController::class, 'index'])
+        ->name('profile');
 
+    Route::get('/Profile/edit', [ProfileController::class, 'edit'])
+        ->name('profile.edit');
+
+    Route::patch('/Profile', [ProfileController::class, 'update'])
+        ->name('profile.update');
+
+    Route::delete('/Profile', [ProfileController::class, 'destroy'])
+        ->name('profile.destroy');
+});

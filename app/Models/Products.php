@@ -14,6 +14,8 @@ class Products extends Model
     'description',
     'price',
     'image',
+    'status',
+    'expiry_date',
     ];
 
     public function user(){
@@ -22,5 +24,12 @@ class Products extends Model
 
     public function categories(){
         return $this->belongsToMany( Categorios::class, 'products_categories', 'product_id', 'category_id');
+    }
+
+    protected function casts(): array
+    {
+        return [
+           'expiry_date' => 'date',
+        ];
     }
 }

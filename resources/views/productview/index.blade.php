@@ -1,7 +1,6 @@
-<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Products List</title>
 
@@ -33,6 +32,7 @@
             color: white !important;
             text-decoration: none;
         }
+
         .add-product-btn {
             background-color: #5cb85c;
             border-color: #4cae4c;
@@ -58,7 +58,7 @@
             justify-content: center;
             box-sizing: border-box;
             font-size: 14px;
-        }    
+        }
     </style>
 </head>
 
@@ -77,26 +77,37 @@
                 </a>
             </li>
 
-            @if (auth()->check() && (int) auth()->user()->user_type === 1)
+            @can('viewNotifications', \App\Models\User::class)
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('notifications.index') }}">
                         My Notifications
-                        @php
-                            $unreadCount = auth()->user()
-                                ->unreadNotifications()
-                                ->count();
-                        @endphp
 
-                        @if ($unreadCount > 0)
+                        @if (($unreadNotificationsCount ?? 0) > 0)
                             <span class="badge">
-                                {{ $unreadCount }}
+                                {{ $unreadNotificationsCount }}
                             </span>
                         @endif
                     </a>
                 </li>
-            @endif
+            @endcan
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('profile') }}">
+                    My Profile
+                </a>
+            </li>
         </ul>
+
+        <form method="POST" action="{{ route('logout') }}"
+              class="navbar-form navbar-right">
+
+            @csrf
+            <button type="submit" class="btn btn-default">
+                Logout
+            </button>
+        </form>
     </nav>
+
 
     <div class="container">
         <h2>Products List</h2>
@@ -113,12 +124,13 @@
             </div>
         @endif
 
-        @if (auth()->check() && (int) auth()->user()->user_type === 1)
-            <a href="{{ route('Products.create') }}"
-               class="btn add-product-btn">
+
+        @can('create', \App\Models\Products::class)
+
+            <a href="{{ route('Products.create') }}" class="btn add-product-btn">
                 Add New Products
             </a>
-        @endif
+        @endcan
 
         <br><br>
 
@@ -126,9 +138,12 @@
             <thead>
                 <tr>
                     <th>Name</th>
+                    <th>Status</th>
+                    <th>Expiry Date</th>
                     <th>Action</th>
                 </tr>
             </thead>
+
 
             <tbody>
                 @forelse ($Products as $product)
@@ -138,8 +153,24 @@
                         </td>
 
                         <td>
-                            <a href="{{ route('Products.show', $product->id) }}"
-                               class="btn show-detail-btn">
+                            @if ($product->status === 'expired')
+                                <span class="label label-danger">
+                                    Expired
+                                </span>
+
+                            @else
+                                <span class="label label-success">
+                                    Active
+                                </span>
+                            @endif
+                        </td>
+
+                        <td>
+                            {{ $product->expiry_date?->format('Y-m-d') ?? 'Not specified' }}
+                        </td>
+
+                        <td>
+                            <a href="{{ route('Products.show', $product->id) }}" class="btn show-detail-btn">
                                 Show Detail
                             </a>
                         </td>
@@ -147,7 +178,7 @@
 
                 @empty
                     <tr>
-                        <td colspan="2" class="text-center">
+                        <td colspan="4" class="text-center">
                             No products found.
                         </td>
                     </tr>
@@ -160,16 +191,15 @@
         @endif
 
         <div class="back-button">
-            <a href="{{ route('Categorios.index') }}"
-               class="btn back-btn">
-                Show Categorios
+            <a href="{{ route('Categorios.index') }}" class="btn back-btn">
+                Show Categories
             </a>
 
-            @if (auth()->check() && (int) auth()->user()->user_type === 1)
-            <a href="{{ route('notifications.index') }}"
-               class="btn back-btn">
-                Show Notification
-            </a>
-            @endif
+            @can('viewNotifications', \App\Models\User::class)
+                <a href="{{ route('notifications.index') }}" class="btn back-btn">
+                    Show Notification
+                </a>
+            @endcan
         </div>
     </div>
+

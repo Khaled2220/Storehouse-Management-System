@@ -1,15 +1,27 @@
-<div>
-    <h2>New Product Created Successfully</h2>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <p>A new product has been added to the Storehouse Management System.</p>
+    <title>New Product Created</title>
+</head>
 
-    <p>
-        <strong>Product Name:</strong>
-        {{ $productName }}
-    </p>
+<body>
+    <div>
+        <h2>New Product Created Successfully</h2>
 
-    <p>
-        <strong>Product ID:</strong>
-        {{ $productId }}
-    </p>
-</div>
+        <p>
+            A new product has been added to the
+            Storehouse Management System.
+        </p>
+
+        <p>
+            <strong>Product Name:</strong>
+            {{ $productName }}
+        </p>
+
+        <p>
+            <strong>Product ID:</strong>
+            {{ $productId }}
+        </p>
+    </div>
+</body>

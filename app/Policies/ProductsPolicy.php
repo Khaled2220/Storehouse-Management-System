@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Products;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class ProductsPolicy
 {
@@ -29,7 +28,7 @@ class ProductsPolicy
      */
     public function create(User $user): bool
     {
-        return (int) $user->user_type === 1;
+        return  $user->isAdmin();
     }
 
     /**
@@ -37,7 +36,7 @@ class ProductsPolicy
      */
     public function update(User $user, Products $products): bool
     {
-        return (int) $user->user_type === 1;
+        return $user->isAdmin();
     }
 
     /**
@@ -45,7 +44,7 @@ class ProductsPolicy
      */
     public function delete(User $user, Products $products): bool
     {
-        return (int) $user->user_type === 1;
+        return  $user->isAdmin();
     }
 
     /**
@@ -53,7 +52,7 @@ class ProductsPolicy
      */
     public function restore(User $user, Products $products): bool
     {
-        return (int) $user->user_type === 1;
+        return  $user->isAdmin();
     }
 
     /**
@@ -61,6 +60,6 @@ class ProductsPolicy
      */
     public function forceDelete(User $user, Products $products): bool
     {
-        return (int) $user->user_type === 1;
+        return $user->isAdmin();
     }
 }

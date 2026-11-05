@@ -1,4 +1,3 @@
-<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,6 +8,7 @@
           href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
     <style>
@@ -30,6 +30,7 @@
         .product-form {
             max-width: 600px;
         }
+
         .form-control {
             width: 100%;
             max-width: 600px;
@@ -62,6 +63,7 @@
             border-color: #398439;
             color: white;
         }
+
         .back-button {
             margin-top: 15px;
         }
@@ -72,6 +74,7 @@
             border-radius: 4px;
             text-decoration: none;
         }
+
         .back-button .back-btn:hover,
         .back-button .back-btn:focus {
             background-color: #555555;
@@ -82,45 +85,54 @@
 </head>
 
 <body>
-<nav class="navbar navbar-expand-sm bg-primary navbar-dark">
-    <ul class="nav navbar-nav">
-        <li class="nav-item">
-            <a class="nav-link" href="{{ route('Products.index') }}">
-                Products
-            </a>
-        </li>
-
-        <li class="nav-item">
-            <a class="nav-link" href="{{ route('Categorios.index') }}">
-                Category
-            </a>
-        </li>
-
-
-        @if (auth()->check() && (int) auth()->user()->user_type === 1)
+        <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
+        <ul class="nav navbar-nav">
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('notifications.index') }}">
-                    My Notifications
-                    @php
-                        $unreadCount = auth()->user()
-                            ->unreadNotifications()
-                            ->count();
-                    @endphp
-
-                    @if ($unreadCount > 0)
-                        <span class="badge">
-                            {{ $unreadCount }}
-                        </span>
-                    @endif
+                <a class="nav-link active" href="{{ route('Products.index') }}">
+                    Products
                 </a>
             </li>
-        @endif
-    </ul>
-</nav>
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('Categorios.index') }}">
+                    Category
+                </a>
+            </li>
+
+            @can('viewNotifications', \App\Models\User::class)
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('notifications.index') }}">
+                        My Notifications
+
+                        @if (($unreadNotificationsCount ?? 0) > 0)
+                            <span class="badge">
+                                {{ $unreadNotificationsCount }}
+                            </span>
+                        @endif
+                    </a>
+                </li>
+            @endcan
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('profile') }}">
+                    My Profile
+                </a>
+            </li>
+        </ul>
+
+        <form method="POST" action="{{ route('logout') }}"
+              class="navbar-form navbar-right">
+
+            @csrf
+            <button type="submit" class="btn btn-default">
+                Logout
+            </button>
+        </form>
+    </nav>
 
 <div class="container">
-    <h2>Add New Product</h2>
 
+    <h2>Add New Product</h2>
 
     @if (session('success'))
         <div class="alert alert-success">
@@ -128,6 +140,11 @@
         </div>
     @endif
 
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
 
     @if ($errors->any())
         <div class="alert alert-danger">
@@ -139,67 +156,90 @@
         </div>
     @endif
 
-    
-    @if (auth()->check() && (int) auth()->user()->user_type === 1)
-        <form
-            class="product-form"
-            method="POST"
-            action="{{ route('Products.store') }}"
-            enctype="multipart/form-data">
+    @can('create', \App\Models\Products::class)
+
+        <form class="product-form" method="POST"
+              action="{{ route('Products.store') }}"
+              enctype="multipart/form-data">
+
             @csrf
+
             <div class="form-group">
                 <label for="name">Name:</label>
-                <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    class="form-control"
-                    value="{{ old('name') }}"
-                    required>
+
+                <input type="text" id="name" name="name" class="form-control" value="{{ old('name') }}" required >
+            </div>
+
+            <div class="form-group">
+                <label for="categories">Categories:</label>
+
+                <select name="categories[]" id="categories" class="form-control" multiple >
+                    @foreach ($categories as $category)
+                        <option value="{{ $category->id }}"
+                            {{ in_array($category->id, old('categories', [])) ? 'selected' : '' }}
+                        >
+                            {{ $category->name }}
+                        </option>
+                    @endforeach
+                </select>
+
+                <small class="text-muted">
+                    Hold Ctrl to select multiple categories.
+                </small>
             </div>
 
             <div class="form-group">
                 <label for="description">Description:</label>
-                <textarea
-                    id="description"
-                    name="description"
+
+                <textarea id="description" name="description"
                     class="form-control"
-                    rows="4">{{ old('description') }}</textarea>
+                    rows="4"
+                >
+                    {{ old('description') }}
+                </textarea>
             </div>
 
             <div class="form-group">
                 <label for="quantity">Quantity:</label>
-                <input
-                    type="number"
-                    id="quantity"
-                    name="quantity"
-                    class="form-control"
-                    value="{{ old('quantity') }}"
-                    min="0"
-                    required>
+
+                <input type="number" id="quantity" name="quantity" class="form-control" value="{{ old('quantity') }}" min="0" required>
             </div>
 
             <div class="form-group">
                 <label for="price">Price:</label>
-                <input
-                    type="number"
-                    id="price"
-                    name="price"
-                    class="form-control"
-                    value="{{ old('price') }}"
-                    min="0"
-                    step="0.01"
-                    required>
+
+                <input type="number" id="price" name="price" class="form-control" value="{{ old('price') }}" min="0" step="0.01" required>
             </div>
 
             <div class="form-group">
                 <label for="image">Image:</label>
-                <input
-                    type="file"
-                    id="image"
-                    name="image"
+
+                <input type="file" id="image" name="image" class="form-control" accept="image/jpeg,image/png,image/jpg,image/gif" >
+            </div>
+
+            <div class="form-group">
+                <label for="status">Status:</label>
+                
+                <select name="status" id="status" class="form-control" required>
+                    <option value="active"
+                        {{ old('status', 'active') == 'active' ? 'selected' : '' }}>
+                        Active
+                    </option>
+
+                    <option value="expired"
+                        {{ old('status') == 'expired' ? 'selected' : '' }}>
+                        Expired
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="expiry_date">Expiry Date:</label>
+
+                <input type="date" id="expiry_date" name="expiry_date"
                     class="form-control"
-                    accept="image/jpeg,image/png,image/jpg,image/gif">
+                    value="{{ old('expiry_date') }}"
+                >
             </div>
 
             <div class="action-buttons">
@@ -207,24 +247,20 @@
                     Save Product
                 </button>
             </div>
-        </form>
 
-        <div class="back-button">
-            <a href="{{ route('Products.index') }}" class="btn back-btn">
-                Back to Products
-            </a>
-        </div>
+        </form>
 
     @else
         <div class="alert alert-danger">
-            <h4>Unauthorized access! Admin only.</h4>
+            <h4>Unauthorized access!</h4>
             <p>You do not have permission to add products.</p>
-
-            <div class="back-button">
-                <a href="{{ route('Products.index') }}" class="btn back-btn">
-                    Back to Products
-                </a>
-            </div>
         </div>
-    @endif
+    @endcan
+
+    <div class="back-button">
+        <a href="{{ route('Products.index') }}" class="btn back-btn">
+            Back to Products
+        </a>
+    </div>
 </div>
+

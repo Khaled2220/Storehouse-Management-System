@@ -2,102 +2,146 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\product;
+use App\Models\Products;
+use App\Models\Categorios;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
-use App\Mail\ProductCreatedMail;
-use App\Models\User;
-use App\Models\Products;
-use App\Notifications\ProductCreatedNotification;
 use App\Services\ProductService;
-use Illuminate\Support\Facades\Mail;
+use App\Services\NotificationService;
+use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    public function __construct(private ProductService $productService) 
+    public function __construct(private ProductService $productService, private NotificationService $notificationService) 
     {
         //
     }
 
-    public function index()
+    /**
+     * Display all products.
+     */
+    public function index(Request $request)
     {
-        $Products = $this->productService->getAllProducts();
+        $categoryId = $request->query('category_id');
 
-        return view('productview.index')
-            ->with('Products', $Products);
+        if ($categoryId) {
+            $Products = $this->productService
+               ->getProductsByCategory((int) $categoryId);
+        } 
+        else {
+            $Products = $this->productService->getAllProducts();
+        }
+        $unreadNotificationsCount = $this->getUnreadNotificationsCount($request);
+
+       return view('productview.index')
+            ->with('Products', $Products)
+            ->with('unreadNotificationsCount', $unreadNotificationsCount);
     }
 
-    public function create()
+    /**
+     * Show create product page.
+     */
+    public function create(Request $request)
     {
-        return view('productview.create');
+        $unreadNotificationsCount =
+        $this->getUnreadNotificationsCount($request);
+
+        $categories = Categorios::all();
+
+        return view('productview.create')
+           ->with('categories', $categories)
+           ->with('unreadNotificationsCount', $unreadNotificationsCount);
     }
 
+    /**
+     * Store a new product.
+     */
     public function store(StoreProductRequest $request)
     {
         $validated = $request->validated();
 
-        $product = $this->productService->createProduct(
+        $image = $request->file('image');
+
+        $this->productService->createProduct(
             $validated,
-            $request->file('image')
+            $image?->getRealPath() ?: null,
+            $image?->extension()
         );
-
-        event(new product($product));
-
-        User::where('user_type', 1)->each(function ($user) use ($product) {
-            $user->notify(
-                new ProductCreatedNotification(
-                    $product->name,
-                    (int) $product->id
-                )
-            );
-        });
-
-        Mail::to('khalidalomari558@gmail.com')->send(
-            new ProductCreatedMail(
-                $product->name,
-                (int) $product->id
-            )
-        );
-
         return redirect()->route('Products.index')
-            ->with('success', 'Product added successfully');
+            ->with('success', 'Product Added Successfully');
     }
 
-    public function show($id)
+    /**
+     * Display a specific product.
+     */
+    public function show(Request $request, Products $product)
     {
-        $product = $this->productService->getProductById(
-            (int) $id
-        );
+        $unreadNotificationsCount =
+            $this->getUnreadNotificationsCount($request);
 
         return view('productview.show')
-            ->with('product', $product);
+            ->with('product', $product)
+            ->with('unreadNotificationsCount', $unreadNotificationsCount);
     }
 
-    public function edit(Products $product)
+    /**
+     * Show edit product page.
+     */
+    public function edit(Request $request, Products $product)
     {
+        $unreadNotificationsCount =
+        $this->getUnreadNotificationsCount($request);
+
+        $categories = Categorios::all();
+
+        $product->load('categories');
+
         return view('productview.edit')
-            ->with('product', $product);
+           ->with('product', $product)
+           ->with('categories', $categories)
+           ->with('unreadNotificationsCount', $unreadNotificationsCount);
     }
 
-    public function update(UpdateProductRequest $request, Products $product)
+    /**
+     * Update an existing product.
+     */
+    public function update(UpdateProductRequest $request,Products $product) 
     {
         $validated = $request->validated();
+
+        $image = $request->file('image');
 
         $this->productService->updateProduct(
             $product,
             $validated,
-            $request->file('image')
+            $image?->getRealPath() ?: null,
+            $image?->extension()
         );
-
         return redirect()->route('Products.index')
-            ->with('success', 'Product updated successfully');
+            ->with('success', 'Product Updated Successfully');
     }
 
+    /**
+     * Delete a product.
+     */
     public function destroy(Products $product)
     {
-        $this->productService->deleteProduct($product);
+        $deleted = $this->productService->deleteProduct($product);
+
+        if (!$deleted) {
+            return redirect()->route('Products.index')
+                ->with('error', 'Product Could Not be Deleted');
+        }
 
         return redirect()->route('Products.index')
-            ->with('success', 'Product deleted successfully');
+            ->with('success', 'Product Deleted Successfully');
     }
+
+        
+    private function getUnreadNotificationsCount(Request $request): int
+    {
+        return $this->notificationService
+            ->getUnreadCount($request->user());
+    }
+
 }

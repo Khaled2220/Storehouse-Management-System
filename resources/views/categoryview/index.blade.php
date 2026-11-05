@@ -1,4 +1,3 @@
-<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -121,37 +120,42 @@
             </li>
 
 
-            @auth
-                @if ((int) auth()->user()->user_type === 1)
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('notifications.index') }}">
-                            My Notifications
-                            @php
-                                $unreadCount = auth()->user()
-                                    ->unreadNotifications()
-                                    ->count();
-                            @endphp
+            @can('viewNotifications', \App\Models\User::class)
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('notifications.index') }}">
+                        My Notifications
+                        @if (($unreadNotificationsCount ?? 0) > 0)
+                            <span class="badge">
+                                {{ $unreadNotificationsCount }}
+                            </span>
+                        @endif
+                    </a>
+                </li>
+            @endcan
 
-                            @if ($unreadCount > 0)
-                                <span class="badge">{{ $unreadCount }}</span>
-                            @endif
-                        </a>
-                    </li>
-                @endif
-            @endauth
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('profile') }}">
+                    My Profile
+                </a>
+            </li>
         </ul>
+
+        <form method="POST" action="{{ route('logout') }}"class="navbar-form navbar-right">
+            @csrf
+            <button type="submit" class="btn btn-default">
+                Logout
+            </button>
+        </form>
     </nav>
 
     <div class="container">
         <h2>Categories List</h2>
-
 
         @if (session('success'))
             <div class="alert alert-success">
                 {{ session('success') }}
             </div>
         @endif
-
 
         @if (session('error'))
             <div class="alert alert-danger">
@@ -171,16 +175,14 @@
         @endif
 
 
-        @auth
-            @if ((int) auth()->user()->user_type === 1)
-                <div class="add-button" style="margin-bottom: 20px;">
-                    <a href="{{ route('Categorios.create') }}"
-                       class="btn add-btn">
-                        Add New Category
-                    </a>
-                </div>
-            @endif
-        @endauth
+        @can('create', \App\Models\Categorios::class)
+            <div class="add-button" style="margin-bottom: 20px;">
+                <a href="{{ route('Categorios.create') }}" class="btn add-btn">
+                    Add New Category
+                </a>
+            </div>
+        @endcan
+
 
         <div class="table-responsive">
             <table class="table table-bordered table-striped">
@@ -189,12 +191,9 @@
                         <th>ID</th>
                         <th>Category Name</th>
                         <th>Show Products</th>
-
-                        @auth
-                            @if ((int) auth()->user()->user_type === 1)
-                                <th>Action</th>
-                            @endif
-                        @endauth
+                        @can('create', \App\Models\Categorios::class)
+                            <th>Action</th>
+                        @endcan
                     </tr>
                 </thead>
 
@@ -210,51 +209,58 @@
                             </td>
 
                             <td>
-                                <a href="{{ route('Products.index', ['category_id' => $category->id]) }}"
-                                   class="btn show-products-btn">
+                                <a href="{{ route('Products.index', ['category_id' => $category->id]) }}" class="btn show-products-btn">
                                     Show Products
                                 </a>
                             </td>
 
-                            
-                            @auth
-                                @if ((int) auth()->user()->user_type === 1)
-                                    <td>
-                                        <div class="action-buttons">
-                                            <a href="{{ route('Categorios.edit', $category->id) }}"
-                                               class="btn edit-btn">
+                            @can('create', \App\Models\Categorios::class)
+                                <td>
+                                    <div class="action-buttons">
+                                        @can('update', $category)
+                                            <a href="{{ route('Categorios.edit', $category->id) }}" class="btn edit-btn">
                                                 Edit
                                             </a>
+                                        @endcan
 
-                                            <form action="{{ route('Categorios.destroy', $category->id) }}"
-                                                  method="POST"
-                                                  onsubmit="return confirm('Are you sure you want to delete this category?');">
+                                        @can('delete', $category)
+                                            <form action="{{ route('Categorios.destroy', $category->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this category?');">
                                                 @csrf
                                                 @method('DELETE')
+
                                                 <button type="submit" class="btn delete-btn">
                                                     Delete
                                                 </button>
                                             </form>
-                                        </div>
-                                    </td>
-                                @endif
-                            @endauth
+                                        @endcan
+                                    </div>
+                                </td>
+                            @endcan
                         </tr>
 
                     @empty
-                        <tr>
-                            <td colspan="{{ auth()->check() && (int) auth()->user()->user_type === 1 ? 4 : 3 }}">
-                                No categories found.
-                            </td>
-                        </tr>
+                        @can('create', \App\Models\Categorios::class)
+                            <tr>
+                                <td colspan="4" class="text-center">
+                                    No categories found.
+                                </td>
+                            </tr>
+
+                        @else
+                            <tr>
+                                <td colspan="3" class="text-center">
+                                    No categories found.
+                                </td>
+                            </tr>
+                        @endcan
                     @endforelse
                 </tbody>
             </table>
         </div>
 
+
         <div class="back-button">
-            <a href="{{ route('Products.index') }}"
-               class="btn back-btn">
+            <a href="{{ route('Products.index') }}" class="btn back-btn">
                 Back to Products
             </a>
         </div>

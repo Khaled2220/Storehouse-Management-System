@@ -4,6 +4,8 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 
 class UpdateCategoryRequest extends FormRequest
 {
@@ -12,6 +14,7 @@ class UpdateCategoryRequest extends FormRequest
      */
     public function authorize(): bool
     {
+        Gate::authorize('update',$this->route('category'));
         return true;
     }
 
@@ -22,8 +25,9 @@ class UpdateCategoryRequest extends FormRequest
      */
     public function rules(): array
     {
+        $category = $this->route('category');
         return [
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255',Rule::unique('categories', 'name')->ignore($category),],
         ];
     }
 }

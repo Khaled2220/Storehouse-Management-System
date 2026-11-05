@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\RegisterController;
 use App\Http\Controllers\API\LoginController;
@@ -10,18 +9,33 @@ use App\Http\Controllers\API\ProductController;
 Route::get('/test', function () {
     return response()->json([
         'status' => true,
-        'message' => 'API is working '
+        'message' => 'API is working',
     ]);
 });
 
-//Route::get('/register', [RegisterController::class,'Registe']);
-Route::post('/register', [RegisterController::class, 'register']);
+Route::post('/register', [RegisterController::class, 'register'])
+    ->middleware('throttle:5,1');
 
-//Route::get('/login',[LoginController::class,'login']);
-Route::post('/login', [LoginController::class, 'login']);
+Route::post('/login', [LoginController::class, 'login'])
+    ->middleware('throttle:5,1');
 
-Route::middleware(['auth:sanctum'])->group(function () {
-  Route::apiResource('products', ProductController::class);
+Route::get('/products', [ProductController::class, 'index']);
+
+Route::get('/products/{id}', [ProductController::class, 'show']);
+
+
+Route::middleware('auth:sanctum')->group(function () {
+
+    Route::post('/products', [ProductController::class, 'store'])
+        ->middleware('can:create,App\Models\Products');
+
+    Route::put('/products/{product}', [ProductController::class, 'update'])
+        ->middleware('can:update,product');
+
+    Route::patch('/products/{product}', [ProductController::class, 'update'])
+        ->middleware('can:update,product');
+
+    Route::delete('/products/{product}', [ProductController::class, 'destroy'])
+        ->middleware('can:delete,product');
+
 });
-
-
