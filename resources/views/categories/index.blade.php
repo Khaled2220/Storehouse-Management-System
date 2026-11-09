@@ -105,6 +105,10 @@
         <a href="{{ route('products.index') }}" class="btn back-btn">
             Back to Products
         </a>
+
+        <a href="{{ route('suppliers.index') }}" class="btn back-btn">
+            Show Suppliers
+        </a>
     </div>
 
 @endsection

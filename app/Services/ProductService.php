@@ -13,29 +13,6 @@ class ProductService
         //
     }
 
-    public function getAllProducts()
-    {
-        return Product::with(['categories', 'user'])
-            ->latest()
-            ->paginate(50);
-    }
-
-    public function getProductsByCategory(int $categoryId)
-    {
-        return Product::with(['categories', 'user'])
-            ->whereHas('categories', function ($query) use ($categoryId) {
-                $query->where('categories.id', $categoryId);
-            })
-            ->latest()
-            ->paginate(50);
-    }
-
-    public function getProductById(int $id): Product
-    {
-        return Product::with(['categories', 'user'])
-            ->findOrFail($id);
-    }
-
     public function createProduct(array $data, ?string $imagePath = null, ?string $imageExtension = null): Product
     {
         $categoryIds = $data['categories'] ?? [];
@@ -53,7 +30,7 @@ class ProductService
 
         event(new ProductCreated($product));
 
-        return $product->load(['categories', 'user']);
+        return $product->load(['categories', 'user', 'supplier']);
     }
 
     public function updateProduct(Product $product, array $data, ?string $imagePath = null, ?string $imageExtension = null): Product
@@ -82,7 +59,7 @@ class ProductService
             $this->imageStorage->delete($oldImage);
         }
 
-        return $product->refresh()->load(['categories', 'user']);
+        return $product->refresh()->load(['categories', 'user', 'supplier']);
     }
 
     public function deleteProduct(Product $product): bool
@@ -96,6 +73,30 @@ class ProductService
         }
 
         return $deleted;
+    }
+
+
+    public function getAllProducts()
+    {
+        return Product::with(['categories', 'user', 'supplier'])
+            ->latest()
+            ->paginate(50);
+    }
+
+    public function getProductsByCategory(int $categoryId)
+    {
+        return Product::with(['categories', 'user', 'supplier'])
+            ->whereHas('categories', function ($query) use ($categoryId) {
+                $query->where('categories.id', $categoryId);
+            })
+            ->latest()
+            ->paginate(50);
+    }
+
+    public function getProductById(int $id): Product
+    {
+        return Product::with(['categories', 'user', 'supplier'])
+            ->findOrFail($id);
     }
 
     private function prepareImage(array &$data, ?string $imagePath, ?string $imageExtension): void

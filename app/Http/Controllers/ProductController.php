@@ -6,6 +6,7 @@ use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Supplier;
 use App\Services\NotificationService;
 use App\Services\ProductService;
 use Illuminate\Http\Request;
@@ -46,8 +47,11 @@ class ProductController extends Controller
 
         $categories = Category::all();
 
+        $suppliers = Supplier::orderBy('name')->get();
+
         return view('products.create')
             ->with('categories', $categories)
+            ->with('suppliers', $suppliers)
             ->with('unreadNotificationsCount', $unreadNotificationsCount);
     }
 
@@ -93,11 +97,14 @@ class ProductController extends Controller
 
         $categories = Category::all();
 
-        $product->load('categories');
+        $suppliers = Supplier::orderBy('name')->get();
+
+        $product->load('categories', 'supplier');
 
         return view('products.edit')
             ->with('product', $product)
             ->with('categories', $categories)
+            ->with('suppliers', $suppliers)
             ->with('unreadNotificationsCount', $unreadNotificationsCount);
     }
 

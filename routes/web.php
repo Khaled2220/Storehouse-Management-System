@@ -9,6 +9,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Middleware\EnsureUserIsAdmin;
 use App\Models\Product;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SupplierController;
+use App\Models\Supplier;
 
 Route::redirect('/', '/login');
 
@@ -38,6 +40,13 @@ Route::middleware(['auth'])->group(function () {
         ->middlewareFor('edit', 'can:update,product')
         ->middlewareFor('update', 'can:update,product')
         ->middlewareFor('destroy', 'can:delete,product');
+
+    Route::resource('suppliers', SupplierController::class)
+        ->middlewareFor('create', 'can:create,'.Supplier::class)
+        ->middlewareFor('store', 'can:create,'.Supplier::class)
+        ->middlewareFor('edit', 'can:update,supplier')
+        ->middlewareFor('update', 'can:update,supplier')
+        ->middlewareFor('destroy', 'can:delete,supplier');    
 
     Route::middleware([EnsureUserIsAdmin::class])->group(function () {
         Route::resource('categories', CategoryController::class)

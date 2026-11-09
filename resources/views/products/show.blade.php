@@ -8,9 +8,23 @@
 
 <table class="table table-bordered product-details">
     <tbody>
+
         <tr>
             <th>Name</th>
             <td>{{ $product->name }}</td>
+        </tr>
+
+        <tr>
+            <th>Supplier</th>
+            <td>
+                @if ($product->supplier)
+                    <a href="{{ route('suppliers.show', $product->supplier) }}">
+                        {{ $product->supplier->name }}
+                    </a>
+                @else
+                    No supplier assigned
+                @endif
+            </td>
         </tr>
 
         <tr>
@@ -28,6 +42,24 @@
         <tr>
             <th>Price</th>
             <td>{{ $product->price }}</td>
+        </tr>
+
+        <tr>
+            <th>Status</th>
+            <td>
+                @if ($product->status === 'expired')
+                    <span class="label label-danger">Expired</span>
+                @else
+                    <span class="label label-success">Active</span>
+                @endif
+            </td>
+        </tr>
+
+        <tr>
+            <th>Expiry Date</th>
+            <td>
+                {{ $product->expiry_date?->format('Y-m-d') ?? 'Not specified' }}
+            </td>
         </tr>
 
         <tr>
@@ -50,6 +82,7 @@
                 {{ $product->created_at?->format('Y-m-d') ?? 'N/A' }}
             </td>
         </tr>
+
     </tbody>
 </table>
 

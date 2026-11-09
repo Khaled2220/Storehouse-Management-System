@@ -26,9 +26,9 @@
         @csrf
         @method('PUT')
 
+        {{-- Product Name --}}
         <div class="form-group">
             <label for="name">Name:</label>
-
             <input
                 type="text"
                 id="name"
@@ -42,10 +42,12 @@
             @enderror
         </div>
 
+        {{-- Categories --}}
         <div class="form-group">
             <label for="categories">Categories:</label>
 
-            <select name="categories[]" id="categories" class="form-control" multiple>
+            <select name="categories[]" id="categories"
+                    class="form-control" multiple>
                 @foreach ($categories as $category)
                     <option
                         value="{{ $category->id }}"
@@ -71,6 +73,33 @@
             @enderror
         </div>
 
+        {{-- Supplier --}}
+        <div class="form-group">
+            <label for="supplier_id">Supplier:</label>
+
+            <select
+                name="supplier_id"
+                id="supplier_id"
+                class="form-control"
+                required>
+
+                <option value="">Select Supplier</option>
+
+                @foreach ($suppliers as $supplier)
+                    <option
+                        value="{{ $supplier->id }}"
+                        {{ old('supplier_id', $product->supplier_id) == $supplier->id ? 'selected' : '' }}>
+                        {{ $supplier->name }}
+                    </option>
+                @endforeach
+            </select>
+
+            @error('supplier_id')
+                <small class="text-danger">{{ $message }}</small>
+            @enderror
+        </div>
+
+        {{-- Description --}}
         <div class="form-group">
             <label for="description">Description:</label>
 
@@ -85,6 +114,7 @@
             @enderror
         </div>
 
+        {{-- Quantity --}}
         <div class="form-group">
             <label for="quantity">Quantity:</label>
 
@@ -102,6 +132,7 @@
             @enderror
         </div>
 
+        {{-- Price --}}
         <div class="form-group">
             <label for="price">Price:</label>
 
@@ -120,10 +151,13 @@
             @enderror
         </div>
 
+        {{-- Status --}}
         <div class="form-group">
             <label for="status">Status:</label>
 
-            <select name="status" id="status" class="form-control" required>
+            <select name="status" id="status"
+                    class="form-control" required>
+
                 <option value="active"
                     {{ old('status', $product->status) == 'active' ? 'selected' : '' }}>
                     Active
@@ -140,6 +174,7 @@
             @enderror
         </div>
 
+        {{-- Expiry Date --}}
         <div class="form-group">
             <label for="expiry_date">Expiry Date:</label>
 
@@ -155,6 +190,7 @@
             @enderror
         </div>
 
+        {{-- Current Image --}}
         <div class="form-group">
             <label>Current Image:</label>
             <br>
@@ -169,6 +205,7 @@
             @endif
         </div>
 
+        {{-- Change Image --}}
         <div class="form-group">
             <label for="image">Change Image:</label>
 

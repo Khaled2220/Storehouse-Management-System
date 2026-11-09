@@ -67,10 +67,14 @@
             Show Categories
         </a>
 
+        <a href="{{ route('suppliers.index') }}" class="btn">
+            Show Suppliers
+        </a>
+
         @can('viewNotifications', \App\Models\User::class)
-            <a href="{{ route('notifications.index') }}" class="btn">
-                Show Notification
-            </a>
+        <a href="{{ route('notifications.index') }}" class="btn">
+            Show Notification
+        </a>
         @endcan
     </div>
 
