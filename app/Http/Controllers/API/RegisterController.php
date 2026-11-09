@@ -4,12 +4,12 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterRequest;
-use App\Services\ApiAuthService;
 use App\Http\Resources\UserResource;
+use App\Services\ApiAuthService;
 
 class RegisterController extends Controller
 {
-    public function __construct(private ApiAuthService $authService) 
+    public function __construct(private ApiAuthService $authService)
     {
         //
     }
@@ -19,6 +19,7 @@ class RegisterController extends Controller
         $result = $this->authService->register(
             $request->validated()
         );
+
         return response()->json([
             'status' => true,
             'message' => 'User registered successfully!',

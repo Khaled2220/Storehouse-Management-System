@@ -14,7 +14,8 @@ class UpdateProfileRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        Gate::authorize('updateProfile',$this->user());
+        Gate::authorize('updateProfile', $this->user());
+
         return true;
     }
 
@@ -26,8 +27,8 @@ class UpdateProfileRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'full_name'=>['required','string','max:250'],
-            'email' => ['required','string','email','max:225',Rule::unique('users', 'email')->ignore($this->user()->id),],
+            'full_name' => ['required', 'string', 'max:250'],
+            'email' => ['required', 'string', 'email', 'max:225', Rule::unique('users', 'email')->ignore($this->user()->id)],
         ];
     }
 }

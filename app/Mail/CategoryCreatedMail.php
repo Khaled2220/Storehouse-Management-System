@@ -16,7 +16,7 @@ class CategoryCreatedMail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(public string $categoryName,public int $categoryId)
+    public function __construct(public string $categoryName, public int $categoryId)
     {
         //
     }

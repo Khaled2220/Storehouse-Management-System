@@ -30,7 +30,7 @@ class ProfileService
     {
         $deleted = (bool) $user->delete();
 
-        if (!$deleted) {
+        if (! $deleted) {
             return false;
         }
         Auth::logout();

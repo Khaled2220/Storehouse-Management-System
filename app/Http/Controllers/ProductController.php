@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
-use App\Models\Category;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
-use App\Services\ProductService;
+use App\Models\Category;
+use App\Models\Product;
 use App\Services\NotificationService;
+use App\Services\ProductService;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    public function __construct(private ProductService $productService, private NotificationService $notificationService) 
+    public function __construct(private ProductService $productService, private NotificationService $notificationService)
     {
         //
     }
@@ -26,13 +26,12 @@ class ProductController extends Controller
 
         if ($categoryId) {
             $products = $this->productService->getProductsByCategory((int) $categoryId);
-        } 
-        else {
+        } else {
             $products = $this->productService->getAllProducts();
         }
         $unreadNotificationsCount = $this->getUnreadNotificationsCount($request);
 
-       return view('products.index')
+        return view('products.index')
             ->with('products', $products)
             ->with('unreadNotificationsCount', $unreadNotificationsCount);
     }
@@ -48,8 +47,8 @@ class ProductController extends Controller
         $categories = Category::all();
 
         return view('products.create')
-           ->with('categories', $categories)
-           ->with('unreadNotificationsCount', $unreadNotificationsCount);
+            ->with('categories', $categories)
+            ->with('unreadNotificationsCount', $unreadNotificationsCount);
     }
 
     /**
@@ -66,6 +65,7 @@ class ProductController extends Controller
             $image?->getRealPath() ?: null,
             $image?->extension()
         );
+
         return redirect()->route('products.index')
             ->with('success', 'Product Added Successfully');
     }
@@ -96,9 +96,9 @@ class ProductController extends Controller
         $product->load('categories');
 
         return view('products.edit')
-           ->with('product', $product)
-           ->with('categories', $categories)
-           ->with('unreadNotificationsCount', $unreadNotificationsCount);
+            ->with('product', $product)
+            ->with('categories', $categories)
+            ->with('unreadNotificationsCount', $unreadNotificationsCount);
     }
 
     /**
@@ -116,6 +116,7 @@ class ProductController extends Controller
             $image?->getRealPath() ?: null,
             $image?->extension()
         );
+
         return redirect()->route('products.index')
             ->with('success', 'Product Updated Successfully');
     }
@@ -127,7 +128,7 @@ class ProductController extends Controller
     {
         $deleted = $this->productService->deleteProduct($product);
 
-        if (!$deleted) {
+        if (! $deleted) {
             return redirect()->route('products.index')
                 ->with('error', 'Product Could Not be Deleted');
         }
@@ -136,11 +137,9 @@ class ProductController extends Controller
             ->with('success', 'Product Deleted Successfully');
     }
 
-        
     private function getUnreadNotificationsCount(Request $request): int
     {
         return $this->notificationService
             ->getUnreadCount($request->user());
     }
-
 }

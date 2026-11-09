@@ -1,3 +1,4 @@
+
 @import 'tailwindcss';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
@@ -6,4 +7,635 @@
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+.navbar .nav-link,
+.navbar .nav-link:hover,
+.navbar .nav-link:focus {
+    color: black !important;
+    font-size: 20px;
+}
+
+.container {
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+
+.show-detail-btn,
+.action-buttons .btn,
+.back-button .btn {
+    background-color: DimGrey;
+    color: white !important;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+}
+
+.show-detail-btn:hover,
+.action-buttons .btn:hover,
+.back-button .btn:hover {
+    background-color: #555555;
+    color: white !important;
+    text-decoration: none;
+}
+
+.add-product-btn {
+    background-color: #5cb85c;
+    border-color: #4cae4c;
+    color: white !important;
+}
+
+.add-product-btn:hover {
+    background-color: #449d44;
+    border-color: #398439;
+    color: white !important;
+}
+
+
+/* Categories Index */
+
+.category-form {
+    max-width: 600px;
+}
+
+.form-control {
+    width: 100%;
+    max-width: 600px;
+}
+
+h2 {
+    margin-bottom: 25px;
+}
+
+.table {
+    background-color: white;
+}
+
+.table th,
+.table td {
+    text-align: center;
+    vertical-align: middle !important;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.action-buttons .btn,
+.add-button .btn,
+.back-button .btn {
+    width: 170px;
+    height: 40px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    border-radius: 4px;
+    border: none;
+    text-decoration: none;
+}
+
+.show-products-btn,
+.back-btn {
+    background-color: DimGrey;
+    color: white !important;
+}
+
+.show-products-btn:hover,
+.back-btn:hover {
+    background-color: #555555;
+    color: white !important;
+}
+
+.edit-btn {
+    background-color: #f0ad4e;
+    color: white !important;
+}
+
+.edit-btn:hover {
+    background-color: #ec971f;
+    color: white !important;
+}
+
+.delete-btn {
+    background-color: #d9534f;
+    color: white !important;
+}
+
+.delete-btn:hover {
+    background-color: #c9302c;
+    color: white !important;
+}
+
+.add-btn {
+    background-color: #5cb85c;
+    color: white !important;
+}
+
+.add-btn:hover {
+    background-color: #449d44;
+    color: white !important;
+}
+
+.alert {
+    margin-top: 15px;
+}
+
+.back-button {
+    margin-top: 20px;
+}
+
+.add-button {
+    margin-bottom: 20px;
+}
+
+
+/* Register  */
+
+.register-page {
+    min-height: calc(100vh - 50px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.register-box {
+    width: 100%;
+    max-width: 440px;
+    background-color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.register-box .panel-body {
+    padding: 25px;
+}
+
+.register-box .text-logo {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #0b4d7a;
+}
+
+.register-box .form-control {
+    border: 1px solid #cbd5e1;
+    padding: 10px 14px;
+    border-radius: 6px;
+    height: auto;
+}
+
+.btn-register {
+    background-color: Navy;
+    color: white;
+    font-weight: 600;
+    padding: 11px;
+    border-radius: 6px;
+    border: none;
+}
+
+.btn-register:hover,
+.btn-register:focus {
+    background-color: #083b5e;
+    color: white;
+}
+
+
+/* Login  */
+
+.login-page {
+    min-height: calc(100vh - 50px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-box {
+    width: 100%;
+    max-width: 440px;
+    background-color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.login-box .panel-body {
+    padding: 25px;
+}
+
+.login-box .text-logo {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #0b4d7a;
+    letter-spacing: -1px;
+}
+
+.login-box .form-control {
+    border: 1px solid #cbd5e1;
+    padding: 10px 14px;
+    border-radius: 6px;
+    height: auto;
+}
+
+.login-box .form-control:focus {
+    border-color: #0b4d7a;
+    box-shadow: 0 0 0 2px rgba(11, 77, 122, 0.15);
+}
+
+.btn-login {
+    background-color: Navy;
+    color: #ffffff;
+    font-weight: 600;
+    padding: 11px;
+    border-radius: 6px;
+    border: none;
+}
+
+.btn-login:hover,
+.btn-login:focus {
+    background-color: #083b5e;
+    color: #ffffff;
+}
+
+.btn-create-account {
+    background-color: Navy;
+    color: white !important;
+    font-weight: bold;
+}
+
+
+/* Category create  */
+
+.save-btn {
+    background-color: #5cb85c;
+    color: white;
+    border: none;
+}
+
+.save-btn:hover,
+.save-btn:focus {
+    background-color: #449d44;
+    color: white;
+}
+
+.action-buttons {
+    margin-top: 20px;
+}
+
+.back-button {
+    margin-top: 15px;
+}
+
+
+/* Category edit */
+
+.update-btn {
+    background-color: #5cb85c;
+    color: white;
+    border: none;
+}
+
+.update-btn:hover,
+.update-btn:focus {
+    background-color: #449d44;
+    color: white;
+}
+
+/* Category Show */
+.product-image {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+}
+
+/* Product create  */
+.product-form {
+    max-width: 600px;
+}
+
+/* Product edit  */
+.current-image {
+    max-width: 250px;
+    height: auto;
+    border-radius: 6px;
+    margin-top: 10px;
+}
+
+/* Product Show */
+.product-details th {
+    width: 180px;
+}
+
+.product-image {
+    max-width: 250px;
+    height: auto;
+    border-radius: 6px;
+    margin-top: 10px;
+}
+
+.action-buttons form {
+    display: inline-block;
+    margin: 0;
+}
+
+/* Notifications  */
+.notification {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 15px;
+}
+
+.notification.unread {
+    border-left: 5px solid #2563eb;
+}
+
+.notification.read {
+    border-left: 5px solid #16a34a;
+}
+
+.notification-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+
+.notification-actions form {
+    display: inline-block;
+    margin: 0;
+}
+
+.notification-actions .btn,
+.mark-read-button {
+    min-width: 100px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+.mark-read-button {
+    background: #5cb85c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+.mark-read-button:hover {
+    background: #449d44;
+    color: white;
+}
+
+.notification-actions .btn-danger {
+    background-color: #d9534f;
+    border-color: #d43f3a;
+    color: white;
+}
+
+.notification-actions .btn-danger:hover,
+.notification-actions .btn-danger:focus {
+    background-color: #c9302c;
+    border-color: #ac2925;
+    color: white;
+}
+
+.back-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    margin-bottom: 25px;
+}
+
+.back-buttons .back-btn {
+    width: 170px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    font-size: 14px;
+    background-color: DimGrey;
+    color: white !important;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+}
+
+.back-buttons .back-btn:hover,
+.back-buttons .back-btn:focus {
+    background-color: #555;
+    color: white !important;
+    text-decoration: none;
+}
+
+/* Profile Index */
+.profile-container {
+    max-width: 600px;
+    margin: 50px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.profile-title {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.profile-row {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.profile-label {
+    font-weight: bold;
+    color: #555;
+}
+
+.profile-back-button {
+    background-color: DimGrey;
+    color: white !important;
+    margin-top: 20px;
+    width: 120px;
+    height: 40px;
+    border: none;
+}
+
+.profile-back-button:hover,
+.profile-back-button:focus {
+    color: white !important;
+    background-color: #444;
+}
+
+.edit-button {
+    background-color: #f0ad4e;
+    color: white !important;
+    margin-top: 20px;
+    width: 170px;
+    height: 40px;
+    border: none;
+}
+
+.edit-button:hover,
+.edit-button:focus {
+    background-color: #ec971f;
+    color: white !important;
+}
+
+.delete-button {
+    background-color: #d9534f;
+    color: white;
+    width: 170px;
+    height: 40px;
+    margin-top: 10px;
+    border: none;
+}
+
+.delete-button:hover,
+.delete-button:focus {
+    background-color: #c9302c;
+    color: white;
+}
+
+.delete-form {
+    margin-top: 25px;
+}
+
+/* Profile edit */
+.form-container {
+    max-width: 600px;
+    margin: 30px auto;
+    padding: 30px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-update {
+    background-color: #f0ad4e;
+    color: white;
+    width: 170px;
+    height: 40px;
+    border: none;
+}
+
+.btn-update:hover,
+.btn-update:focus {
+    background-color: #ec971f;
+    color: white;
+}
+
+.btn-back {
+    background-color: DimGrey;
+    color: white !important;
+    width: 120px;
+    height: 40px;
+    border: none;
+}
+
+.btn-back:hover,
+.btn-back:focus {
+    background-color: #444;
+    color: white !important;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+/* Users index  */
+.action-buttons form {
+    display: inline-block;
+    margin: 0;
+}
+
+.action-buttons .btn {
+    width: 100px;
+    height: 40px;
+}
+
+/* User create  */
+.btn-add {
+    background-color: #5cb85c;
+    color: white;
+    width: 170px;
+    height: 40px;
+    border: none;
+}
+
+.btn-add:hover,
+.btn-add:focus {
+    background-color: #449d44;
+    color: white;
+}
+
+.form-actions .btn-back {
+    background-color: DimGrey;
+    color: white !important;
+    width: 120px;
+    height: 40px;
+    border: none;
+}
+
+.form-actions .btn-back:hover,
+.form-actions .btn-back:focus {
+    background-color: #444;
+    color: white !important;
+}
+
+/* User Show  */
+.details {
+    width: 60%;
+    margin: 30px auto;
+    background-color: white;
+}
+
+.details th {
+    width: 30%;
+}
+
+.btn-back {
+    background-color: DimGrey;
+    color: white !important;
+    width: 120px;
+    height: 40px;
+    border: none;
+}
+
+.btn-back:hover,
+.btn-back:focus {
+    background-color: #444;
+    color: white !important;
+}
+
+/* User edit  */
+.btn-update {
+    background-color: #f0ad4e;
+    color: white !important;
+    width: 170px;
+    height: 40px;
+    border: none;
+}
+
+.btn-update:hover,
+.btn-update:focus {
+    background-color: #ec971f;
+    color: white !important;
 }

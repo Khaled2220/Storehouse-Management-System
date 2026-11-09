@@ -15,6 +15,7 @@ class StoreUserRequest extends FormRequest
     public function authorize(): bool
     {
         Gate::authorize('create', User::class);
+
         return true;
     }
 
@@ -26,17 +27,17 @@ class StoreUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'full_name' =>['required','string','max:250'],
-            'email' =>['required','string','email','max:225','unique:users,email'],
-            'password' =>['required','string','min:7'],
-            'user_type' =>['required','in:1,2'],
+            'full_name' => ['required', 'string', 'max:250'],
+            'email' => ['required', 'string', 'email', 'max:225', 'unique:users,email'],
+            'password' => ['required', 'string', 'min:7'],
+            'user_type' => ['required', 'in:1,2'],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'email.unique' =>'This Email already exists.Please Choose another Email'
+            'email.unique' => 'This Email already exists.Please Choose another Email',
         ];
     }
 }

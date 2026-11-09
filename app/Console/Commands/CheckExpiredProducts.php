@@ -2,15 +2,14 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Product;
+use Carbon\Carbon;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
-use App\Models\Products; 
-use Carbon\Carbon;  
-
 
 #[Signature('app:check-expired-products')]
-#[Description('Command description')]
+#[Description('Mark active products as expired when their expiry date is today or earlier.')]
 
 class CheckExpiredProducts extends Command
 {
@@ -19,15 +18,20 @@ class CheckExpiredProducts extends Command
      */
     public function handle()
     {
-       $updatedCount = Products::where('expiry_date', '<=', Carbon::today('Asia/Amman')->toDateString())
+        $updatedCount = Product::where(
+            'expiry_date',
+            '<=',
+            Carbon::today(config('app.timezone'))->toDateString()
+        )
             ->where('status', 'active')
             ->update(['status' => 'expired']);
-    
+
         if ($updatedCount === 0) {
             $this->info('There are no expired products today.');
         } else {
             $this->info("Successfully updated {$updatedCount} expired products.");
         }
+
         return Command::SUCCESS;
     }
 }

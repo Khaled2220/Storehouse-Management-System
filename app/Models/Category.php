@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Category extends Model
 {
-    protected $table = 'categories'; 
+    protected $table = 'categories';
 
     protected $fillable = [
         'name',
@@ -21,7 +21,7 @@ class Category extends Model
         );
     }
 
-    //public function products(){
+    // public function products(){
     //    return $this->belongsToMany(Products::class, 'products_categories', 'category_id', 'product_id');
-    //}
+    // }
 }

@@ -1,14 +1,14 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 use App\Http\Middleware\EnsureUserIsAdmin;
 use App\Models\Product;
+use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/login');
 
@@ -30,16 +30,14 @@ Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 
-
 Route::middleware(['auth'])->group(function () {
 
     Route::resource('products', ProductController::class)
-        ->middlewareFor('create', 'can:create,' . Product::class)
-        ->middlewareFor('store', 'can:create,' . Product::class)
+        ->middlewareFor('create', 'can:create,'.Product::class)
+        ->middlewareFor('store', 'can:create,'.Product::class)
         ->middlewareFor('edit', 'can:update,product')
         ->middlewareFor('update', 'can:update,product')
         ->middlewareFor('destroy', 'can:delete,product');
-
 
     Route::middleware([EnsureUserIsAdmin::class])->group(function () {
         Route::resource('categories', CategoryController::class)
@@ -48,7 +46,6 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('categories', CategoryController::class)
         ->only(['index', 'show']);
-
 
     Route::middleware([EnsureUserIsAdmin::class])->group(function () {
         Route::resource('users', UserController::class);

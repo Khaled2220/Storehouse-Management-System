@@ -9,13 +9,14 @@ use Illuminate\Support\Facades\Gate;
 class DeleteProfileRequest extends FormRequest
 {
     protected $errorBag = 'userDeletion';
-    
+
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        Gate::authorize('deleteProfile',$this->user());
+        Gate::authorize('deleteProfile', $this->user());
+
         return true;
     }
 

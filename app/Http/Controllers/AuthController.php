@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
 use App\Services\WebAuthService;
+use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
-    public function __construct(private WebAuthService $authService) 
+    public function __construct(private WebAuthService $authService)
     {
         //
     }
@@ -25,7 +25,7 @@ class AuthController extends Controller
             $request->validated()
         );
 
-        return redirect('/');
+        return redirect()->route('login');
     }
 
     public function showLogin()
@@ -39,7 +39,7 @@ class AuthController extends Controller
             $request->validated()
         );
 
-        if (!$authenticated) {
+        if (! $authenticated) {
             return back()
                 ->withErrors([
                     'email' => 'Invalid email or password',

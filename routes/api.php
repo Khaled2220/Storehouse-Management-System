@@ -1,10 +1,9 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\API\RegisterController;
 use App\Http\Controllers\API\LoginController;
 use App\Http\Controllers\API\ProductController;
-
+use App\Http\Controllers\API\RegisterController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/test', function () {
     return response()->json([
@@ -22,7 +21,6 @@ Route::post('/login', [LoginController::class, 'login'])
 Route::get('/products', [ProductController::class, 'index']);
 
 Route::get('/products/{product}', [ProductController::class, 'show']);
-
 
 Route::middleware('auth:sanctum')->group(function () {
 

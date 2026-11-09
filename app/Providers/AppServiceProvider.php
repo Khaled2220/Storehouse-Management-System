@@ -2,12 +2,12 @@
 
 namespace App\Providers;
 
-use App\Models\User;
-use App\Models\Product;
 use App\Models\Category;
-use App\Policies\UserPolicy;
-use App\Policies\ProductPolicy;
+use App\Models\Product;
+use App\Models\User;
 use App\Policies\CategoryPolicy;
+use App\Policies\ProductPolicy;
+use App\Policies\UserPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -28,6 +28,6 @@ class AppServiceProvider extends ServiceProvider
     {
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(Product::class, ProductPolicy::class);
-        Gate::policy(Category::class,CategoryPolicy::class);
+        Gate::policy(Category::class, CategoryPolicy::class);
     }
 }

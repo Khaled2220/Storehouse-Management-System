@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\DatabaseNotification;
-use App\Services\NotificationService;
 
 class NotificationController extends Controller
 {
-    public function __construct(private NotificationService $notificationService) 
+    public function __construct(private NotificationService $notificationService)
     {
         //
     }
@@ -38,7 +38,7 @@ class NotificationController extends Controller
             ->with('success', 'Notification marked as Read.');
     }
 
-    public function destroy(Request $request,DatabaseNotification $notification) 
+    public function destroy(Request $request, DatabaseNotification $notification)
     {
         $this->notificationService->deleteNotification(
             $request->user(),

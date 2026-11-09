@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
-use App\Services\ProductService;
 use App\Http\Resources\ProductResource;
+use App\Models\Product;
+use App\Services\ProductService;
 
 class ProductController extends Controller
 {
-    public function __construct(private ProductService $productService) 
+    public function __construct(private ProductService $productService)
     {
         //
     }
@@ -21,7 +21,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-         $products = $this->productService->getAllProducts();
+        $products = $this->productService->getAllProducts();
 
         return ProductResource::collection($products)
             ->additional([
@@ -79,11 +79,12 @@ class ProductController extends Controller
         $image = $request->file('image');
 
         $updatedProduct = $this->productService->updateProduct(
-           $product,
-           $validated,
-           $image?->getRealPath(),
-           $image?->extension()
+            $product,
+            $validated,
+            $image?->getRealPath(),
+            $image?->extension()
         );
+
         return (new ProductResource($updatedProduct))->additional([
             'status' => true,
             'message' => 'Product updated successfully.',
@@ -97,7 +98,7 @@ class ProductController extends Controller
     {
         $deleted = $this->productService->deleteProduct($product);
 
-        if (!$deleted) {
+        if (! $deleted) {
             return response()->json([
                 'status' => false,
                 'message' => 'Product could not be deleted.',

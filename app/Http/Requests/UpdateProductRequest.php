@@ -14,7 +14,8 @@ class UpdateProductRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        Gate::authorize('update',$this->route('product'));
+        Gate::authorize('update', $this->route('product'));
+
         return true;
     }
 
@@ -26,12 +27,13 @@ class UpdateProductRequest extends FormRequest
     public function rules(): array
     {
         $product = $this->route('product');
+
         return [
-            'name' => ['required', 'string', 'max:255',Rule::unique('products', 'name')->ignore($product),],
-            'quantity' => ['required','integer','min:0'],
-            'description' => ['nullable','string'],
-            'price' => ['required','numeric','min:0'],
-            'image' => ['nullable','image','mimes:jpeg,png,jpg,gif','max:2048'],
+            'name' => ['required', 'string', 'max:255', Rule::unique('products', 'name')->ignore($product)],
+            'quantity' => ['required', 'integer', 'min:0'],
+            'description' => ['nullable', 'string'],
+            'price' => ['required', 'numeric', 'min:0'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
             'categories' => ['nullable', 'array'],
             'categories.*' => ['integer', 'exists:categories,id'],
             'status' => ['required', 'in:active,expired'],
@@ -39,7 +41,3 @@ class UpdateProductRequest extends FormRequest
         ];
     }
 }
-
-
-
-

@@ -1,190 +1,82 @@
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+@extends('layouts.app')
 
-    <title>Add New Category</title>
+@section('title', 'Add New Category')
 
-    <link rel="stylesheet"
-          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+@section('content')
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    @can('create', \App\Models\Category::class)
 
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        <h2>Add New Category</h2>
 
-    <style>
-        .navbar .nav-link,
-        .navbar .nav-link:hover,
-        .navbar .nav-link:focus,
-        .navbar .nav-link.active {
-            color: black !important;
-            font-size: 20px;
-        }
-        .container {
-            margin-top: 25px;
-            margin-bottom: 30px;
-        }
-        .category-form {
-            max-width: 600px;
-        }
-        .form-control {
-            width: 100%;
-            max-width: 600px;
-        }
-        .action-buttons {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-top: 20px;
-        }
-        .action-buttons .btn,
-        .back-button .btn {
-            width: 170px;
-            height: 40px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            box-sizing: border-box;
-            font-size: 14px;
-            border-radius: 4px;
-            text-decoration: none;
-        }
-        .save-btn {
-            background-color: #5cb85c;
-            color: white;
-            border: none;
-        }
-        .save-btn:hover,
-        .save-btn:focus {
-            background-color: #449d44;
-            color: white;
-        }
-        .back-button {
-            margin-top: 15px;
-        }
-        .back-button .back-btn {
-            background-color: DimGrey;
-            color: white !important;
-            border: none;
-            border-radius: 4px;
-            text-decoration: none;
-        }
-        .back-button .back-btn:hover,
-        .back-button .back-btn:focus {
-            background-color: #555555;
-            color: white !important;
-            text-decoration: none;
-        }
-    </style>
-</head>
-
-<body>
-    <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
-        <ul class="nav navbar-nav">
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('products.index') }}">
-                    Products
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('categories.index') }}">
-                    Category
-                </a>
-            </li>
-
-
-            @can('viewNotifications', \App\Models\User::class)
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('notifications.index') }}">
-                        My Notifications
-
-                        @if (($unreadNotificationsCount ?? 0) > 0)
-                            <span class="badge">
-                                {{ $unreadNotificationsCount }}
-                            </span>
-                        @endif
-                    </a>
-                </li>
-            @endcan
-
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('profile') }}">
-                    My Profile
-                </a>
-            </li>
-        </ul>
-
-        <form method="POST" action="{{ route('logout') }}" class="navbar-form navbar-right">
-            @csrf
-            <button type="submit" class="btn btn-default">
-                Logout
-            </button>
-        </form>
-    </nav>
-
-
-    <div class="container">
-        @can('create', \App\Models\Category::class)
-
-            <h2>Add New Category</h2>
-
-            @if (session('success'))
-                <div class="alert alert-success">
-                    {{ session('success') }}
-                </div>
-            @endif
-
-            @if (session('error'))
-                <div class="alert alert-danger">
-                    {{ session('error') }}
-                </div>
-            @endif
-
-            @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
-            <form class="category-form" method="POST" action="{{ route('categories.store') }}" >
-                @csrf
-                <div class="form-group">
-
-                    <label for="name">Category Name:</label>
-
-                    <input type="text" id="name" name="name" class="form-control" value="{{ old('name') }}" required autofocus >
-
-                    @error('name')
-                        <small class="text-danger">
-                            {{ $message }}
-                        </small>
-                    @enderror
-                </div>
-
-                <div class="action-buttons">
-                    <button type="submit" class="btn save-btn">
-                        Save Category
-                    </button>
-                </div>
-            </form>
-
-        @else
-
+        @if ($errors->any())
             <div class="alert alert-danger">
-                <h4>Unauthorized access!</h4>
-                <p>You do not have permission to add categories.</p>
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
             </div>
-        @endcan
+        @endif
 
-        <div class="back-button">
-            <a href="{{ route('categories.index') }}" class="btn back-btn">
-                Back to Categories
-            </a>
+        <form class="category-form"
+              method="POST"
+              action="{{ route('categories.store') }}">
+
+            @csrf
+
+            <div class="form-group">
+
+                <label for="name">
+                    Category Name:
+                </label>
+
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    class="form-control"
+                    value="{{ old('name') }}"
+                    required
+                    autofocus
+                >
+
+                @error('name')
+                    <small class="text-danger">
+                        {{ $message }}
+                    </small>
+                @enderror
+
+            </div>
+
+            <div class="action-buttons">
+
+                <button type="submit" class="btn save-btn">
+                    Save Category
+                </button>
+
+            </div>
+
+        </form>
+
+    @else
+
+        <div class="alert alert-danger">
+            <h4>Unauthorized access!</h4>
+
+            <p>
+                You do not have permission to add categories.
+            </p>
         </div>
+
+    @endcan
+
+    <div class="back-button">
+
+        <a href="{{ route('categories.index') }}"
+           class="btn back-btn">
+            Back to Categories
+        </a>
+
     </div>
 
+@endsection

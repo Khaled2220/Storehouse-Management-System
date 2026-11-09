@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Hash;
 
 class ApiAuthService
 {
-    public function __construct(private WebAuthService $webAuthService) 
+    public function __construct(private WebAuthService $webAuthService)
     {
         //
     }
@@ -28,7 +28,7 @@ class ApiAuthService
     {
         $user = User::where('email', $data['email'])->first();
 
-        if (!$user || !Hash::check($data['password'], $user->password)) {
+        if (! $user || ! Hash::check($data['password'], $user->password)) {
             return null;
         }
 

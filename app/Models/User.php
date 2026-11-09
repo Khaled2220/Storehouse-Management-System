@@ -2,23 +2,22 @@
 
 namespace App\Models;
 
+use App\Enums\UserType;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use App\Enums\UserType;
 use Laravel\Sanctum\HasApiTokens;
-use App\Models\Product;
 
-class User extends Authenticatable{
+class User extends Authenticatable
+{
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable,HasApiTokens;
+    use HasApiTokens, HasFactory,Notifiable;
 
-
-   protected $fillable = [
-        'full_name', 
+    protected $fillable = [
+        'full_name',
         'email',
         'password',
         'user_type',
@@ -29,7 +28,7 @@ class User extends Authenticatable{
         'remember_token',
     ];
 
-    public function products() :HasMany
+    public function products(): HasMany
     {
         return $this->hasMany(Product::class);
     }
@@ -47,7 +46,7 @@ class User extends Authenticatable{
             'user_type' => UserType::class,
         ];
     }
-    
+
     public function isAdmin(): bool
     {
         return $this->user_type === UserType::ADMIN;

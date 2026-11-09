@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Models\User;
 use App\Services\UserService;
 
 class UserController extends Controller
 {
-    public function __construct(private UserService $userService) 
+    public function __construct(private UserService $userService)
     {
         //
     }
+
     /**
      * Display a listing of the resource.
      */
@@ -85,5 +86,4 @@ class UserController extends Controller
     }
 }
 
-
-//link:http://127.0.0.1:8000/users
+// link:http://127.0.0.1:8000/users

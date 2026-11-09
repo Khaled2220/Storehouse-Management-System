@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 use RuntimeException;
@@ -14,27 +14,28 @@ class ProductImageStorage
      */
     public function store(string $sourcePath, string $extension): string
     {
-        if (!is_file($sourcePath) || !is_readable($sourcePath)) {
+        if (! is_file($sourcePath) || ! is_readable($sourcePath)) {
             throw new InvalidArgumentException('Invalid image source.');
         }
 
         $extension = strtolower($extension);
 
-        if (!preg_match('/^[a-z0-9]+$/', $extension)) {
+        if (! preg_match('/^[a-z0-9]+$/', $extension)) {
             throw new InvalidArgumentException('Invalid image extension.');
         }
 
-        $directory = public_path('image');
+        $imageName = Str::uuid().'.'.$extension;
 
-        File::ensureDirectoryExists($directory);
+        $stored = Storage::disk('public')->putFileAs(
+            '',
+            $sourcePath,
+            $imageName
+        );
 
-        $imageName = Str::uuid() . '.' . $extension;
-
-        $destination = $directory . DIRECTORY_SEPARATOR . $imageName;
-
-        if (!File::copy($sourcePath, $destination)) {
+        if ($stored === false) {
             throw new RuntimeException('Unable to store product image.');
         }
+
         return $imageName;
     }
 
@@ -46,10 +47,7 @@ class ProductImageStorage
         if (empty($imageName)) {
             return;
         }
-        $path = public_path('image/' . basename($imageName));
 
-        if (File::exists($path)) {
-            File::delete($path);
-        }
+        Storage::disk('public')->delete(basename($imageName));
     }
 }

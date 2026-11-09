@@ -4,12 +4,12 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
-use App\Services\ApiAuthService;
 use App\Http\Resources\UserResource;
+use App\Services\ApiAuthService;
 
 class LoginController extends Controller
 {
-    public function __construct(private ApiAuthService $authService) 
+    public function __construct(private ApiAuthService $authService)
     {
         //
     }
@@ -19,12 +19,13 @@ class LoginController extends Controller
         $result = $this->authService->login(
             $request->validated()
         );
-        if (!$result) {
+        if (! $result) {
             return response()->json([
                 'status' => false,
                 'message' => 'Invalid email or password',
             ], 401);
         }
+
         return response()->json([
             'status' => true,
             'message' => 'Login successful',

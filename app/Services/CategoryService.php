@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\Category;
 use App\Events\CategoryCreated;
+use App\Models\Category;
 
 class CategoryService
 {
@@ -26,7 +26,7 @@ class CategoryService
         return $category;
     }
 
-    public function updateCategory(Category $category,array $data): Category
+    public function updateCategory(Category $category, array $data): Category
     {
         $category->update($data);
 
@@ -35,9 +35,10 @@ class CategoryService
 
     public function deleteCategory(Category $category): bool
     {
-         if ($category->products()->exists()) {
+        if ($category->products()->exists()) {
             return false;
         }
+
         return (bool) $category->delete();
     }
 }

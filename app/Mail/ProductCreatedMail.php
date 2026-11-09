@@ -16,7 +16,7 @@ class ProductCreatedMail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(public string $productName,public int $productId)
+    public function __construct(public string $productName, public int $productId)
     {
         //
     }

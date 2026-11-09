@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 use App\Enums\UserType;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class WebAuthService
 {
@@ -17,7 +17,7 @@ class WebAuthService
         //
     }
 
-     /**
+    /**
      * Register a new regular user.
      */
     public function register(array $data): User

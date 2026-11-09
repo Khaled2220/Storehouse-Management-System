@@ -5,7 +5,6 @@ namespace App\Listeners;
 use App\Events\ProductCreated;
 use App\Jobs\ProcessProductCreated as ProcessProductCreatedJob;
 
-
 class ProcessProductCreated
 {
     /**

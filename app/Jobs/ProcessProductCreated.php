@@ -2,9 +2,9 @@
 
 namespace App\Jobs;
 
+use App\Mail\ProductCreatedMail;
 use App\Models\Product;
 use App\Models\User;
-use App\Mail\ProductCreatedMail;
 use App\Notifications\ProductCreatedNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;

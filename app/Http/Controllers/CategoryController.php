@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
+use App\Models\Category;
 use App\Services\CategoryService;
 
 class CategoryController extends Controller
 {
-    public function __construct(private CategoryService $categoryService) 
+    public function __construct(private CategoryService $categoryService)
     {
         //
     }
@@ -19,7 +19,7 @@ class CategoryController extends Controller
         $categories = $this->categoryService->getAllCategories();
 
         return view('categories.index')->with([
-            'categories' => $categories
+            'categories' => $categories,
         ]);
     }
 
@@ -44,18 +44,18 @@ class CategoryController extends Controller
 
         return view('categories.show')->with([
             'category' => $category,
-            'products' => $products
+            'products' => $products,
         ]);
     }
 
     public function edit(Category $category)
     {
         return view('categories.edit')->with([
-            'category' => $category
+            'category' => $category,
         ]);
     }
 
-    public function update(UpdateCategoryRequest $request,Category $category) 
+    public function update(UpdateCategoryRequest $request, Category $category)
     {
         $validated = $request->validated();
 
@@ -69,7 +69,7 @@ class CategoryController extends Controller
     {
         $deleted = $this->categoryService->deleteCategory($category);
 
-        if (!$deleted) {
+        if (! $deleted) {
             return redirect()->route('categories.index')
                 ->with(
                     'error',

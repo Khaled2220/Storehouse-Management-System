@@ -1,169 +1,101 @@
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+@extends('layouts.app')
 
-    <title>Users List</title>
+@section('title', 'Users List')
 
-    <link rel="stylesheet"
-          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+@section('content')
 
-    <style>
-        body {
-            padding: 30px;
-            background-color: #f5f5f5;
-        }
-        h2 {
-            margin-bottom: 25px;
-        }
-        .btn {
-            width: 100px;
-            margin: 2px;
-        }
-        .btn-show {
-            background-color: DimGrey;
-            color: white;
-        }
-        .btn-show:hover,
-        .btn-show:focus {
-            background-color: #555555;
-            color: white;
-        }
-        .btn-edit {
-            background-color: #f0ad4e;
-            color: white;
-        }
-        .btn-edit:hover,
-        .btn-edit:focus {
-            background-color: #ec971f;
-            color: white;
-        }
-        .btn-delete {
-            background-color: #d9534f;
-            color: white;
-            border: none;
-        }
-        .btn-delete:hover,
-        .btn-delete:focus {
-            background-color: #c9302c;
-            color: white;
-        }
-        .btn-add {
-            background-color: #5cb85c;
-            color: white;
-            width: 170px;
-            height: 40px;
-        }
-        .btn-add:hover,
-        .btn-add:focus {
-            background-color: #449d44;
-            color: white;
-        }
-        .table {
-            background-color: white;
-        }
-    </style>
-</head>
+<h2>Users List</h2>
 
-<body>
-    <div class="container">
-        <h2>Users List</h2>
+@can('create', \App\Models\User::class)
+    <div class="add-button">
+        <a href="{{ route('users.create') }}" class="btn add-btn">
+            Add User
+        </a>
+    </div>
+@endcan
 
-        @if (session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
-            </div>
-        @endif
+<div class="table-responsive">
+    <table class="table table-bordered table-striped">
 
-        @if (session('error'))
-            <div class="alert alert-danger">
-                {{ session('error') }}
-            </div>
-        @endif
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>User Type</th>
+                <th>Created At</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
 
-        @can('create', \App\Models\User::class)
-            <a href="{{ route('users.create') }}" class="btn btn-add">
-                Add User
-            </a>
-        @endcan
-
-        <br><br>
-
-        <table class="table table-bordered table-striped">
-            <thead>
+        <tbody>
+            @forelse ($users as $user)
                 <tr>
-                    <th>ID</th>
-                    <th>Full Name</th>
-                    <th>Email</th>
-                    <th>User Type</th>
-                    <th>Created At</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
+                    <td>{{ $user->id }}</td>
 
-            <tbody>
-                @forelse ($users as $user)
-                    <tr>
-                        <td>
-                            {{ $user->id }}
-                        </td>
+                    <td>{{ $user->full_name }}</td>
 
-                        <td>
-                            {{ $user->full_name }}
-                        </td>
+                    <td>{{ $user->email }}</td>
 
-                        <td>
-                            {{ $user->email }}
-                        </td>
+                    <td>{{ $user->isAdmin() ? 'Admin' : 'User' }}</td>
 
-                        <td>
-                            {{ $user->isAdmin() ? 'Admin' : 'User' }}
-                        </td>
+                    <td>{{ $user->created_at?->format('Y-m-d') }}</td>
 
-                        <td>
-                            {{ $user->created_at?->format('Y-m-d') }}
-                        </td>
+                    <td>
+                        <div class="action-buttons">
 
-                        <td>
                             @can('view', $user)
-                                <a href="{{ route('users.show', $user->id) }}" class="btn btn-show">
+                                <a href="{{ route('users.show', $user) }}"
+                                   class="btn show-products-btn">
                                     Show
                                 </a>
                             @endcan
 
                             @can('update', $user)
-                                <a href="{{ route('users.edit', $user->id) }}" class="btn btn-edit">
+                                <a href="{{ route('users.edit', $user) }}"
+                                   class="btn edit-btn">
                                     Edit
                                 </a>
                             @endcan
 
                             @can('delete', $user)
-                                <form action="{{ route('users.destroy', $user->id) }}"
-                                    method="POST"
-                                    style="display: inline;"
-                                    onsubmit="return confirm('Are you sure you want to delete this user?')">
+                                <form action="{{ route('users.destroy', $user) }}"
+                                      method="POST"
+                                      onsubmit="return confirm('Are you sure you want to delete this user?')">
 
                                     @csrf
                                     @method('DELETE')
 
-                                    <button type="submit" class="btn btn-delete">
+                                    <button type="submit" class="btn delete-btn">
                                         Delete
                                     </button>
                                 </form>
                             @endcan
-                        </td>
-                    </tr>
 
-                @empty
-                    <tr>
-                        <td colspan="6" class="text-center">
-                            No Users Found
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
+                        </div>
+                    </td>
+                </tr>
 
-        <div class="text-center">
-            {{ $users->links() }}
-        </div>
-    </div>
+            @empty
+                <tr>
+                    <td colspan="6" class="text-center">
+                        No Users Found
+                    </td>
+                </tr>
+            @endforelse
+        </tbody>
+
+    </table>
+</div>
+
+<div class="text-center">
+    {{ $users->links() }}
+</div>
+
+<div class="back-button">
+    <a href="{{ route('products.index') }}" class="btn back-btn">
+        Back to Products
+    </a>
+</div>
+
+@endsection

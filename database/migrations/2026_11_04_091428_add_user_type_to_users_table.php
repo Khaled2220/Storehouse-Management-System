@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasColumn('users', 'user_type')) {
+        if (! Schema::hasColumn('users', 'user_type')) {
             Schema::table('users', function (Blueprint $table) {
                 $table->integer('user_type')->default(2);
             });
-        }    
+        }
     }
 
     /**

@@ -16,12 +16,13 @@ return new class extends Migration
             $table->date('expiry_date')->nullable()->after('status');
         });
     }
+
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-         Schema::table('products', function (Blueprint $table) {
+        Schema::table('products', function (Blueprint $table) {
             $table->dropColumn(['status', 'expiry_date']);
         });
     }

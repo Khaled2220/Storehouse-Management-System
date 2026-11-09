@@ -14,7 +14,8 @@ class UpdateCategoryRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        Gate::authorize('update',$this->route('category'));
+        Gate::authorize('update', $this->route('category'));
+
         return true;
     }
 
@@ -26,8 +27,9 @@ class UpdateCategoryRequest extends FormRequest
     public function rules(): array
     {
         $category = $this->route('category');
+
         return [
-            'name' => ['required', 'string', 'max:255',Rule::unique('categories', 'name')->ignore($category),],
+            'name' => ['required', 'string', 'max:255', Rule::unique('categories', 'name')->ignore($category)],
         ];
     }
 }

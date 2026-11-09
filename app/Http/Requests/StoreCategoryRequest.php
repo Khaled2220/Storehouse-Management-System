@@ -14,7 +14,8 @@ class StoreCategoryRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        Gate::authorize('create',Category::class);
+        Gate::authorize('create', Category::class);
+
         return true;
     }
 
@@ -26,7 +27,7 @@ class StoreCategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required','string', 'max:255', 'unique:categories,name'],
+            'name' => ['required', 'string', 'max:255', 'unique:categories,name'],
         ];
     }
 

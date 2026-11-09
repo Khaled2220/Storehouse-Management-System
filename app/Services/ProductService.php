@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\Product;
 use App\Events\ProductCreated;
+use App\Models\Product;
 use InvalidArgumentException;
 
 class ProductService
@@ -36,7 +36,7 @@ class ProductService
             ->findOrFail($id);
     }
 
-    public function createProduct( array $data, ?string $imagePath = null, ?string $imageExtension = null ): Product
+    public function createProduct(array $data, ?string $imagePath = null, ?string $imageExtension = null): Product
     {
         $categoryIds = $data['categories'] ?? [];
 
@@ -94,13 +94,15 @@ class ProductService
         if ($deleted) {
             $this->imageStorage->delete($image);
         }
+
         return $deleted;
     }
 
-    private function prepareImage(array &$data, ?string $imagePath, ?string $imageExtension): void 
+    private function prepareImage(array &$data, ?string $imagePath, ?string $imageExtension): void
     {
         if ($imagePath === null) {
             unset($data['image']);
+
             return;
         }
 

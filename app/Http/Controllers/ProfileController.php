@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Http\RedirectResponse;
-use App\Http\Requests\UpdateProfileRequest;
 use App\Http\Requests\DeleteProfileRequest;
+use App\Http\Requests\UpdateProfileRequest;
 use App\Services\ProfileService;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 class ProfileController extends Controller
 {
@@ -42,10 +42,11 @@ class ProfileController extends Controller
             $request->user(),
             $request
         );
-        if (!$deleted) {
+        if (! $deleted) {
             return redirect()->route('profile')
                 ->with('error', 'Your Account could not be Deleted.');
         }
+
         return redirect()->route('login')
             ->with('success', 'Your Account has been Deleted Successfully.');
     }
