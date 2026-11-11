@@ -2,13 +2,13 @@
 
 namespace App\Jobs;
 
-use App\Mail\ProductCreatedMail;
-use App\Models\Product;
 use App\Models\User;
+use App\Models\Product;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ProductCreatedMail;
 use App\Notifications\ProductCreatedNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Support\Facades\Mail;
 
 class ProcessProductCreated implements ShouldQueue
 {

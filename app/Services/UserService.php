@@ -22,7 +22,6 @@ class UserService
         if (blank($data['password'] ?? null)) {
             unset($data['password']);
         }
-
         $user->update($data);
 
         return $user->refresh();

@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Events\CategoryCreated;
 use App\Models\Category;
+use App\Events\CategoryCreated;
 
 class CategoryService
 {
@@ -38,7 +38,11 @@ class CategoryService
         if ($category->products()->exists()) {
             return false;
         }
-
         return (bool) $category->delete();
+    }
+
+    public function getCategoryWithProducts(Category $category): Category
+    {
+        return $category->load('products');
     }
 }

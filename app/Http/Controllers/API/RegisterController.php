@@ -19,7 +19,6 @@ class RegisterController extends Controller
         $result = $this->authService->register(
             $request->validated()
         );
-
         return response()->json([
             'status' => true,
             'message' => 'User registered successfully!',

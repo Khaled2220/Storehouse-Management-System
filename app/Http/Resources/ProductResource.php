@@ -22,14 +22,22 @@ class ProductResource extends JsonResource
             'description' => $this->description,
             'price' => $this->price,
             'image' => $this->image,
+            'status' => $this->status,
+            'expiry_date' => $this->expiry_date?->toDateString(),
+
             'categories' => $this->whenLoaded('categories',
                 fn () => $this->categories->map(fn ($category) => [
                     'id' => $category->id,
                     'name' => $category->name,
                 ])
             ),
+
             'user' => $this->whenLoaded('user',
                 fn () => new UserResource($this->user)
+            ),
+
+            'supplier' => $this->whenLoaded('supplier',
+                fn () => new SupplierResource($this->supplier)
             ),
         ];
     }

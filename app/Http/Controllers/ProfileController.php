@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateProfileRequest;
 use App\Services\ProfileService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
@@ -15,12 +16,12 @@ class ProfileController extends Controller
         //
     }
 
-    public function index(Request $request)
+    public function index(Request $request): View
     {
         return view('profile.index')->with('user', $request->user());
     }
 
-    public function edit(Request $request)
+    public function edit(Request $request): View
     {
         return view('profile.edit')->with('user', $request->user());
     }
@@ -38,14 +39,19 @@ class ProfileController extends Controller
 
     public function destroy(DeleteProfileRequest $request): RedirectResponse
     {
-        $deleted = $this->profileService->deleteProfile(
-            $request->user(),
-            $request
-        );
+        $user = $request->user();
+
+        $deleted = $this->profileService->deleteProfile($user);
+
         if (! $deleted) {
             return redirect()->route('profile')
                 ->with('error', 'Your Account could not be Deleted.');
         }
+        auth()->logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
 
         return redirect()->route('login')
             ->with('success', 'Your Account has been Deleted Successfully.');

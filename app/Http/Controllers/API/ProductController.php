@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Models\Product;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\ProductResource;
-use App\Models\Product;
 use App\Services\ProductService;
 
 class ProductController extends Controller
@@ -46,7 +46,6 @@ class ProductController extends Controller
             $image?->getRealPath(),
             $image?->extension()
         );
-
         return (new ProductResource($product))
             ->additional([
                 'status' => true,
@@ -61,7 +60,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        $product->load(['categories', 'user']);
+        $product = $this->productService->getProductWithRelations($product);
 
         return (new ProductResource($product))->additional([
             'status' => true,
@@ -84,7 +83,6 @@ class ProductController extends Controller
             $image?->getRealPath(),
             $image?->extension()
         );
-
         return (new ProductResource($updatedProduct))->additional([
             'status' => true,
             'message' => 'Product updated successfully.',

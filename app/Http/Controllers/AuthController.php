@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Services\WebAuthService;
-use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
@@ -38,7 +38,7 @@ class AuthController extends Controller
         $authenticated = $this->authService->attemptLogin(
             $request->validated()
         );
-
+        
         if (! $authenticated) {
             return back()
                 ->withErrors([
@@ -46,7 +46,6 @@ class AuthController extends Controller
                 ])
                 ->onlyInput('email');
         }
-
         $request->session()->regenerate();
 
         return redirect()->route('products.index');

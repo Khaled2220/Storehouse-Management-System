@@ -37,7 +37,6 @@
         <th>Updated At</th>
         <td>{{ $user->updated_at?->format('Y-m-d H:i:s') }}</td>
     </tr>
-
 </table>
 
 <div class="text-center">
@@ -45,5 +44,4 @@
         Back
     </a>
 </div>
-
 @endsection

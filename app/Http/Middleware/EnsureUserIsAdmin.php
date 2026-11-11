@@ -2,9 +2,9 @@
 
 namespace App\Http\Middleware;
 
-use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Closure;
 
 class EnsureUserIsAdmin
 {
@@ -20,7 +20,6 @@ class EnsureUserIsAdmin
                 ->route('products.index')
                 ->with('error', 'Unauthorized access! Admin only.');
         }
-
         return $next($request);
     }
 }

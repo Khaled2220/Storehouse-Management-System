@@ -31,14 +31,7 @@
         <div class="form-group">
             <label for="full_name">Full Name:</label>
 
-            <input
-                type="text"
-                name="full_name"
-                id="full_name"
-                class="form-control"
-                value="{{ old('full_name', $user->full_name) }}"
-                autocomplete="name"
-                required>
+            <input type="text" name="full_name" id="full_name" class="form-control" value="{{ old('full_name', $user->full_name) }}" autocomplete="name" required>
 
             @error('full_name')
                 <small class="text-danger">{{ $message }}</small>
@@ -48,14 +41,7 @@
         <div class="form-group">
             <label for="email">Email:</label>
 
-            <input
-                type="email"
-                name="email"
-                id="email"
-                class="form-control"
-                value="{{ old('email', $user->email) }}"
-                autocomplete="email"
-                required>
+            <input type="email" name="email" id="email" class="form-control" value="{{ old('email', $user->email) }}" autocomplete="email" required>
 
             @error('email')
                 <small class="text-danger">{{ $message }}</small>
@@ -72,7 +58,5 @@
             </a>
         </div>
     </form>
-
 </div>
-
 @endsection

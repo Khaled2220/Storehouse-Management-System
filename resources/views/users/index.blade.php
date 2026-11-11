@@ -45,24 +45,19 @@
                         <div class="action-buttons">
 
                             @can('view', $user)
-                                <a href="{{ route('users.show', $user) }}"
-                                   class="btn show-products-btn">
+                                <a href="{{ route('users.show', $user) }}" class="btn show-products-btn">
                                     Show
                                 </a>
                             @endcan
 
                             @can('update', $user)
-                                <a href="{{ route('users.edit', $user) }}"
-                                   class="btn edit-btn">
+                                <a href="{{ route('users.edit', $user) }}" class="btn edit-btn">
                                     Edit
                                 </a>
                             @endcan
 
                             @can('delete', $user)
-                                <form action="{{ route('users.destroy', $user) }}"
-                                      method="POST"
-                                      onsubmit="return confirm('Are you sure you want to delete this user?')">
-
+                                <form action="{{ route('users.destroy', $user) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this user?')">
                                     @csrf
                                     @method('DELETE')
 
@@ -71,7 +66,6 @@
                                     </button>
                                 </form>
                             @endcan
-
                         </div>
                     </td>
                 </tr>
@@ -84,7 +78,6 @@
                 </tr>
             @endforelse
         </tbody>
-
     </table>
 </div>
 
@@ -97,5 +90,4 @@
         Back to Products
     </a>
 </div>
-
 @endsection

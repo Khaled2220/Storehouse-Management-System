@@ -78,8 +78,7 @@
                 <td>{{ $product->status }}</td>
 
                 <td>
-                    <a href="{{ route('products.show', $product) }}"
-                       class="btn show-detail-btn">
+                    <a href="{{ route('products.show', $product) }}" class="btn show-detail-btn">
                         Show Product
                     </a>
                 </td>
@@ -104,11 +103,7 @@
 
     @can('delete', $supplier)
         @if ($supplier->products->isEmpty())
-            <form
-                action="{{ route('suppliers.destroy', $supplier) }}"
-                method="POST"
-                onsubmit="return confirm('Are you sure you want to delete this supplier?')">
-
+            <form action="{{ route('suppliers.destroy', $supplier) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this supplier?')">
                 @csrf
                 @method('DELETE')
 
@@ -119,7 +114,6 @@
             </form>
         @endif
     @endcan
-
 </div>
 
 <div class="back-button">
@@ -127,5 +121,4 @@
         Back to Suppliers
     </a>
 </div>
-
 @endsection

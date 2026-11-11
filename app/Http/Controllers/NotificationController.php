@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\DatabaseNotification;
+use App\Services\NotificationService;
 
 class NotificationController extends Controller
 {
@@ -18,17 +18,13 @@ class NotificationController extends Controller
      */
     public function index(Request $request)
     {
-        $notifications = $this->notificationService
-            ->getUserNotifications($request->user());
+        $notifications = $this->notificationService->getUserNotifications($request->user());
 
-        return view('notifications.index')
-            ->with('notifications', $notifications);
+        return view('notifications.index')->with('notifications', $notifications);
     }
 
-    public function markAsRead(
-        Request $request,
-        DatabaseNotification $notification
-    ) {
+    public function markAsRead(Request $request,DatabaseNotification $notification) 
+    {
         $this->notificationService->markAsRead(
             $request->user(),
             $notification->id
@@ -44,7 +40,6 @@ class NotificationController extends Controller
             $request->user(),
             $notification->id
         );
-
         return redirect()->route('notifications.index')
             ->with('success', 'Notification deleted successfully.');
     }

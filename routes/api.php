@@ -1,9 +1,9 @@
-
 <?php
 
+use App\Http\Controllers\API\RegisterController;
 use App\Http\Controllers\API\LoginController;
 use App\Http\Controllers\API\ProductController;
-use App\Http\Controllers\API\RegisterController;
+use App\Http\Controllers\API\StockMovementController;
 use App\Http\Controllers\API\SupplierController;
 use Illuminate\Support\Facades\Route;
 
@@ -51,4 +51,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::delete('/suppliers/{supplier}', [SupplierController::class, 'destroy'])
         ->middleware('can:delete,supplier');
+
+    Route::get('/stock-movements', [StockMovementController::class,'index',])
+        ->middleware('can:viewAny,App\Models\StockMovement')
+        ->name('api.stock-movements.index');
+
+    Route::post('/stock-movements', [StockMovementController::class,'store',])
+        ->middleware('can:create,App\Models\StockMovement')
+        ->name('api.stock-movements.store');
 });

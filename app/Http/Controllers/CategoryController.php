@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
-use App\Models\Category;
 use App\Services\CategoryService;
 
 class CategoryController extends Controller
@@ -18,9 +18,7 @@ class CategoryController extends Controller
     {
         $categories = $this->categoryService->getAllCategories();
 
-        return view('categories.index')->with([
-            'categories' => $categories,
-        ]);
+        return view('categories.index')->with(['categories' => $categories,]);
     }
 
     public function create()
@@ -40,19 +38,16 @@ class CategoryController extends Controller
 
     public function show(Category $category)
     {
-        $products = $category->products;
-
+        $category = $this->categoryService->getCategoryWithProducts($category);
         return view('categories.show')->with([
             'category' => $category,
-            'products' => $products,
-        ]);
+            'products' => $category->products,
+            ]);
     }
 
     public function edit(Category $category)
     {
-        return view('categories.edit')->with([
-            'category' => $category,
-        ]);
+        return view('categories.edit')->with(['category' => $category,]);
     }
 
     public function update(UpdateCategoryRequest $request, Category $category)
@@ -76,7 +71,6 @@ class CategoryController extends Controller
                     'Category cannot be deleted because it has linked products'
                 );
         }
-
         return redirect()->route('categories.index')
             ->with('success', 'Category Deleted Successfully');
     }

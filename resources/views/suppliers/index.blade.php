@@ -43,10 +43,7 @@
                 <tr>
                     <td>
                         @if ($supplier->logo)
-                            <img
-                                src="{{ asset('storage/' . $supplier->logo) }}"
-                                alt="{{ $supplier->name }} Logo"
-                                width="60"
+                            <img src="{{ asset('storage/' . $supplier->logo) }}" alt="{{ $supplier->name }} Logo" width="60"
                                 height="60"
                                 style="object-fit: contain;"
                             >
@@ -64,25 +61,18 @@
                     <td>{{ $supplier->products_count }}</td>
 
                     <td>
-                        <a href="{{ route('suppliers.show', $supplier) }}"
-                           class="btn show-detail-btn">
+                        <a href="{{ route('suppliers.show', $supplier) }}" class="btn show-detail-btn">
                             Show Detail
                         </a>
 
                         @can('update', $supplier)
-                            <a href="{{ route('suppliers.edit', $supplier) }}"
-                               class="btn edit-btn">
+                            <a href="{{ route('suppliers.edit', $supplier) }}" class="btn edit-btn">
                                 Edit
                             </a>
                         @endcan
 
                         @can('delete', $supplier)
-                            <form
-                                action="{{ route('suppliers.destroy', $supplier) }}"
-                                method="POST"
-                                style="display: inline;"
-                                onsubmit="return confirm('Are you sure you want to delete this supplier?');"
-                            >
+                            <form action="{{ route('suppliers.destroy', $supplier) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this supplier?');" >
                                 @csrf
                                 @method('DELETE')
 
@@ -125,5 +115,4 @@
             </a>
         @endcan
     </div>
-
 @endsection

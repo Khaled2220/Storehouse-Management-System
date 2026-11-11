@@ -2,8 +2,9 @@
 
 namespace App\Services;
 
-use App\Models\Supplier;
 use App\Events\SupplierCreated;
+use App\Models\Supplier;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use Throwable;
@@ -15,20 +16,30 @@ class SupplierService
         //
     }
 
-    public function getAllSuppliers()
+    /**
+     * Get all suppliers with their products count.
+     */
+    public function getAllSuppliers(): LengthAwarePaginator
     {
         return Supplier::withCount('products')
             ->orderBy('name')
             ->paginate(50);
     }
 
+    /**
+     * Get a supplier with its products and categories.
+     */
     public function getSupplierById(int $id): Supplier
     {
-        return Supplier::with(['products.categories'])
-            ->findOrFail($id);
+        return Supplier::with([
+            'products.categories',
+        ])->findOrFail($id);
     }
 
-    public function createSupplier(array $data, ?string $logoPath = null, ?string $logoExtension = null): Supplier 
+    /**
+     * Create a supplier and optionally store its logo.
+     */
+    public function createSupplier(array $data,?string $logoPath = null,?string $logoExtension = null): Supplier 
     {
         $storedLogo = null;
 
@@ -51,7 +62,8 @@ class SupplierService
             $supplier = DB::transaction(function () use ($data) {
                 return Supplier::create($data);
             });
-        } catch (Throwable $exception) {
+        } 
+        catch (Throwable $exception) {
             $this->logoStorage->delete($storedLogo);
 
             throw $exception;
@@ -62,7 +74,10 @@ class SupplierService
         return $supplier;
     }
 
-    public function updateSupplier(Supplier $supplier, array $data, ?string $logoPath = null, ?string $logoExtension = null): Supplier 
+    /**
+     * Update a supplier and optionally replace its logo.
+     */
+    public function updateSupplier(Supplier $supplier,array $data,?string $logoPath = null,?string $logoExtension = null): Supplier 
     {
         $oldLogo = $supplier->logo;
         $newLogo = null;
@@ -105,6 +120,9 @@ class SupplierService
         return $updatedSupplier;
     }
 
+    /**
+     * Delete a supplier only when it has no products.
+     */
     public function deleteSupplier(Supplier $supplier): bool
     {
         $result = DB::transaction(function () use ($supplier) {

@@ -8,7 +8,7 @@
 
     @can('create', \App\Models\Product::class)
         <a href="{{ route('products.create') }}" class="btn add-product-btn">
-            Add New Products
+            Add New Product
         </a>
     @endcan
 
@@ -18,8 +18,11 @@
         <thead>
             <tr>
                 <th>Name</th>
+                <th>Quantity</th>
+                <th>Price</th>
                 <th>Status</th>
                 <th>Expiry Date</th>
+                <th>Supplier</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -28,6 +31,12 @@
             @forelse ($products as $product)
                 <tr>
                     <td>{{ $product->name }}</td>
+
+                    <td>{{ $product->quantity }}</td>
+
+                    <td>
+                        {{ number_format((float) $product->price, 2) }}
+                    </td>
 
                     <td>
                         @if ($product->status === 'expired')
@@ -42,15 +51,22 @@
                     </td>
 
                     <td>
-                        <a href="{{ route('products.show', $product) }}"
-                           class="btn show-detail-btn">
-                            Show Detail
+                        {{ $product->supplier?->name ?? 'N/A' }}
+                    </td>
+
+                    <td>
+                        <a
+                            href="{{ route('products.show', $product) }}"
+                            class="btn show-detail-btn"
+                        >
+                            Show Details
                         </a>
                     </td>
                 </tr>
+
             @empty
                 <tr>
-                    <td colspan="4" class="text-center">
+                    <td colspan="7" class="text-center">
                         No products found.
                     </td>
                 </tr>
@@ -58,9 +74,6 @@
         </tbody>
     </table>
 
-    @if (method_exists($products, 'links'))
-        {{ $products->links() }}
-    @endif
 
     <div class="back-button">
         <a href="{{ route('categories.index') }}" class="btn">
@@ -72,10 +85,13 @@
         </a>
 
         @can('viewNotifications', \App\Models\User::class)
-        <a href="{{ route('notifications.index') }}" class="btn">
-            Show Notification
-        </a>
+            <a href="{{ route('notifications.index') }}" class="btn">
+                Show Notifications
+            </a>
         @endcan
-    </div>
 
+        <a href="{{ route('stock-movements.index') }}" class="btn">
+            Show Stock Movements
+        </a>
+    </div>
 @endsection

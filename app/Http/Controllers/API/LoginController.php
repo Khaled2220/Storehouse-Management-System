@@ -16,16 +16,14 @@ class LoginController extends Controller
 
     public function login(LoginRequest $request)
     {
-        $result = $this->authService->login(
-            $request->validated()
-        );
+        $result = $this->authService->login($request->validated());
+
         if (! $result) {
             return response()->json([
                 'status' => false,
                 'message' => 'Invalid email or password',
             ], 401);
         }
-
         return response()->json([
             'status' => true,
             'message' => 'Login successful',

@@ -2,9 +2,8 @@
 
 namespace App\Services;
 
-use App\Enums\UserType;
 use App\Models\User;
-use Illuminate\Http\Request;
+use App\Enums\UserType;
 use Illuminate\Support\Facades\Auth;
 
 class WebAuthService
@@ -30,14 +29,5 @@ class WebAuthService
     public function attemptLogin(array $credentials): bool
     {
         return Auth::attempt($credentials);
-    }
-
-    public function logout(Request $request): void
-    {
-        Auth::logout();
-
-        $request->session()->invalidate();
-
-        $request->session()->regenerateToken();
     }
 }

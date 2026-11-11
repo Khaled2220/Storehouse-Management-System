@@ -4,107 +4,149 @@
 
 @section('content')
 
-<h1>My Notifications</h1>
+    <h1>My Notifications</h1>
 
-@forelse ($notifications as $notification)
+    @forelse ($notifications as $notification)
 
-    <div class="notification {{ $notification->read_at ? 'read' : 'unread' }}">
+        <div class="notification {{ $notification->read_at ? 'read' : 'unread' }}">
 
-        <h3>
-            {{ $notification->data['message'] ?? 'New notification' }}
-        </h3>
+            <h3>
+                {{ $notification->data['message'] ?? 'New notification' }}
+            </h3>
 
-        @if (isset($notification->data['product_name']))
+            @if (isset($notification->data['product_name']))
+                <p>
+                    <strong>Product:</strong>
+                    {{ $notification->data['product_name'] }}
+                </p>
+            @endif
+
+            @if (isset($notification->data['product_id']))
+                <p>
+                    <strong>Product ID:</strong>
+                    {{ $notification->data['product_id'] }}
+                </p>
+            @endif
+
+            @if (isset($notification->data['category_name']))
+                <p>
+                    <strong>Category:</strong>
+                    {{ $notification->data['category_name'] }}
+                </p>
+            @endif
+
+            @if (isset($notification->data['category_id']))
+                <p>
+                    <strong>Category ID:</strong>
+                    {{ $notification->data['category_id'] }}
+                </p>
+            @endif
+
+            @if (isset($notification->data['supplier_name']))
+                <p>
+                    <strong>Supplier:</strong>
+                    {{ $notification->data['supplier_name'] }}
+                </p>
+            @endif
+
+            @if (isset($notification->data['supplier_id']))
+                <p>
+                    <strong>Supplier ID:</strong>
+                    {{ $notification->data['supplier_id'] }}
+                </p>
+            @endif
+
+            @if (isset($notification->data['type']))
+                <p>
+                    <strong>Movement Type:</strong>
+                    {{ ucfirst($notification->data['type']) }}
+                </p>
+            @endif
+
+            @if (isset($notification->data['quantity']))
+                <p>
+                    <strong>Quantity:</strong>
+                    {{ $notification->data['quantity'] }}
+                </p>
+            @endif
+
+            @if (isset($notification->data['movement_date']))
+                <p>
+                    <strong>Movement Date:</strong>
+                    {{ $notification->data['movement_date'] }}
+                </p>
+            @endif
+
+            @if (isset($notification->data['stock_movement_id']))
+                <p>
+                    <strong>Movement ID:</strong>
+                    {{ $notification->data['stock_movement_id'] }}
+                </p>
+            @endif
+
             <p>
-                <strong>Product:</strong>
-                {{ $notification->data['product_name'] }}
+                <strong>Date:</strong>
+                {{ $notification->created_at->format('Y-m-d H:i') }}
             </p>
-        @endif
 
-        @if (isset($notification->data['product_id']))
             <p>
-                <strong>Product ID:</strong>
-                {{ $notification->data['product_id'] }}
+                <strong>Status:</strong>
+                {{ $notification->read_at ? 'Read' : 'Unread' }}
             </p>
-        @endif
 
-        @if (isset($notification->data['category_name']))
-            <p>
-                <strong>Category:</strong>
-                {{ $notification->data['category_name'] }}
-            </p>
-        @endif
+            <div class="notification-actions">
 
-        @if (isset($notification->data['category_id']))
-            <p>
-                <strong>Category ID:</strong>
-                {{ $notification->data['category_id'] }}
-            </p>
-        @endif
+                @unless ($notification->read_at)
+                    <form method="POST"
+                          action="{{ route('notifications.read', $notification) }}">
 
-        <p>
-            <strong>Date:</strong>
-            {{ $notification->created_at->format('Y-m-d H:i') }}
-        </p>
+                        @csrf
+                        @method('PATCH')
 
-        <p>
-            <strong>Status:</strong>
-            {{ $notification->read_at ? 'Read' : 'Unread' }}
-        </p>
+                        <button type="submit" class="mark-read-button">
+                            Mark as read
+                        </button>
+                    </form>
+                @endunless
 
-        <div class="notification-actions">
-
-            @unless ($notification->read_at)
-                <form
-                    method="POST"
-                    action="{{ route('notifications.read', $notification) }}">
+                <form action="{{ route('notifications.destroy', $notification) }}"
+                      method="POST"
+                      onsubmit="return confirm('Are you sure you want to delete this notification?');">
 
                     @csrf
-                    @method('PATCH')
+                    @method('DELETE')
 
-                    <button type="submit" class="mark-read-button">
-                        Mark as read
+                    <button type="submit" class="btn btn-danger">
+                        <span class="glyphicon glyphicon-trash"></span>
+                        Delete
                     </button>
                 </form>
-            @endunless
 
-            <form
-                action="{{ route('notifications.destroy', $notification) }}"
-                method="POST"
-                onsubmit="return confirm('Are you sure you want to delete this notification?')">
-
-                @csrf
-                @method('DELETE')
-
-                <button type="submit" class="btn btn-danger">
-                    <span class="glyphicon glyphicon-trash"></span>
-                    Delete
-                </button>
-            </form>
-
+            </div>
         </div>
+
+    @empty
+
+        <div class="alert alert-info">
+            You have no notifications.
+        </div>
+
+    @endforelse
+
+    <div class="mt-3">
+        {{ $notifications->links() }}
     </div>
 
-@empty
+    <div class="back-buttons">
 
-    <div class="alert alert-info">
-        You have no notifications.
+        <a href="{{ route('products.index') }}" class="btn back-btn">
+            Back to Products
+        </a>
+
+        <a href="{{ route('categories.index') }}" class="btn back-btn">
+            Back to Categories
+        </a>
+
     </div>
-
-@endforelse
-
-<div class="mt-3">
-    {{ $notifications->links() }}
-</div>
-
-<div class="back-buttons">
-    <a href="{{ route('products.index') }}" class="btn back-btn">
-        Back to Products
-    </a>
-
-    <a href="{{ route('categories.index') }}" class="btn back-btn">
-        Back to Categories
-    </a>
-</div>
 
 @endsection

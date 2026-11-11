@@ -5,12 +5,12 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\UserController;
-use App\Http\Middleware\EnsureUserIsAdmin;
-use App\Models\Product;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\StockMovementController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\UserController;
+use App\Models\Product;
 use App\Models\Supplier;
+use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/login');
 
@@ -32,8 +32,7 @@ Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 
-Route::middleware(['auth'])->group(function () {
-
+Route::middleware('auth')->group(function () {
     Route::resource('products', ProductController::class)
         ->middlewareFor('create', 'can:create,'.Product::class)
         ->middlewareFor('store', 'can:create,'.Product::class)
@@ -46,21 +45,19 @@ Route::middleware(['auth'])->group(function () {
         ->middlewareFor('store', 'can:create,'.Supplier::class)
         ->middlewareFor('edit', 'can:update,supplier')
         ->middlewareFor('update', 'can:update,supplier')
-        ->middlewareFor('destroy', 'can:delete,supplier');    
+        ->middlewareFor('destroy', 'can:delete,supplier');
 
-    Route::middleware([EnsureUserIsAdmin::class])->group(function () {
-        Route::resource('categories', CategoryController::class)
-            ->except(['index', 'show']);
-    });
+    Route::resource('categories', CategoryController::class)
+        ->except(['index', 'show'])
+        ->middleware('admin');
 
     Route::resource('categories', CategoryController::class)
         ->only(['index', 'show']);
 
-    Route::middleware([EnsureUserIsAdmin::class])->group(function () {
-        Route::resource('users', UserController::class);
-    });
+    Route::resource('users', UserController::class)
+        ->middleware('admin');
 
-    Route::middleware([EnsureUserIsAdmin::class])->group(function () {
+    Route::middleware('admin')->group(function () {
         Route::get('/notifications', [
             NotificationController::class,
             'index',
@@ -76,6 +73,20 @@ Route::middleware(['auth'])->group(function () {
             'destroy',
         ])->name('notifications.destroy');
     });
+
+    Route::get('/stock-movements', [
+        StockMovementController::class,
+        'index',
+    ])
+        ->middleware('can:viewAny,App\Models\StockMovement')
+        ->name('stock-movements.index');
+
+    Route::post('/stock-movements', [
+        StockMovementController::class,
+        'store',
+    ])
+        ->middleware('can:create,App\Models\StockMovement')
+        ->name('stock-movements.store');
 
     Route::get('/profile', [ProfileController::class, 'index'])
         ->name('profile');

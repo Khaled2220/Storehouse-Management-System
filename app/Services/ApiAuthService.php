@@ -16,12 +16,7 @@ class ApiAuthService
     {
         $user = $this->webAuthService->register($data);
 
-        $token = $user->createToken('AuthToken')->plainTextToken;
-
-        return [
-            'token' => $token,
-            'user' => $user,
-        ];
+        return $this->formatAuthResponse($user);
     }
 
     public function login(array $data): ?array
@@ -32,10 +27,13 @@ class ApiAuthService
             return null;
         }
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        return $this->formatAuthResponse($user);
+    }
 
+    private function formatAuthResponse(User $user): array
+    {
         return [
-            'access_token' => $token,
+            'access_token' => $user->createToken('auth_token')->plainTextToken,
             'token_type' => 'Bearer',
             'user' => $user,
         ];

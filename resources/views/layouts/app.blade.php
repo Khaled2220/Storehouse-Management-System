@@ -1,6 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,13 +13,11 @@
 </head>
 
 <body>
-
     @if (auth()->check() && !request()->routeIs('login', 'register'))
         <nav class="navbar navbar-default">
             <div class="container-fluid">
 
                 <ul class="nav navbar-nav">
-
                     <li>
                         <a class="nav-link" href="{{ route('products.index') }}">
                             Products
@@ -54,24 +49,19 @@
                             My Profile
                         </a>
                     </li>
-
                 </ul>
 
-                <form method="POST"
-                      action="{{ route('logout') }}"
-                      class="navbar-form navbar-right">
-
+                <form method="POST" action="{{ route('logout') }}" class="navbar-form navbar-right">
                     @csrf
 
                     <button type="submit" class="btn btn-default">
                         Logout
                     </button>
-
                 </form>
-
             </div>
         </nav>
     @endif
+
     <div class="container">
 
         @if (session('success'))
@@ -87,10 +77,7 @@
         @endif
 
         @yield('content')
-
     </div>
-
     @stack('scripts')
-
 </body>
 </html>

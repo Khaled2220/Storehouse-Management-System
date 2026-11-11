@@ -2,8 +2,8 @@
 
 namespace App\Listeners;
 
-use App\Events\CategoryCreated;
 use App\Jobs\ProcessCategoryCreated as ProcessCategoryCreatedJob;
+use App\Events\CategoryCreated;
 
 class ProcessCategoryCreated
 {

@@ -23,12 +23,12 @@ class SupplierController extends Controller
     {
         $suppliers = $this->supplierService->getAllSuppliers();
 
-        $unreadNotificationsCount =
-            $this->getUnreadNotificationsCount($request);
+        $unreadNotificationsCount = $this->getUnreadNotificationsCount($request);
 
-        return view('suppliers.index')
-            ->with('suppliers', $suppliers)
-            ->with('unreadNotificationsCount', $unreadNotificationsCount);
+        return view('suppliers.index')->with([
+            'suppliers' => $suppliers,
+            'unreadNotificationsCount' => $unreadNotificationsCount,
+        ]);
     }
 
     /**
@@ -36,10 +36,9 @@ class SupplierController extends Controller
      */
     public function create(Request $request)
     {
-        $unreadNotificationsCount =
-            $this->getUnreadNotificationsCount($request);
+        $unreadNotificationsCount = $this->getUnreadNotificationsCount($request);
 
-        return view('suppliers.create')->with('unreadNotificationsCount', $unreadNotificationsCount);
+        return view('suppliers.create')->with(['unreadNotificationsCount' => $unreadNotificationsCount,]);
     }
 
     /**
@@ -62,19 +61,19 @@ class SupplierController extends Controller
     }
 
     /**
-     * Display a specific supplier.
+     * Display a specific supplier and its products.
      */
     public function show(Request $request, Supplier $supplier)
     {
-        $supplier = $this->supplierService
-            ->getSupplierById($supplier->id);
-
-        $unreadNotificationsCount =
-            $this->getUnreadNotificationsCount($request);
-
-        return view('suppliers.show')
-            ->with('supplier', $supplier)
-            ->with('unreadNotificationsCount', $unreadNotificationsCount);
+        $supplier = $this->supplierService->getSupplierById($supplier->id);
+        
+        $unreadNotificationsCount = $this->getUnreadNotificationsCount($request);
+        
+        return view('suppliers.show')->with([
+            'supplier' => $supplier,
+            'products' => $supplier->products,
+            'unreadNotificationsCount' => $unreadNotificationsCount,
+        ]);
     }
 
     /**
@@ -82,15 +81,12 @@ class SupplierController extends Controller
      */
     public function edit(Request $request, Supplier $supplier)
     {
-        $supplier = $this->supplierService
-            ->getSupplierById($supplier->id);
+        $unreadNotificationsCount = $this->getUnreadNotificationsCount($request);
 
-        $unreadNotificationsCount =
-            $this->getUnreadNotificationsCount($request);
-
-        return view('suppliers.edit')
-            ->with('supplier', $supplier)
-            ->with('unreadNotificationsCount', $unreadNotificationsCount);
+        return view('suppliers.edit')->with([
+            'supplier' => $supplier,
+            'unreadNotificationsCount' => $unreadNotificationsCount,
+        ]);
     }
 
     /**
@@ -122,13 +118,19 @@ class SupplierController extends Controller
 
         if (! $deleted) {
             return redirect()->route('suppliers.index')
-                ->with('error', 'Supplier Cannot Be Deleted Because It Has Products.');
+                ->with(
+                    'error',
+                    'Supplier Cannot Be Deleted Because It Has Products.'
+                );
         }
 
         return redirect()->route('suppliers.index')
             ->with('success', 'Supplier Deleted Successfully');
     }
 
+    /**
+     * Get unread notifications count for the authenticated user.
+     */
     private function getUnreadNotificationsCount(Request $request): int
     {
         return $this->notificationService->getUnreadCount($request->user());

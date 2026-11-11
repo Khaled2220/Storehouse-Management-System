@@ -2,13 +2,10 @@
 
 namespace App\Notifications;
 
-use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
 class SupplierCreatedNotification extends Notification
 {
-    use Queueable;
-
     /**
      * Create a new notification instance.
      */

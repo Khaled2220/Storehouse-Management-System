@@ -4,16 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
-use App\Models\Category;
 use App\Models\Product;
-use App\Models\Supplier;
 use App\Services\NotificationService;
 use App\Services\ProductService;
+use App\Services\StockMovementService;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    public function __construct(private ProductService $productService, private NotificationService $notificationService)
+    public function __construct(private ProductService $productService,private NotificationService $notificationService,private StockMovementService $stockMovementService) 
     {
         //
     }
@@ -26,15 +25,20 @@ class ProductController extends Controller
         $categoryId = $request->query('category_id');
 
         if ($categoryId) {
-            $products = $this->productService->getProductsByCategory((int) $categoryId);
-        } else {
+            $products = $this->productService
+                ->getProductsByCategory((int) $categoryId);
+        } 
+        else {
             $products = $this->productService->getAllProducts();
         }
-        $unreadNotificationsCount = $this->getUnreadNotificationsCount($request);
 
-        return view('products.index')
-            ->with('products', $products)
-            ->with('unreadNotificationsCount', $unreadNotificationsCount);
+        $unreadNotificationsCount =
+            $this->getUnreadNotificationsCount($request);
+
+        return view('products.index')->with([
+            'products' => $products,
+            'unreadNotificationsCount' => $unreadNotificationsCount,
+        ]);
     }
 
     /**
@@ -42,17 +46,18 @@ class ProductController extends Controller
      */
     public function create(Request $request)
     {
+        $categories = $this->productService->getCategories();
+
+        $suppliers = $this->productService->getSuppliers();
+
         $unreadNotificationsCount =
-        $this->getUnreadNotificationsCount($request);
+            $this->getUnreadNotificationsCount($request);
 
-        $categories = Category::all();
-
-        $suppliers = Supplier::orderBy('name')->get();
-
-        return view('products.create')
-            ->with('categories', $categories)
-            ->with('suppliers', $suppliers)
-            ->with('unreadNotificationsCount', $unreadNotificationsCount);
+        return view('products.create')->with([
+            'categories' => $categories,
+            'suppliers' => $suppliers,
+            'unreadNotificationsCount' => $unreadNotificationsCount,
+        ]);
     }
 
     /**
@@ -82,9 +87,16 @@ class ProductController extends Controller
         $unreadNotificationsCount =
             $this->getUnreadNotificationsCount($request);
 
-        return view('products.show')
-            ->with('product', $product)
-            ->with('unreadNotificationsCount', $unreadNotificationsCount);
+        $product->load('categories', 'supplier');
+
+        $movements = $this->stockMovementService
+            ->getProductMovements($product->id);
+
+        return view('products.show')->with([
+            'product' => $product,
+            'movements' => $movements,
+            'unreadNotificationsCount' => $unreadNotificationsCount,
+        ]);
     }
 
     /**
@@ -92,20 +104,22 @@ class ProductController extends Controller
      */
     public function edit(Request $request, Product $product)
     {
+        $categories = $this->productService->getCategories();
+
+        $suppliers = $this->productService->getSuppliers();
+
+        $product = $this->productService
+            ->getProductWithRelations($product);
+
         $unreadNotificationsCount =
-        $this->getUnreadNotificationsCount($request);
+            $this->getUnreadNotificationsCount($request);
 
-        $categories = Category::all();
-
-        $suppliers = Supplier::orderBy('name')->get();
-
-        $product->load('categories', 'supplier');
-
-        return view('products.edit')
-            ->with('product', $product)
-            ->with('categories', $categories)
-            ->with('suppliers', $suppliers)
-            ->with('unreadNotificationsCount', $unreadNotificationsCount);
+        return view('products.edit')->with([
+            'product' => $product,
+            'categories' => $categories,
+            'suppliers' => $suppliers,
+            'unreadNotificationsCount' => $unreadNotificationsCount,
+        ]);
     }
 
     /**
@@ -144,9 +158,11 @@ class ProductController extends Controller
             ->with('success', 'Product Deleted Successfully');
     }
 
+    /**
+     * Get unread notifications count for the authenticated user.
+     */
     private function getUnreadNotificationsCount(Request $request): int
     {
-        return $this->notificationService
-            ->getUnreadCount($request->user());
+        return $this->notificationService->getUnreadCount($request->user());
     }
 }

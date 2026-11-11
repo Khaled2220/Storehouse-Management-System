@@ -46,8 +46,7 @@
                         <td>{{ $category->name }}</td>
 
                         <td>
-                            <a href="{{ route('products.index', ['category_id' => $category->id]) }}"
-                               class="btn show-products-btn">
+                            <a href="{{ route('products.index', ['category_id' => $category->id]) }}" class="btn show-products-btn">
                                 Show Products
                             </a>
                         </td>
@@ -57,17 +56,13 @@
                                 <div class="action-buttons">
 
                                     @can('update', $category)
-                                        <a href="{{ route('categories.edit', $category) }}"
-                                           class="btn edit-btn">
+                                        <a href="{{ route('categories.edit', $category) }}" class="btn edit-btn">
                                             Edit
                                         </a>
                                     @endcan
 
                                     @can('delete', $category)
-                                        <form action="{{ route('categories.destroy', $category) }}"
-                                              method="POST"
-                                              onsubmit="return confirm('Are you sure you want to delete this category?');">
-
+                                        <form action="{{ route('categories.destroy', $category) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this category?');">
                                             @csrf
                                             @method('DELETE')
 
@@ -76,7 +71,6 @@
                                             </button>
                                         </form>
                                     @endcan
-
                                 </div>
                             </td>
                         @endcan
@@ -89,6 +83,7 @@
                                 No categories found.
                             </td>
                         </tr>
+
                     @else
                         <tr>
                             <td colspan="3" class="text-center">
@@ -110,5 +105,4 @@
             Show Suppliers
         </a>
     </div>
-
 @endsection

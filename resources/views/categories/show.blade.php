@@ -26,18 +26,16 @@
                     <td>{{ $product->name }}</td>
                     <td>{{ $product->quantity }}</td>
                     <td>{{ $product->price }}</td>
-
                     <td>
                         @if ($product->image)
-                            <img
-                                src="{{ asset('storage/' . $product->image) }}"
-                                alt="{{ $product->name }}"
-                                class="product-image">
+                            <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="product-image">
+ 
                         @else
                             No Image
                         @endif
                     </td>
                 </tr>
+
             @empty
                 <tr>
                     <td colspan="5">
@@ -54,5 +52,4 @@
         Back to Categories
     </a>
 </div>
-
 @endsection
