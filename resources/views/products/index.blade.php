@@ -80,18 +80,18 @@
             Show Categories
         </a>
 
-        <a href="{{ route('suppliers.index') }}" class="btn">
-            Show Suppliers
+        <a href="{{ route('notifications.index') }}" class="btn">
+            Show Notifications
         </a>
 
-        @can('viewNotifications', \App\Models\User::class)
-            <a href="{{ route('notifications.index') }}" class="btn">
-                Show Notifications
+        @if (auth()->user()?->isAdmin())
+            <a href="{{ route('suppliers.index') }}" class="btn">
+                Show Suppliers
             </a>
-        @endcan
-
-        <a href="{{ route('stock-movements.index') }}" class="btn">
-            Show Stock Movements
-        </a>
+            
+            <a href="{{ route('stock-movements.index') }}" class="btn">
+                Show Stock Movements
+            </a>
+        @endif
     </div>
 @endsection

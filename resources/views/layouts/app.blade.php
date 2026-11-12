@@ -29,6 +29,7 @@
                             Category
                         </a>
                     </li>
+                    
 
                     @can('viewNotifications', \App\Models\User::class)
                         <li>
@@ -43,6 +44,20 @@
                             </a>
                         </li>
                     @endcan
+
+                    @if (auth()->user()->isAdmin())
+                    <li>
+                        <a class="nav-link" href="{{ route('suppliers.index') }}">
+                            Suppliers
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a class="nav-link" href="{{ route('stock-movements.index') }}">
+                            Stock Movements
+                        </a>
+                    </li>
+                    @endif
 
                     <li>
                         <a class="nav-link" href="{{ route('profile') }}">

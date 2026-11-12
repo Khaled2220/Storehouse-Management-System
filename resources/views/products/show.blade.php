@@ -93,7 +93,7 @@
     </table>
 
     <hr>
-
+    @if (auth()->user()?->isAdmin())
     <h3>Stock Movement History</h3>
 
     @if ($movements->isEmpty())
@@ -110,7 +110,7 @@
                     <th>Recorded By</th>
                 </tr>
             </thead>
-
+            
             <tbody>
                 @foreach ($movements as $movement)
                     <tr>
@@ -147,8 +147,7 @@
                 @endforeach
             </tbody>
         </table>
-
-        {{ $movements->links() }}
+        @endif
     @endif
 
     <div class="action-buttons">
@@ -175,7 +174,7 @@
 
     <div class="back-button">
         <a href="{{ route('products.index') }}" class="btn back-btn">
-            Back to Products
+            Back to list Products
         </a>
     </div>
 @endsection

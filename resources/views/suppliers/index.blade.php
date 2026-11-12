@@ -99,7 +99,7 @@
 
     <div class="back-button">
         <a href="{{ route('products.index') }}" class="btn">
-            Show Products
+            Show list products
         </a>
 
         <a href="{{ route('categories.index') }}" class="btn">

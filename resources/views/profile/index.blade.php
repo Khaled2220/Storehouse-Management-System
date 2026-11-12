@@ -50,7 +50,7 @@
     </a>
 
     <a href="{{ route('products.index') }}" class="btn profile-back-button">
-        Back
+        Back to list Products
     </a>
 
     <hr>

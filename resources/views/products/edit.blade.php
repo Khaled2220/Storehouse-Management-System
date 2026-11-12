@@ -190,7 +190,7 @@
 
     <div class="back-button">
         <a href="{{ route('products.index') }}" class="btn back-btn">
-            Back to Products
+            Back to list Products
         </a>
     </div>
 @endsection

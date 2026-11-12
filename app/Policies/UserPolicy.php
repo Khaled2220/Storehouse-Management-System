@@ -74,6 +74,6 @@ class UserPolicy
 
     public function viewNotifications(User $user): bool
     {
-        return $user->isAdmin();
+        return true;
     }
 }

@@ -31,10 +31,7 @@
                     <th>ID</th>
                     <th>Category Name</th>
                     <th>Show Products</th>
-
-                    @can('create', \App\Models\Category::class)
-                        <th>Action</th>
-                    @endcan
+                    <th>Action</th>
                 </tr>
             </thead>
 
@@ -46,51 +43,46 @@
                         <td>{{ $category->name }}</td>
 
                         <td>
-                            <a href="{{ route('products.index', ['category_id' => $category->id]) }}" class="btn show-products-btn">
+                            <a href="{{ route('products.index', ['category_id' => $category->id]) }}"
+                               class="btn show-products-btn">
                                 Show Products
                             </a>
                         </td>
 
-                        @can('create', \App\Models\Category::class)
-                            <td>
-                                <div class="action-buttons">
+                        <td>
+                            <div class="action-buttons">
 
-                                    @can('update', $category)
-                                        <a href="{{ route('categories.edit', $category) }}" class="btn edit-btn">
-                                            Edit
-                                        </a>
-                                    @endcan
+                                @can('update', $category)
+                                    <a href="{{ route('categories.edit', $category) }}"
+                                       class="btn edit-btn">
+                                        Edit
+                                    </a>
+                                @endcan
 
-                                    @can('delete', $category)
-                                        <form action="{{ route('categories.destroy', $category) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this category?');">
-                                            @csrf
-                                            @method('DELETE')
+                                @can('delete', $category)
+                                    <form action="{{ route('categories.destroy', $category) }}"
+                                          method="POST"
+                                          onsubmit="return confirm('Are you sure you want to delete this category?');">
 
-                                            <button type="submit" class="btn delete-btn">
-                                                Delete
-                                            </button>
-                                        </form>
-                                    @endcan
-                                </div>
-                            </td>
-                        @endcan
+                                        @csrf
+                                        @method('DELETE')
+
+                                        <button type="submit" class="btn delete-btn">
+                                            Delete
+                                        </button>
+                                    </form>
+                                @endcan
+
+                            </div>
+                        </td>
                     </tr>
 
                 @empty
-                    @can('create', \App\Models\Category::class)
-                        <tr>
-                            <td colspan="4" class="text-center">
-                                No categories found.
-                            </td>
-                        </tr>
-
-                    @else
-                        <tr>
-                            <td colspan="3" class="text-center">
-                                No categories found.
-                            </td>
-                        </tr>
-                    @endcan
+                    <tr>
+                        <td colspan="4" class="text-center">
+                            No categories found.
+                        </td>
+                    </tr>
                 @endforelse
             </tbody>
         </table>
@@ -98,11 +90,21 @@
 
     <div class="back-button">
         <a href="{{ route('products.index') }}" class="btn back-btn">
-            Back to Products
+            Show list Products
         </a>
 
+        <a href="{{ route('notifications.index') }}" class="btn">
+            Show Notifications
+        </a>
+        
+        @if (auth()->user()?->isAdmin())
         <a href="{{ route('suppliers.index') }}" class="btn back-btn">
             Show Suppliers
         </a>
+
+        <a href="{{ route('stock-movements.index') }}" class="btn back-btn">
+            Show Stock Movements
+        </a>
+        @endif
     </div>
 @endsection

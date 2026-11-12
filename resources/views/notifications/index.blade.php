@@ -23,8 +23,9 @@
 
             @if (isset($notification->data['product_id']))
                 <p>
-                    <strong>Product ID:</strong>
-                    {{ $notification->data['product_id'] }}
+                    <a href="{{ route('products.show', $notification->data['product_id']) }}" class="btn btn-default">
+                        View Product
+                    </a>
                 </p>
             @endif
 
@@ -140,7 +141,7 @@
     <div class="back-buttons">
 
         <a href="{{ route('products.index') }}" class="btn back-btn">
-            Back to Products
+            Back to list Products
         </a>
 
         <a href="{{ route('categories.index') }}" class="btn back-btn">

@@ -40,13 +40,6 @@ Route::middleware('auth')->group(function () {
         ->middlewareFor('update', 'can:update,product')
         ->middlewareFor('destroy', 'can:delete,product');
 
-    Route::resource('suppliers', SupplierController::class)
-        ->middlewareFor('create', 'can:create,'.Supplier::class)
-        ->middlewareFor('store', 'can:create,'.Supplier::class)
-        ->middlewareFor('edit', 'can:update,supplier')
-        ->middlewareFor('update', 'can:update,supplier')
-        ->middlewareFor('destroy', 'can:delete,supplier');
-
     Route::resource('categories', CategoryController::class)
         ->except(['index', 'show'])
         ->middleware('admin');
@@ -57,10 +50,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('users', UserController::class)
         ->middleware('admin');
 
-    Route::middleware('admin')->group(function () {
-        Route::get('/notifications', [
-            NotificationController::class,
-            'index',
+
+     Route::get('/notifications', [
+         NotificationController::class,'index',
         ])->name('notifications.index');
 
         Route::patch('/notifications/{notification}/read', [
@@ -72,21 +64,29 @@ Route::middleware('auth')->group(function () {
             NotificationController::class,
             'destroy',
         ])->name('notifications.destroy');
-    });
+    
+    
+    Route::middleware('admin')->group(function () {
 
-    Route::get('/stock-movements', [
-        StockMovementController::class,
-        'index',
-    ])
+        Route::resource('suppliers',
+            SupplierController::class)     
+        ->middlewareFor('create', 'can:create,'.Supplier::class)
+        ->middlewareFor('store', 'can:create,'.Supplier::class)
+        ->middlewareFor('edit', 'can:update,supplier')
+        ->middlewareFor('update', 'can:update,supplier')
+        ->middlewareFor('destroy', 'can:delete,supplier');
+
+        Route::get('/stock-movements', [
+            StockMovementController::class,'index',])
         ->middleware('can:viewAny,App\Models\StockMovement')
         ->name('stock-movements.index');
-
-    Route::post('/stock-movements', [
-        StockMovementController::class,
-        'store',
-    ])
+        
+        Route::post('/stock-movements', [
+            StockMovementController::class,'store',
+        ])
         ->middleware('can:create,App\Models\StockMovement')
         ->name('stock-movements.store');
+    });
 
     Route::get('/profile', [ProfileController::class, 'index'])
         ->name('profile');
