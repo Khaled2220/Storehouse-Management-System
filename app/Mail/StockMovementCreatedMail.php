@@ -16,7 +16,7 @@ class StockMovementCreatedMail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct( public int $stockMovementId, public string $productName, public string $type, public int $quantity, public string $movementDate)
+    public function __construct(public int $stockMovementId, public string $productName, public string $type, public int $quantity, public string $movementDate)
     {
         //
     }

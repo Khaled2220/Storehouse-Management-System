@@ -2,8 +2,8 @@
 
 namespace App\Listeners;
 
-use App\Jobs\ProcessStockMovementCreated as ProcessStockMovementCreatedJob;
 use App\Events\StockMovementCreated;
+use App\Jobs\ProcessStockMovementCreated as ProcessStockMovementCreatedJob;
 
 class ProcessStockMovementCreated
 {
@@ -20,6 +20,6 @@ class ProcessStockMovementCreated
      */
     public function handle(StockMovementCreated $event): void
     {
-            ProcessStockMovementCreatedJob::dispatch($event->stockMovement->id);
+        ProcessStockMovementCreatedJob::dispatch($event->stockMovement->id);
     }
 }

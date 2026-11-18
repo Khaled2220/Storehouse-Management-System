@@ -12,7 +12,7 @@ use Illuminate\Http\JsonResponse;
 
 class SupplierController extends Controller
 {
-    public function __construct(private SupplierService $supplierService) 
+    public function __construct(private SupplierService $supplierService)
     {
         //
     }
@@ -20,7 +20,7 @@ class SupplierController extends Controller
     /**
      * Display all suppliers.
      */
-    public function index()
+    public function index(): JsonResponse
     {
         $suppliers = $this->supplierService->getAllSuppliers();
 
@@ -28,15 +28,21 @@ class SupplierController extends Controller
             ->additional([
                 'status' => true,
                 'message' => 'Suppliers retrieved successfully.',
-            ]);
+            ])
+            ->response();
     }
 
     /**
      * Display the specified supplier.
      */
-    public function show(Supplier $supplier): SupplierResource
+    public function show(Supplier $supplier): JsonResponse
     {
-        return new SupplierResource($supplier);
+        return (new SupplierResource($supplier))
+            ->additional([
+                'status' => true,
+                'message' => 'Supplier retrieved successfully.',
+            ])
+            ->response();
     }
 
     /**
@@ -44,15 +50,11 @@ class SupplierController extends Controller
      */
     public function store(StoreSupplierRequest $request): JsonResponse
     {
-        $validated = $request->validated();
-
-        $logo = $request->file('logo');
-
         $supplier = $this->supplierService->createSupplier(
-            $validated,
-            $logo?->getRealPath(),
-            $logo?->extension()
+            $request->validated(),
+            $request->file('logo'),
         );
+
         return (new SupplierResource($supplier))
             ->additional([
                 'status' => true,
@@ -65,23 +67,20 @@ class SupplierController extends Controller
     /**
      * Update the specified supplier.
      */
-    public function update(UpdateSupplierRequest $request,Supplier $supplier): SupplierResource 
+    public function update(UpdateSupplierRequest $request, Supplier $supplier): JsonResponse
     {
-        $validated = $request->validated();
-
-        $logo = $request->file('logo');
-
         $updatedSupplier = $this->supplierService->updateSupplier(
             $supplier,
-            $validated,
-            $logo?->getRealPath(),
-            $logo?->extension()
+            $request->validated(),
+            $request->file('logo'),
         );
+
         return (new SupplierResource($updatedSupplier))
             ->additional([
                 'status' => true,
                 'message' => 'Supplier updated successfully.',
-            ]);
+            ])
+            ->response();
     }
 
     /**
@@ -97,6 +96,7 @@ class SupplierController extends Controller
                 'message' => 'Cannot delete supplier because it has products.',
             ], 422);
         }
+
         return response()->json([
             'status' => true,
             'message' => 'Supplier deleted successfully.',

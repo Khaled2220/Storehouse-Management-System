@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Resources\UserResource;
 use App\Services\ApiAuthService;
+use Illuminate\Http\JsonResponse;
 
 class LoginController extends Controller
 {
@@ -14,7 +15,7 @@ class LoginController extends Controller
         //
     }
 
-    public function login(LoginRequest $request)
+    public function login(LoginRequest $request): JsonResponse
     {
         $result = $this->authService->login($request->validated());
 
@@ -24,12 +25,13 @@ class LoginController extends Controller
                 'message' => 'Invalid email or password',
             ], 401);
         }
+
         return response()->json([
             'status' => true,
             'message' => 'Login successful',
             'access_token' => $result['access_token'],
             'token_type' => $result['token_type'],
             'user' => new UserResource($result['user']),
-        ], 200);
+        ]);
     }
 }

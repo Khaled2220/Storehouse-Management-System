@@ -4,7 +4,6 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class UpdateProductRequest extends FormRequest
@@ -14,9 +13,7 @@ class UpdateProductRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        Gate::authorize('update', $this->route('product'));
-
-        return true;
+        return $this->user()->can('update', $this->route('product'));
     }
 
     /**
@@ -35,7 +32,7 @@ class UpdateProductRequest extends FormRequest
             'price' => ['required', 'numeric', 'min:0'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
             'categories' => ['nullable', 'array'],
-            'categories.*' => ['integer', 'exists:categories,id'],
+            'categories.*' => ['integer', 'distinct', 'exists:categories,id'],
             'status' => ['required', 'in:active,expired'],
             'expiry_date' => ['nullable', 'date'],
             'supplier_id' => ['required', 'integer', 'exists:suppliers,id'],

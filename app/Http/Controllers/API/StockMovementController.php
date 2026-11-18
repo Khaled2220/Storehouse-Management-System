@@ -7,20 +7,19 @@ use App\Http\Requests\IndexStockMovementRequest;
 use App\Http\Requests\StoreStockMovementRequest;
 use App\Http\Resources\StockMovementResource;
 use App\Services\StockMovementService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class StockMovementController extends Controller
 {
-    public function __construct(private StockMovementService $stockMovementService) 
+    public function __construct(private StockMovementService $stockMovementService)
     {
         //
     }
 
-    public function index(IndexStockMovementRequest $request): AnonymousResourceCollection 
+    public function index(IndexStockMovementRequest $request): AnonymousResourceCollection
     {
-        $movements = $this->stockMovementService->getAllMovements(
-            $request->validated()
-        );
+        $movements = $this->stockMovementService->getAllMovements($request->validated());
 
         return StockMovementResource::collection($movements)
             ->additional([
@@ -28,26 +27,20 @@ class StockMovementController extends Controller
             ]);
     }
 
-    public function store(StoreStockMovementRequest $request): StockMovementResource 
+    public function store(StoreStockMovementRequest $request): JsonResponse
     {
-        $data = $request->validated();
-
-        $attachment = $request->file('attachment');
-
-        unset($data['attachment']);
-
-        $data['created_by'] = $request->user()->id;
-
         $movement = $this->stockMovementService->recordMovement(
-            $data,
-            $attachment?->getPathname(),
-            $attachment?->extension()
+            $request->validated(),
+            $request->user(),
+            $request->file('attachment')
         );
 
         return (new StockMovementResource($movement))
             ->additional([
                 'success' => true,
                 'message' => 'Stock movement recorded successfully.',
-            ]);
+            ])
+            ->response()
+            ->setStatusCode(201);
     }
 }

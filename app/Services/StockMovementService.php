@@ -6,14 +6,16 @@ use App\Events\StockMovementCreated;
 use App\Models\Product;
 use App\Models\StockMovement;
 use App\Models\Supplier;
+use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use Throwable;
 
 class StockMovementService
 {
-    public function __construct(private StockMovementAttachmentStorage $attachmentStorage) 
+    public function __construct(private StockMovementAttachmentStorage $attachmentStorage)
     {
         //
     }
@@ -21,7 +23,7 @@ class StockMovementService
     /**
      * Record a stock movement and update product quantity.
      */
-    public function recordMovement(array $data,?string $attachmentPath = null,?string $attachmentExtension = null): StockMovement 
+    public function recordMovement(array $data, User $user, ?UploadedFile $attachment = null): StockMovement
     {
         $type = $data['type'] ?? null;
         $quantityValue = $data['quantity'] ?? null;
@@ -30,11 +32,9 @@ class StockMovementService
             throw new InvalidArgumentException('Invalid movement type.');
         }
 
-        $validQuantity = is_int($quantityValue)
-            || (
-                is_string($quantityValue)
-                && ctype_digit($quantityValue)
-            );
+        $validQuantity = is_int($quantityValue) || (
+            is_string($quantityValue) && ctype_digit($quantityValue)
+        );
 
         if (! $validQuantity || (int) $quantityValue <= 0) {
             throw new InvalidArgumentException(
@@ -48,11 +48,9 @@ class StockMovementService
         if ($type === 'in') {
             $supplierIdValue = $data['supplier_id'] ?? null;
 
-            $validSupplierId = is_int($supplierIdValue)
-                || (
-                    is_string($supplierIdValue)
-                    && ctype_digit($supplierIdValue)
-                );
+            $validSupplierId = is_int($supplierIdValue) || (
+                is_string($supplierIdValue) && ctype_digit($supplierIdValue)
+            );
 
             if (! $validSupplierId || (int) $supplierIdValue <= 0) {
                 throw new InvalidArgumentException(
@@ -66,25 +64,19 @@ class StockMovementService
         $storedAttachment = null;
 
         try {
-            if ($attachmentPath !== null) {
-                if ($attachmentExtension === null) {
-                    throw new InvalidArgumentException(
-                        'Attachment extension is required.'
-                    );
-                }
-
+            if ($attachment !== null) {
                 $storedAttachment = $this->attachmentStorage->store(
-                    $attachmentPath,
-                    $attachmentExtension
+                    $attachment->getRealPath(),
+                    $attachment->extension()
                 );
             }
-
             $movement = DB::transaction(function () use (
                 $data,
                 $type,
                 $quantity,
                 $supplierId,
-                $storedAttachment
+                $storedAttachment,
+                $user
             ) {
                 $product = Product::query()
                     ->lockForUpdate()
@@ -116,7 +108,7 @@ class StockMovementService
                     'movement_date' => $data['movement_date'],
                     'note' => $data['note'] ?? null,
                     'attachment' => $storedAttachment,
-                    'created_by' => $data['created_by'],
+                    'created_by' => $user->id,
                 ]);
             });
         } catch (Throwable $exception) {
@@ -139,7 +131,7 @@ class StockMovementService
     /**
      * Get all stock movements with optional filters.
      */
-    public function getAllMovements(array $filters = []): LengthAwarePaginator 
+    public function getAllMovements(array $filters = []): LengthAwarePaginator
     {
         return StockMovement::with([
             'product',
@@ -182,7 +174,7 @@ class StockMovementService
     /**
      * Get movements for a specific product.
      */
-    public function getProductMovements(int $productId): LengthAwarePaginator 
+    public function getProductMovements(int $productId): LengthAwarePaginator
     {
         return StockMovement::with([
             'supplier',

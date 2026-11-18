@@ -2,13 +2,15 @@
 
 namespace App\Jobs;
 
-use App\Models\User;
-use App\Models\Supplier;
-use Illuminate\Support\Facades\Mail;
 use App\Mail\SupplierCreatedMail;
+use App\Models\Supplier;
+use App\Models\User;
 use App\Notifications\SupplierCreatedNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Throwable;
 
 class ProcessSupplierCreated implements ShouldQueue
 {
@@ -37,13 +39,20 @@ class ProcessSupplierCreated implements ShouldQueue
                     (int) $supplier->id
                 )
             );
-            Mail::to($user->email)->send(
-                new SupplierCreatedMail(
-                    $supplier->name,
-                    (int) $supplier->id
-                )
-            );
-
+            try {
+                Mail::to($user->email)->send(
+                    new SupplierCreatedMail(
+                        $supplier->name,
+                        (int) $supplier->id
+                    )
+                );
+            } catch (Throwable $exception) {
+                Log::error('Supplier Create Email could not be send.', [
+                    'user_id' => $user->id,
+                    'suppler_id' => $supplier->id,
+                    'error' => $exception->getMessage(),
+                ]);
+            }
         });
     }
 }

@@ -321,11 +321,6 @@
     <div class="pagination-container">
         {{ $movements->links() }}
     </div>
+    @include('layouts.partials.body')
 @endif
-
-<div class="back-button">
-    <a href="{{ route('products.index') }}" class="btn back-btn">
-        Back to list Products
-    </a>
-</div>
 @endsection

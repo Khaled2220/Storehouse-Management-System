@@ -31,7 +31,11 @@
                     <th>ID</th>
                     <th>Category Name</th>
                     <th>Show Products</th>
+
+                    @if (auth()->user()?->isAdmin())
                     <th>Action</th>
+                    @endif
+
                 </tr>
             </thead>
 
@@ -49,25 +53,23 @@
                             </a>
                         </td>
 
+                        @if (auth()->user()?->isAdmin())
                         <td>
                             <div class="action-buttons">
-
                                 @can('update', $category)
-                                    <a href="{{ route('categories.edit', $category) }}"
-                                       class="btn edit-btn">
+                                    <a href="{{ route('categories.edit', $category) }}" class="btn edit-btn">
                                         Edit
                                     </a>
                                 @endcan
 
                                 @can('delete', $category)
-                                    <form action="{{ route('categories.destroy', $category) }}"
-                                          method="POST"
-                                          onsubmit="return confirm('Are you sure you want to delete this category?');">
+                                    <form action="{{ route('categories.destroy', $category) }}" method="POST"
+                                        onsubmit="return confirm('Are you sure you want to delete this category?');">
 
                                         @csrf
                                         @method('DELETE')
-
                                         <button type="submit" class="btn delete-btn">
+                                            <span class="glyphicon glyphicon-trash"></span>
                                             Delete
                                         </button>
                                     </form>
@@ -75,6 +77,7 @@
 
                             </div>
                         </td>
+                        @endif
                     </tr>
 
                 @empty
@@ -87,24 +90,5 @@
             </tbody>
         </table>
     </div>
-
-    <div class="back-button">
-        <a href="{{ route('products.index') }}" class="btn back-btn">
-            Show list Products
-        </a>
-
-        <a href="{{ route('notifications.index') }}" class="btn">
-            Show Notifications
-        </a>
-        
-        @if (auth()->user()?->isAdmin())
-        <a href="{{ route('suppliers.index') }}" class="btn back-btn">
-            Show Suppliers
-        </a>
-
-        <a href="{{ route('stock-movements.index') }}" class="btn back-btn">
-            Show Stock Movements
-        </a>
-        @endif
-    </div>
+@include('layouts.partials.body')
 @endsection

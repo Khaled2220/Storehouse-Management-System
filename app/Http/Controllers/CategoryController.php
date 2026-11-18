@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
+use App\Models\Category;
 use App\Services\CategoryService;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class CategoryController extends Controller
 {
@@ -14,53 +16,50 @@ class CategoryController extends Controller
         //
     }
 
-    public function index()
+    public function index(): View
     {
         $categories = $this->categoryService->getAllCategories();
 
-        return view('categories.index')->with(['categories' => $categories,]);
+        return view('categories.index')->with(['categories' => $categories]);
     }
 
-    public function create()
+    public function create(): View
     {
         return view('categories.create');
     }
 
-    public function store(StoreCategoryRequest $request)
+    public function store(StoreCategoryRequest $request): RedirectResponse
     {
-        $validated = $request->validated();
-
-        $this->categoryService->createCategory($validated);
+        $this->categoryService->createCategory($request->validated());
 
         return redirect()->route('categories.index')
             ->with('success', 'Category Added Successfully');
     }
 
-    public function show(Category $category)
+    public function show(Category $category): View
     {
         $category = $this->categoryService->getCategoryWithProducts($category);
+
         return view('categories.show')->with([
             'category' => $category,
             'products' => $category->products,
-            ]);
+        ]);
     }
 
-    public function edit(Category $category)
+    public function edit(Category $category): View
     {
-        return view('categories.edit')->with(['category' => $category,]);
+        return view('categories.edit')->with(['category' => $category]);
     }
 
-    public function update(UpdateCategoryRequest $request, Category $category)
+    public function update(UpdateCategoryRequest $request, Category $category): RedirectResponse
     {
-        $validated = $request->validated();
-
-        $this->categoryService->updateCategory($category, $validated);
+        $this->categoryService->updateCategory($category, $request->validated());
 
         return redirect()->route('categories.index')
             ->with('success', 'Category Updated Successfully');
     }
 
-    public function destroy(Category $category)
+    public function destroy(Category $category): RedirectResponse
     {
         $deleted = $this->categoryService->deleteCategory($category);
 
@@ -71,6 +70,7 @@ class CategoryController extends Controller
                     'Category cannot be deleted because it has linked products'
                 );
         }
+
         return redirect()->route('categories.index')
             ->with('success', 'Category Deleted Successfully');
     }

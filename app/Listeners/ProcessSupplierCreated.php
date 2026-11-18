@@ -2,8 +2,8 @@
 
 namespace App\Listeners;
 
-use App\Jobs\ProcessSupplierCreated as ProcessSupplierCreatedJob;
 use App\Events\SupplierCreated;
+use App\Jobs\ProcessSupplierCreated as ProcessSupplierCreatedJob;
 
 class ProcessSupplierCreated
 {

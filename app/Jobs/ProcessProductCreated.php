@@ -3,14 +3,14 @@
 namespace App\Jobs;
 
 use App\Enums\UserType;
-use App\Models\User;
-use App\Models\Product;
-use Illuminate\Support\Facades\Mail;
 use App\Mail\ProductCreatedMail;
+use App\Models\Product;
+use App\Models\User;
 use App\Notifications\ProductCreatedNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Throwable;
 
 class ProcessProductCreated implements ShouldQueue
@@ -41,14 +41,14 @@ class ProcessProductCreated implements ShouldQueue
             );
         });
         User::where('user_type', UserType::USER->value)
-            ->each(function(User $user) use ($product){
+            ->each(function (User $user) use ($product) {
                 $user->notify(
                     new ProductCreatedNotification(
                         $product->name,
                         (int) $product->id
                     )
                 );
-         });
+            });
         User::admins()->each(function (User $user) use ($product) {
             try {
                 Mail::to($user->email)->send(
@@ -56,9 +56,8 @@ class ProcessProductCreated implements ShouldQueue
                         $product->name,
                         (int) $product->id
                     )
-                );    
-             } 
-            catch (Throwable $exception) {
+                );
+            } catch (Throwable $exception) {
                 Log::error('Product created email could not be sent.', [
                     'user_id' => $user->id,
                     'product_id' => $product->id,

@@ -633,9 +633,20 @@ h2 {
     height: 40px;
     border: none;
 }
-
 .btn-update:hover,
 .btn-update:focus {
     background-color: #ec971f;
+    color: white !important;
+}
+
+.action-buttons .delete-btn,
+.action-buttons form .delete-btn {
+    background-color: #d9534f !important;
+    border-color: #d43f3a !important;
+    color: white !important;
+}
+
+.action-buttons .delete-btn:hover {
+    background-color: #c9302c !important;
     color: white !important;
 }

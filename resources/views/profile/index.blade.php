@@ -83,4 +83,5 @@
         </button>
     </form>
 </div>
+@include('layouts.partials.body')
 @endsection

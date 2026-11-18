@@ -10,7 +10,7 @@ use Illuminate\View\View;
 
 class StockMovementController extends Controller
 {
-    public function __construct(private StockMovementService $stockMovementService) 
+    public function __construct(private StockMovementService $stockMovementService)
     {
         //
     }
@@ -39,11 +39,7 @@ class StockMovementController extends Controller
 
         $data['created_by'] = $request->user()->id;
 
-        $this->stockMovementService->recordMovement(
-            $data,
-            $attachment?->getPathname(),
-            $attachment?->extension()
-        );
+        $this->stockMovementService->recordMovement($data, $attachment?->getPathname(), $attachment?->extension());
 
         return back()->with(
             'success',

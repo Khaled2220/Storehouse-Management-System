@@ -24,6 +24,7 @@
                 </td>
             </tr>
 
+            @if (auth()->user()?->isAdmin())
             <tr>
                 <th>Supplier</th>
                 <td>
@@ -36,6 +37,7 @@
                     @endif
                 </td>
             </tr>
+            @endif
 
             <tr>
                 <th>Description</th>
@@ -158,12 +160,9 @@
         @endcan
 
         @can('delete', $product)
-            <form action="{{ route('products.destroy', $product) }}" method="POST"
-                onsubmit="return confirm('Are you sure you want to delete this product?')"
-            >
+            <form action="{{ route('products.destroy', $product) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this product?')" >
                 @csrf
                 @method('DELETE')
-
                 <button type="submit" class="btn delete-btn">
                     <span class="glyphicon glyphicon-trash"></span>
                     Delete
@@ -171,10 +170,5 @@
             </form>
         @endcan
     </div>
-
-    <div class="back-button">
-        <a href="{{ route('products.index') }}" class="btn back-btn">
-            Back to list Products
-        </a>
-    </div>
+@include('layouts.partials.pageproducts')
 @endsection

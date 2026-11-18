@@ -5,65 +5,37 @@ namespace App\Services;
 use App\Events\SupplierCreated;
 use App\Models\Supplier;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
-use InvalidArgumentException;
 use Throwable;
 
 class SupplierService
 {
-    public function __construct(private SupplierLogoStorage $logoStorage) 
+    public function __construct(private SupplierLogoStorage $logoStorage)
     {
         //
     }
 
     /**
-     * Get all suppliers with their products count.
-     */
-    public function getAllSuppliers(): LengthAwarePaginator
-    {
-        return Supplier::withCount('products')
-            ->orderBy('name')
-            ->paginate(50);
-    }
-
-    /**
-     * Get a supplier with its products and categories.
-     */
-    public function getSupplierById(int $id): Supplier
-    {
-        return Supplier::with([
-            'products.categories',
-        ])->findOrFail($id);
-    }
-
-    /**
      * Create a supplier and optionally store its logo.
      */
-    public function createSupplier(array $data,?string $logoPath = null,?string $logoExtension = null): Supplier 
+    public function createSupplier(array $data, ?UploadedFile $logo = null): Supplier
     {
         $storedLogo = null;
 
         try {
-            if ($logoPath !== null) {
-                if ($logoExtension === null) {
-                    throw new InvalidArgumentException(
-                        'Logo extension is required.'
-                    );
-                }
-
+            if ($logo !== null) {
                 $storedLogo = $this->logoStorage->store(
-                    $logoPath,
-                    $logoExtension
+                    $logo->getRealPath(),
+                    $logo->extension(),
                 );
 
                 $data['logo'] = $storedLogo;
             }
-
             $supplier = DB::transaction(function () use ($data) {
                 return Supplier::create($data);
             });
-        } 
-        catch (Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->logoStorage->delete($storedLogo);
 
             throw $exception;
@@ -77,22 +49,16 @@ class SupplierService
     /**
      * Update a supplier and optionally replace its logo.
      */
-    public function updateSupplier(Supplier $supplier,array $data,?string $logoPath = null,?string $logoExtension = null): Supplier 
+    public function updateSupplier(Supplier $supplier, array $data, ?UploadedFile $logo = null): Supplier
     {
         $oldLogo = $supplier->logo;
         $newLogo = null;
 
         try {
-            if ($logoPath !== null) {
-                if ($logoExtension === null) {
-                    throw new InvalidArgumentException(
-                        'Logo extension is required.'
-                    );
-                }
-
+            if ($logo !== null) {
                 $newLogo = $this->logoStorage->store(
-                    $logoPath,
-                    $logoExtension
+                    $logo->getRealPath(),
+                    $logo->extension(),
                 );
 
                 $data['logo'] = $newLogo;
@@ -106,8 +72,7 @@ class SupplierService
 
                 return $supplier->refresh();
             });
-        } 
-        catch (Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->logoStorage->delete($newLogo);
 
             throw $exception;
@@ -136,7 +101,11 @@ class SupplierService
 
             $logo = $lockedSupplier->logo;
 
-            $lockedSupplier->delete();
+            $deleted = $lockedSupplier->delete();
+
+            if (! $deleted) {
+                return false;
+            }
 
             return ['logo' => $logo];
         });
@@ -148,5 +117,19 @@ class SupplierService
         $this->logoStorage->delete($result['logo']);
 
         return true;
+    }
+
+    public function getAllSuppliers(): LengthAwarePaginator
+    {
+        return Supplier::withCount('products')
+            ->orderBy('name')
+            ->paginate(50);
+    }
+
+    public function getSupplierById(int $id): Supplier
+    {
+        return Supplier::with([
+            'products.categories',
+        ])->findOrFail($id);
     }
 }

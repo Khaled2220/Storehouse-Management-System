@@ -110,14 +110,12 @@
                     </form>
                 @endunless
 
-                <form action="{{ route('notifications.destroy', $notification) }}"
-                      method="POST"
-                      onsubmit="return confirm('Are you sure you want to delete this notification?');">
+                <form action="{{ route('notifications.destroy', $notification) }}" method="POST"
+                    onsubmit="return confirm('Are you sure you want to delete this notification?');">
 
                     @csrf
                     @method('DELETE')
-
-                    <button type="submit" class="btn btn-danger">
+                    <button type="submit" class="btn delete-btn">
                         <span class="glyphicon glyphicon-trash"></span>
                         Delete
                     </button>
@@ -137,17 +135,6 @@
     <div class="mt-3">
         {{ $notifications->links() }}
     </div>
-
-    <div class="back-buttons">
-
-        <a href="{{ route('products.index') }}" class="btn back-btn">
-            Back to list Products
-        </a>
-
-        <a href="{{ route('categories.index') }}" class="btn back-btn">
-            Back to Categories
-        </a>
-
-    </div>
-
+    
+@include('layouts.partials.body')
 @endsection

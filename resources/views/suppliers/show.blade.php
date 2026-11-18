@@ -104,21 +104,10 @@
     @can('delete', $supplier)
         @if ($supplier->products->isEmpty())
             <form action="{{ route('suppliers.destroy', $supplier) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this supplier?')">
-                @csrf
-                @method('DELETE')
-
-                <button type="submit" class="btn delete-btn">
-                    <span class="glyphicon glyphicon-trash"></span>
-                    Delete
-                </button>
+                @include('layouts.partials.buttondelete')
             </form>
         @endif
     @endcan
 </div>
-
-<div class="back-button">
-    <a href="{{ route('suppliers.index') }}" class="btn back-btn">
-        Back to Suppliers
-    </a>
-</div>
+@include('layouts.partials.pagesuppliers')
 @endsection

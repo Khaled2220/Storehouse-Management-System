@@ -8,11 +8,13 @@ use App\Models\Product;
 use App\Services\NotificationService;
 use App\Services\ProductService;
 use App\Services\StockMovementService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class ProductController extends Controller
 {
-    public function __construct(private ProductService $productService,private NotificationService $notificationService,private StockMovementService $stockMovementService) 
+    public function __construct(private ProductService $productService, private NotificationService $notificationService, private StockMovementService $stockMovementService)
     {
         //
     }
@@ -20,20 +22,13 @@ class ProductController extends Controller
     /**
      * Display all products.
      */
-    public function index(Request $request)
+    public function index(Request $request): View
     {
-        $categoryId = $request->query('category_id');
+        $categoryId = $request->filled('category_id') ? $request->integer('category_id') : null;
 
-        if ($categoryId) {
-            $products = $this->productService
-                ->getProductsByCategory((int) $categoryId);
-        } 
-        else {
-            $products = $this->productService->getAllProducts();
-        }
+        $products = $this->productService->getProducts($categoryId);
 
-        $unreadNotificationsCount =
-            $this->getUnreadNotificationsCount($request);
+        $unreadNotificationsCount = $this->getUnreadNotificationsCount($request);
 
         return view('products.index')->with([
             'products' => $products,
@@ -44,14 +39,13 @@ class ProductController extends Controller
     /**
      * Show create product page.
      */
-    public function create(Request $request)
+    public function create(Request $request): View
     {
         $categories = $this->productService->getCategories();
 
         $suppliers = $this->productService->getSuppliers();
 
-        $unreadNotificationsCount =
-            $this->getUnreadNotificationsCount($request);
+        $unreadNotificationsCount = $this->getUnreadNotificationsCount($request);
 
         return view('products.create')->with([
             'categories' => $categories,
@@ -63,16 +57,12 @@ class ProductController extends Controller
     /**
      * Store a new product.
      */
-    public function store(StoreProductRequest $request)
+    public function store(StoreProductRequest $request): RedirectResponse
     {
-        $validated = $request->validated();
-
-        $image = $request->file('image');
-
         $this->productService->createProduct(
-            $validated,
-            $image?->getRealPath() ?: null,
-            $image?->extension()
+            $request->validated(),
+            $request->file('image'),
+            $request->user(),
         );
 
         return redirect()->route('products.index')
@@ -82,15 +72,13 @@ class ProductController extends Controller
     /**
      * Display a specific product.
      */
-    public function show(Request $request, Product $product)
+    public function show(Request $request, Product $product): View
     {
-        $unreadNotificationsCount =
-            $this->getUnreadNotificationsCount($request);
+        $unreadNotificationsCount = $this->getUnreadNotificationsCount($request);
 
-        $product->load('categories', 'supplier');
+        $product = $this->productService->getProductWithRelations($product);
 
-        $movements = $this->stockMovementService
-            ->getProductMovements($product->id);
+        $movements = $this->stockMovementService->getProductMovements($product->id);
 
         return view('products.show')->with([
             'product' => $product,
@@ -102,17 +90,15 @@ class ProductController extends Controller
     /**
      * Show edit product page.
      */
-    public function edit(Request $request, Product $product)
+    public function edit(Request $request, Product $product): View
     {
         $categories = $this->productService->getCategories();
 
         $suppliers = $this->productService->getSuppliers();
 
-        $product = $this->productService
-            ->getProductWithRelations($product);
+        $product = $this->productService->getProductWithRelations($product);
 
-        $unreadNotificationsCount =
-            $this->getUnreadNotificationsCount($request);
+        $unreadNotificationsCount = $this->getUnreadNotificationsCount($request);
 
         return view('products.edit')->with([
             'product' => $product,
@@ -125,18 +111,9 @@ class ProductController extends Controller
     /**
      * Update an existing product.
      */
-    public function update(UpdateProductRequest $request, Product $product)
+    public function update(UpdateProductRequest $request, Product $product): RedirectResponse
     {
-        $validated = $request->validated();
-
-        $image = $request->file('image');
-
-        $this->productService->updateProduct(
-            $product,
-            $validated,
-            $image?->getRealPath() ?: null,
-            $image?->extension()
-        );
+        $this->productService->updateProduct($product, $request->validated(), $request->file('image'));
 
         return redirect()->route('products.index')
             ->with('success', 'Product Updated Successfully');
@@ -145,7 +122,7 @@ class ProductController extends Controller
     /**
      * Delete a product.
      */
-    public function destroy(Product $product)
+    public function destroy(Product $product): RedirectResponse
     {
         $deleted = $this->productService->deleteProduct($product);
 
@@ -158,9 +135,6 @@ class ProductController extends Controller
             ->with('success', 'Product Deleted Successfully');
     }
 
-    /**
-     * Get unread notifications count for the authenticated user.
-     */
     private function getUnreadNotificationsCount(Request $request): int
     {
         return $this->notificationService->getUnreadCount($request->user());

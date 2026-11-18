@@ -15,7 +15,7 @@ class SupplierCreatedMail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(public string $supplierName,public int $supplierId)
+    public function __construct(public string $supplierName, public int $supplierId)
     {
         //
     }
@@ -36,7 +36,7 @@ class SupplierCreatedMail extends Mailable
     public function content(): Content
     {
         return new Content(
-             view: 'emails.suppliers.created',
+            view: 'emails.suppliers.created',
         );
     }
 

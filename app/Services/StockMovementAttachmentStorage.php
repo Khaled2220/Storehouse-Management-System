@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Http\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
@@ -29,7 +30,7 @@ class StockMovementAttachmentStorage
 
         $stored = Storage::disk('public')->putFileAs(
             'stock-movements',
-            $sourcePath,
+            new File($sourcePath),
             $fileName
         );
 

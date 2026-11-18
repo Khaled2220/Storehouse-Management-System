@@ -47,10 +47,5 @@
             </p>
         </div>
     @endcan
-
-    <div class="back-button">
-        <a href="{{ route('categories.index') }}" class="btn back-btn">
-            Back to Categories
-        </a>
-    </div>
+@include('layouts.partials.pagecategories')
 @endsection

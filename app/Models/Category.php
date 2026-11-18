@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Category extends Model
 {
-    protected $fillable = ['name',];
+    protected $fillable = ['name'];
 
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany( Product::class,
+        return $this->belongsToMany(Product::class,
             'products_categories',
             'category_id',
             'product_id'

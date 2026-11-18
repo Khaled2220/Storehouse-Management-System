@@ -4,7 +4,6 @@ namespace App\Http\Requests;
 
 use App\Models\Supplier;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Gate;
 
 class StoreSupplierRequest extends FormRequest
 {
@@ -13,9 +12,7 @@ class StoreSupplierRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        Gate::authorize('create', Supplier::class);
-
-        return true;
+        return $this->user()->can('create', Supplier::class);
     }
 
     public function rules(): array

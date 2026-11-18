@@ -4,7 +4,6 @@ namespace App\Http\Requests;
 
 use App\Models\StockMovement;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Gate;
 
 class IndexStockMovementRequest extends FormRequest
 {
@@ -13,9 +12,7 @@ class IndexStockMovementRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        Gate::authorize('viewAny', StockMovement::class);
-
-        return true;
+        return $this->user()->can('viewAny', StockMovement::class);
     }
 
     /**

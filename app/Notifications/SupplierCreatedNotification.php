@@ -9,7 +9,7 @@ class SupplierCreatedNotification extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct(public string $supplierName,public int $supplierId)
+    public function __construct(public string $supplierName, public int $supplierId)
     {
         //
     }
@@ -23,7 +23,6 @@ class SupplierCreatedNotification extends Notification
     {
         return ['database'];
     }
-
 
     /**
      * Get the array representation of the notification.

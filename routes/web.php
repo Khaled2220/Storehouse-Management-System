@@ -8,8 +8,10 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StockMovementController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
+use App\Models\Category;
 use App\Models\Product;
 use App\Models\Supplier;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/login');
@@ -35,58 +37,40 @@ Route::post('/logout', [AuthController::class, 'logout'])
 Route::middleware('auth')->group(function () {
     Route::resource('products', ProductController::class)
         ->middlewareFor('create', 'can:create,'.Product::class)
-        ->middlewareFor('store', 'can:create,'.Product::class)
         ->middlewareFor('edit', 'can:update,product')
-        ->middlewareFor('update', 'can:update,product')
         ->middlewareFor('destroy', 'can:delete,product');
 
     Route::resource('categories', CategoryController::class)
-        ->except(['index', 'show'])
-        ->middleware('admin');
-
-    Route::resource('categories', CategoryController::class)
-        ->only(['index', 'show']);
+        ->middlewareFor('create', 'can:create,'.Category::class)
+        ->middlewareFor('edit', 'can:update,category')
+        ->middlewareFor('destroy', 'can:delete,category');
 
     Route::resource('users', UserController::class)
-        ->middleware('admin');
+        ->middlewareFor('index', 'can:viewAny,'.User::class)
+        ->middlewareFor('create', 'can:create,'.User::class)
+        ->middlewareFor('show', 'can:view,user')
+        ->middlewareFor('edit', 'can:update,user')
+        ->middlewareFor('destroy', 'can:delete,user');
 
+    Route::get('/notifications', [NotificationController::class, 'index',
+    ])->name('notifications.index');
 
-     Route::get('/notifications', [
-         NotificationController::class,'index',
-        ])->name('notifications.index');
+    Route::patch('/notifications/{notification}/read', [NotificationController::class, 'markAsRead',
+    ])->name('notifications.read');
 
-        Route::patch('/notifications/{notification}/read', [
-            NotificationController::class,
-            'markAsRead',
-        ])->name('notifications.read');
+    Route::delete('/notifications/{notification}', [NotificationController::class, 'destroy',
+    ])->name('notifications.destroy');
 
-        Route::delete('/notifications/{notification}', [
-            NotificationController::class,
-            'destroy',
-        ])->name('notifications.destroy');
-    
-    
-    Route::middleware('admin')->group(function () {
-
-        Route::resource('suppliers',
-            SupplierController::class)     
+    Route::resource('suppliers', SupplierController::class)
         ->middlewareFor('create', 'can:create,'.Supplier::class)
-        ->middlewareFor('store', 'can:create,'.Supplier::class)
         ->middlewareFor('edit', 'can:update,supplier')
-        ->middlewareFor('update', 'can:update,supplier')
         ->middlewareFor('destroy', 'can:delete,supplier');
 
-        Route::get('/stock-movements', [
-            StockMovementController::class,'index',])
-        ->middleware('can:viewAny,App\Models\StockMovement')
+    Route::get('/stock-movements', [StockMovementController::class, 'index'])
         ->name('stock-movements.index');
-        
-        Route::post('/stock-movements', [
-            StockMovementController::class,'store',
-        ])
-        ->middleware('can:create,App\Models\StockMovement')
+
+    Route::post('/stock-movements', [StockMovementController::class, 'store'])
         ->name('stock-movements.store');
-    });
 
     Route::get('/profile', [ProfileController::class, 'index'])
         ->name('profile');

@@ -2,13 +2,13 @@
 
 namespace App\Jobs;
 
-use App\Models\User;
-use App\Models\StockMovement;
-use Illuminate\Support\Facades\Mail;
 use App\Mail\StockMovementCreatedMail;
+use App\Models\StockMovement;
+use App\Models\User;
 use App\Notifications\StockMovementCreatedNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\Mail;
 
 class ProcessStockMovementCreated implements ShouldQueue
 {

@@ -73,12 +73,12 @@
 
                         @can('delete', $supplier)
                             <form action="{{ route('suppliers.destroy', $supplier) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this supplier?');" >
-                                @csrf
-                                @method('DELETE')
-
-                                <button type="submit" class="btn delete-btn">
-                                    Delete
-                                </button>
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger">
+                                        <span class="glyphicon glyphicon-trash"></span>
+                                        Delete
+                                    </button>
                             </form>
                         @endcan
                     </td>
@@ -96,23 +96,5 @@
     @if (method_exists($suppliers, 'links'))
         {{ $suppliers->links() }}
     @endif
-
-    <div class="back-button">
-        <a href="{{ route('products.index') }}" class="btn">
-            Show list products
-        </a>
-
-        <a href="{{ route('categories.index') }}" class="btn">
-            Show Categories
-        </a>
-
-        @can('viewNotifications', \App\Models\User::class)
-            <a href="{{ route('notifications.index') }}" class="btn">
-                Show Notification
-                @if (($unreadNotificationsCount ?? 0) > 0)
-                    ({{ $unreadNotificationsCount }})
-                @endif
-            </a>
-        @endcan
-    </div>
+    @include('layouts.partials.body')
 @endsection

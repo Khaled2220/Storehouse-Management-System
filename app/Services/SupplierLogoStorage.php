@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Http\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
@@ -29,14 +30,16 @@ class SupplierLogoStorage
         }
         $logoName = Str::uuid().'.'.$extension;
 
-        $stored = Storage::disk('public')->putFileAs('suppliers',
-            $sourcePath,
+        $stored = Storage::disk('public')->putFileAs(
+            'suppliers',
+            new File($sourcePath),
             $logoName
         );
 
         if ($stored === false) {
             throw new RuntimeException('Unable to store supplier logo.');
         }
+
         return $stored;
     }
 
@@ -45,6 +48,11 @@ class SupplierLogoStorage
         if (empty($logoPath)) {
             return;
         }
+
+        if (! str_starts_with($logoPath, 'suppliers/') || basename($logoPath) !== substr($logoPath, strlen('suppliers/'))) {
+            throw new InvalidArgumentException('Invalid logo path.');
+        }
+
         Storage::disk('public')->delete($logoPath);
     }
 }

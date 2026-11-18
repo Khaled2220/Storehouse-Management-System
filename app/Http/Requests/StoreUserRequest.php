@@ -5,7 +5,6 @@ namespace App\Http\Requests;
 use App\Models\User;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Gate;
 
 class StoreUserRequest extends FormRequest
 {
@@ -14,9 +13,7 @@ class StoreUserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        Gate::authorize('create', User::class);
-
-        return true;
+        return $this->user()->can('create', User::class);
     }
 
     /**

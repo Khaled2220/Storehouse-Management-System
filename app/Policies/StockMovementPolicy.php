@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\Models\User;
 use App\Models\StockMovement;
+use App\Models\User;
 
 class StockMovementPolicy
 {
@@ -12,7 +12,7 @@ class StockMovementPolicy
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->isAdmin();
     }
 
     /**
@@ -20,7 +20,7 @@ class StockMovementPolicy
      */
     public function view(User $user, StockMovement $stockMovement): bool
     {
-        return true;
+        return $user->isAmin();
     }
 
     /**

@@ -4,7 +4,6 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Gate;
 
 class DeleteProfileRequest extends FormRequest
 {
@@ -15,9 +14,7 @@ class DeleteProfileRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        Gate::authorize('deleteProfile', $this->user());
-
-        return true;
+        return $this->user()->can('deleteProfile', $this->user());
     }
 
     /**

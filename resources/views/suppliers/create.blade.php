@@ -70,10 +70,5 @@
             <p>You do not have permission to add suppliers.</p>
         </div>
     @endcan
-
-    <div class="back-button">
-        <a href="{{ route('suppliers.index') }}" class="btn back-btn">
-            Back to Suppliers
-        </a>
-    </div>
+@include('layouts.partials.pagesuppliers')
 @endsection

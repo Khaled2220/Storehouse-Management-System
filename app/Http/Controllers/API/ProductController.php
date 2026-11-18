@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Models\Product;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\ProductResource;
+use App\Models\Product;
 use App\Services\ProductService;
+use Illuminate\Http\JsonResponse;
 
 class ProductController extends Controller
 {
@@ -19,33 +20,33 @@ class ProductController extends Controller
     /**
      * Display all products.
      */
-    public function index()
+    public function index(): JsonResponse
     {
         $products = $this->productService->getAllProducts();
 
         return ProductResource::collection($products)
             ->additional([
                 'status' => true,
-                'message' => 'Products retrieved successfully',
-            ]);
+                'message' => 'Products retrieved successfully.',
+            ])
+            ->response();
     }
 
     /**
      * Store a new product.
      */
-    public function store(StoreProductRequest $request)
+    public function store(StoreProductRequest $request): JsonResponse
     {
         $validated = $request->validated();
-
-        $validated['user_id'] = $request->user()->id;
 
         $image = $request->file('image');
 
         $product = $this->productService->createProduct(
             $validated,
-            $image?->getRealPath(),
-            $image?->extension()
+            $image,
+            $request->user(),
         );
+
         return (new ProductResource($product))
             ->additional([
                 'status' => true,
@@ -58,20 +59,22 @@ class ProductController extends Controller
     /**
      * Display the specified product.
      */
-    public function show(Product $product)
+    public function show(Product $product): JsonResponse
     {
         $product = $this->productService->getProductWithRelations($product);
 
-        return (new ProductResource($product))->additional([
-            'status' => true,
-            'message' => 'Product retrieved successfully.',
-        ]);
+        return (new ProductResource($product))
+            ->additional([
+                'status' => true,
+                'message' => 'Product retrieved successfully.',
+            ])
+            ->response();
     }
 
     /**
      * Update the specified product.
      */
-    public function update(UpdateProductRequest $request, Product $product)
+    public function update(UpdateProductRequest $request, Product $product): JsonResponse
     {
         $validated = $request->validated();
 
@@ -80,19 +83,21 @@ class ProductController extends Controller
         $updatedProduct = $this->productService->updateProduct(
             $product,
             $validated,
-            $image?->getRealPath(),
-            $image?->extension()
+            $image
         );
-        return (new ProductResource($updatedProduct))->additional([
-            'status' => true,
-            'message' => 'Product updated successfully.',
-        ]);
+
+        return (new ProductResource($updatedProduct))
+            ->additional([
+                'status' => true,
+                'message' => 'Product updated successfully.',
+            ])
+            ->response();
     }
 
     /**
      * Delete the specified product.
      */
-    public function destroy(Product $product)
+    public function destroy(Product $product): JsonResponse
     {
         $deleted = $this->productService->deleteProduct($product);
 
@@ -106,6 +111,6 @@ class ProductController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'Product deleted successfully.',
-        ], 200);
+        ]);
     }
 }

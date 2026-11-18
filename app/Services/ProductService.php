@@ -6,10 +6,11 @@ use App\Events\ProductCreated;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Supplier;
+use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
-use InvalidArgumentException;
 use Throwable;
 
 class ProductService
@@ -19,13 +20,15 @@ class ProductService
         //
     }
 
-    public function createProduct(array $data,?string $imagePath = null,?string $imageExtension = null): Product 
+    public function createProduct(array $data, ?UploadedFile $image, User $user): Product
     {
         $categoryIds = $data['categories'] ?? [];
 
         unset($data['categories']);
 
-        $this->prepareImage($data, $imagePath, $imageExtension);
+        $data['user_id'] = $user->id;
+
+        $this->prepareImage($data, $image);
 
         $newImage = $data['image'] ?? null;
 
@@ -37,8 +40,7 @@ class ProductService
 
                 return $product;
             });
-        } 
-        catch (Throwable $exception) {
+        } catch (Throwable $exception) {
             if ($newImage !== null) {
                 $this->imageStorage->delete($newImage);
             }
@@ -51,7 +53,7 @@ class ProductService
         return $product->load(['categories', 'user', 'supplier']);
     }
 
-    public function updateProduct(Product $product,array $data,?string $imagePath = null,?string $imageExtension = null): Product 
+    public function updateProduct(Product $product, array $data, ?UploadedFile $image = null): Product
     {
         $oldImage = $product->image;
 
@@ -60,7 +62,7 @@ class ProductService
 
         unset($data['categories']);
 
-        $this->prepareImage($data, $imagePath, $imageExtension);
+        $this->prepareImage($data, $image);
 
         $newImage = $data['image'] ?? null;
 
@@ -79,16 +81,15 @@ class ProductService
 
                 return $product->refresh();
             });
-        } 
-        catch (Throwable $exception) {
-            if ($imagePath !== null) {
+        } catch (Throwable $exception) {
+            if ($newImage !== null) {
                 $this->imageStorage->delete($newImage);
             }
 
             throw $exception;
         }
 
-        if ($imagePath !== null) {
+        if ($image !== null) {
             $this->imageStorage->delete($oldImage);
         }
 
@@ -97,6 +98,10 @@ class ProductService
 
     public function deleteProduct(Product $product): bool
     {
+        if ($product->stockMovements()->exists()) {
+            return false;
+        }
+
         $image = $product->image;
 
         $deleted = (bool) $product->delete();
@@ -110,44 +115,32 @@ class ProductService
 
     public function getAllProducts(): LengthAwarePaginator
     {
-        return Product::with(['categories', 'user', 'supplier'])
-            ->latest()
-            ->paginate(50);
+        return $this->getProducts();
     }
 
-    public function getProductsByCategory(int $categoryId): LengthAwarePaginator
+    public function getProducts(?int $categoryId = null): LengthAwarePaginator
     {
         return Product::with(['categories', 'user', 'supplier'])
-            ->whereHas('categories', function ($query) use ($categoryId) {
-                $query->where('categories.id', $categoryId);
+            ->when($categoryId !== null, function ($query) use ($categoryId) {
+                $query->whereHas('categories', function ($query) use ($categoryId) {
+                    $query->where('categories.id', $categoryId);
+                });
             })
             ->latest()
             ->paginate(50);
     }
 
-    public function getProductById(int $id): Product
+    private function prepareImage(array &$data, ?UploadedFile $image): void
     {
-        return Product::with(['categories', 'user', 'supplier'])
-            ->findOrFail($id);
-    }
-
-    private function prepareImage(array &$data,?string $imagePath,?string $imageExtension): void 
-    {
-        if ($imagePath === null) {
+        if ($image === null) {
             unset($data['image']);
 
             return;
         }
 
-        if ($imageExtension === null) {
-            throw new InvalidArgumentException(
-                'Image extension is required.'
-            );
-        }
-
         $data['image'] = $this->imageStorage->store(
-            $imagePath,
-            $imageExtension
+            $image->getRealPath(),
+            $image->extension()
         );
     }
 

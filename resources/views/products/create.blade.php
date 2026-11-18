@@ -166,10 +166,5 @@
             <p>You do not have permission to add products.</p>
         </div>
     @endcan
-
-    <div class="back-button">
-        <a href="{{ route('products.index') }}" class="btn back-btn">
-            Back to list Products
-        </a>
-    </div>
+@include('layouts.partials.pageproducts')
 @endsection

@@ -5,7 +5,6 @@ namespace App\Http\Requests;
 use App\Models\Product;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Gate;
 
 class StoreProductRequest extends FormRequest
 {
@@ -14,9 +13,7 @@ class StoreProductRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        Gate::authorize('create', Product::class);
-
-        return true;
+        return $this->user()->can('create', Product::class);
     }
 
     /**
@@ -33,7 +30,7 @@ class StoreProductRequest extends FormRequest
             'price' => ['required', 'numeric', 'min:0'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
             'categories' => ['nullable', 'array'],
-            'categories.*' => ['integer', 'exists:categories,id'],
+            'categories.*' => ['integer', 'distinct', 'exists:categories,id'],
             'status' => ['required', 'in:active,expired'],
             'expiry_date' => ['nullable', 'date'],
             'supplier_id' => ['required', 'integer', 'exists:suppliers,id'],

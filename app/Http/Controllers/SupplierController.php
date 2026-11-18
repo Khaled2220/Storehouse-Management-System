@@ -7,7 +7,9 @@ use App\Http\Requests\UpdateSupplierRequest;
 use App\Models\Supplier;
 use App\Services\NotificationService;
 use App\Services\SupplierService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class SupplierController extends Controller
 {
@@ -19,7 +21,7 @@ class SupplierController extends Controller
     /**
      * Display all suppliers.
      */
-    public function index(Request $request)
+    public function index(Request $request): View
     {
         $suppliers = $this->supplierService->getAllSuppliers();
 
@@ -34,26 +36,21 @@ class SupplierController extends Controller
     /**
      * Show create supplier page.
      */
-    public function create(Request $request)
+    public function create(Request $request): View
     {
         $unreadNotificationsCount = $this->getUnreadNotificationsCount($request);
 
-        return view('suppliers.create')->with(['unreadNotificationsCount' => $unreadNotificationsCount,]);
+        return view('suppliers.create')->with(['unreadNotificationsCount' => $unreadNotificationsCount]);
     }
 
     /**
      * Store a new supplier.
      */
-    public function store(StoreSupplierRequest $request)
+    public function store(StoreSupplierRequest $request): RedirectResponse
     {
-        $validated = $request->validated();
-
-        $logo = $request->file('logo');
-
         $this->supplierService->createSupplier(
-            $validated,
-            $logo?->getRealPath() ?: null,
-            $logo?->extension()
+            $request->validated(),
+            $request->file('logo')
         );
 
         return redirect()->route('suppliers.index')
@@ -63,12 +60,12 @@ class SupplierController extends Controller
     /**
      * Display a specific supplier and its products.
      */
-    public function show(Request $request, Supplier $supplier)
+    public function show(Request $request, Supplier $supplier): View
     {
         $supplier = $this->supplierService->getSupplierById($supplier->id);
-        
+
         $unreadNotificationsCount = $this->getUnreadNotificationsCount($request);
-        
+
         return view('suppliers.show')->with([
             'supplier' => $supplier,
             'products' => $supplier->products,
@@ -79,7 +76,7 @@ class SupplierController extends Controller
     /**
      * Show edit supplier page.
      */
-    public function edit(Request $request, Supplier $supplier)
+    public function edit(Request $request, Supplier $supplier): View
     {
         $unreadNotificationsCount = $this->getUnreadNotificationsCount($request);
 
@@ -92,17 +89,12 @@ class SupplierController extends Controller
     /**
      * Update an existing supplier.
      */
-    public function update(UpdateSupplierRequest $request, Supplier $supplier)
+    public function update(UpdateSupplierRequest $request, Supplier $supplier): RedirectResponse
     {
-        $validated = $request->validated();
-
-        $logo = $request->file('logo');
-
         $this->supplierService->updateSupplier(
             $supplier,
-            $validated,
-            $logo?->getRealPath() ?: null,
-            $logo?->extension()
+            $request->validated(),
+            $request->file('logo')
         );
 
         return redirect()->route('suppliers.index')
@@ -112,7 +104,7 @@ class SupplierController extends Controller
     /**
      * Delete a supplier.
      */
-    public function destroy(Supplier $supplier)
+    public function destroy(Supplier $supplier): RedirectResponse
     {
         $deleted = $this->supplierService->deleteSupplier($supplier);
 

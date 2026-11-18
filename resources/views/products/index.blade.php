@@ -18,11 +18,6 @@
         <thead>
             <tr>
                 <th>Name</th>
-                <th>Quantity</th>
-                <th>Price</th>
-                <th>Status</th>
-                <th>Expiry Date</th>
-                <th>Supplier</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -32,33 +27,8 @@
                 <tr>
                     <td>{{ $product->name }}</td>
 
-                    <td>{{ $product->quantity }}</td>
-
                     <td>
-                        {{ number_format((float) $product->price, 2) }}
-                    </td>
-
-                    <td>
-                        @if ($product->status === 'expired')
-                            <span class="label label-danger">Expired</span>
-                        @else
-                            <span class="label label-success">Active</span>
-                        @endif
-                    </td>
-
-                    <td>
-                        {{ $product->expiry_date?->format('Y-m-d') ?? 'Not specified' }}
-                    </td>
-
-                    <td>
-                        {{ $product->supplier?->name ?? 'N/A' }}
-                    </td>
-
-                    <td>
-                        <a
-                            href="{{ route('products.show', $product) }}"
-                            class="btn show-detail-btn"
-                        >
+                        <a href="{{ route('products.show', $product) }}" class="btn show-detail-btn" >
                             Show Details
                         </a>
                     </td>
@@ -73,25 +43,5 @@
             @endforelse
         </tbody>
     </table>
-
-
-    <div class="back-button">
-        <a href="{{ route('categories.index') }}" class="btn">
-            Show Categories
-        </a>
-
-        <a href="{{ route('notifications.index') }}" class="btn">
-            Show Notifications
-        </a>
-
-        @if (auth()->user()?->isAdmin())
-            <a href="{{ route('suppliers.index') }}" class="btn">
-                Show Suppliers
-            </a>
-            
-            <a href="{{ route('stock-movements.index') }}" class="btn">
-                Show Stock Movements
-            </a>
-        @endif
-    </div>
+@include('layouts.partials.body')
 @endsection

@@ -4,7 +4,6 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class UpdateProfileRequest extends FormRequest
@@ -14,9 +13,7 @@ class UpdateProfileRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        Gate::authorize('updateProfile', $this->user());
-
-        return true;
+        return $this->user()->can('updateProfile', $this->user());
     }
 
     /**

@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\Models\User;
 use App\Models\Supplier;
+use App\Models\User;
 
 class SupplierPolicy
 {
@@ -12,7 +12,7 @@ class SupplierPolicy
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->isAdmin();
     }
 
     /**
@@ -20,7 +20,7 @@ class SupplierPolicy
      */
     public function view(User $user, Supplier $supplier): bool
     {
-        return true;
+        return $user->isAdmin();
     }
 
     /**

@@ -2,12 +2,13 @@
 
 namespace App\Services;
 
-use App\Models\Category;
 use App\Events\CategoryCreated;
+use App\Models\Category;
+use Illuminate\Database\Eloquent\Collection;
 
 class CategoryService
 {
-    public function getAllCategories()
+    public function getAllCategories(): Collection
     {
         return Category::all();
     }
@@ -38,6 +39,7 @@ class CategoryService
         if ($category->products()->exists()) {
             return false;
         }
+
         return (bool) $category->delete();
     }
 

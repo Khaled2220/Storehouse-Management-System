@@ -2,13 +2,15 @@
 
 namespace App\Jobs;
 
-use App\Models\User;
-use App\Models\Category;
-use Illuminate\Support\Facades\Mail;
 use App\Mail\CategoryCreatedMail;
+use App\Models\Category;
+use App\Models\User;
 use App\Notifications\CategoryCreatedNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Throwable;
 
 class ProcessCategoryCreated implements ShouldQueue
 {
@@ -36,12 +38,22 @@ class ProcessCategoryCreated implements ShouldQueue
                     (int) $category->id
                 )
             );
-            Mail::to($user->email)->send(
-                new CategoryCreatedMail(
-                    $category->name,
-                    (int) $category->id
-                )
-            );
+
+            try {
+                Mail::to($user->email)->send(
+                    new CategoryCreatedMail(
+                        $category->name,
+                        (int) $category->id
+                    )
+                );
+            } catch (Throwable $exception) {
+                Log::error('Category Create Email could not be send .', [
+                    'user_id' => $user->id,
+                    'category_id' => $category->id,
+                    'error' => $exception->getMessage(),
+                ]);
+            }
+
         });
     }
 }

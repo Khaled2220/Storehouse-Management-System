@@ -2,9 +2,7 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class UpdateSupplierRequest extends FormRequest
@@ -14,15 +12,11 @@ class UpdateSupplierRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        Gate::authorize('update', $this->route('supplier'));
-
-        return true;
+        return $this->user()->can('update', $this->route('supplier'));
     }
 
     /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
+     * @return array<string, mixed>
      */
     public function rules(): array
     {
